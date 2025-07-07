@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { Helmet } from 'react-helmet';
 
 const queryClient = new QueryClient();
 
@@ -13,6 +14,10 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <Helmet>
+        <title>Чистокръвни Мейн Куун Котки</title>
+        <meta name="description" content="Чистокръвни Maine Coon котки от развъдник Radanov Pride. Красота, характер и здраве в едно!" />
+      </Helmet>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />

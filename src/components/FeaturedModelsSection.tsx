@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import modelCat1 from "@/assets/model-cat-1.jpg";
 import modelCat2 from "@/assets/model-cat-2.jpg";
 import modelCat3 from "@/assets/model-cat-3.jpg";
+import LayoutGridDemo from "@/components/ui/layout-grid-demo";
 
 interface Cat {
   id: number;
@@ -21,12 +23,15 @@ interface Cat {
 const FeaturedModelsSection = () => {
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const { elementRef: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1);
+  const { elementRef: headerRef, isVisible: headerVisible } = useScrollAnimation(0.3);
+  const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation(0.2);
 
   const featuredCats: Cat[] = [
     {
       id: 1,
       name: "OLIVER",
-      subtitle: "CLASSIC ELEGANCE",
+      subtitle: "GINGER MAGIC",
       image: modelCat1,
       description: "Величествен мъжки мейн кун с изключителни родословни линии. Характеризира се с благородна осанка и нежен темперамент.",
       age: "2 години",
@@ -37,8 +42,8 @@ const FeaturedModelsSection = () => {
     },
     {
       id: 2,
-      name: "SOPHIA",
-      subtitle: "SILVER GRACE",
+      name: "TONY",
+      subtitle: "TABBY JUNGLE",
       image: modelCat2,
       description: "Елегантна женска с прекрасни сребристи маркировки и изключително социален характер. Перфектна за семейство.",
       age: "1.5 години",
@@ -49,8 +54,8 @@ const FeaturedModelsSection = () => {
     },
     {
       id: 3,
-      name: "AURORA",
-      subtitle: "CREAM PERFECTION",
+      name: "SALMA",
+      subtitle: "WHITE GLAM",
       image: modelCat3,
       description: "Нежна красавица с кремав цвят и изключителни качества. Идеална за ценители на рядката красота.",
       age: "8 месеца",
@@ -58,6 +63,30 @@ const FeaturedModelsSection = () => {
       status: "Резервиран",
       price: "3000 лв",
       gallery: [modelCat3, modelCat1, modelCat2]
+    },
+    {
+      id: 4,
+      name: "KATHERINE",
+      subtitle: "LE ARTISAN NOIR",
+      image: modelCat1,
+      description: "Изискана черна красавица с благородни черти и изключителен характер.",
+      age: "1 година",
+      color: "Solid black",
+      status: "Достъпен",
+      price: "2700 лв",
+      gallery: [modelCat1, modelCat2, modelCat3]
+    },
+    {
+      id: 5,
+      name: "ROB",
+      subtitle: "NOIR ELEGANCE",
+      image: modelCat2,
+      description: "Интелигентен мъжки с очила на модата и изключителни качества.",
+      age: "3 години",
+      color: "Brown tabby",
+      status: "Достъпен",
+      price: "2900 лв",
+      gallery: [modelCat2, modelCat1, modelCat3]
     }
   ];
 
@@ -73,27 +102,40 @@ const FeaturedModelsSection = () => {
 
   return (
     <>
-      <section id="models" className="py-20 bg-background">
+      <section ref={sectionRef} className="py-20 bg-[#F5F4F0] mb-24">
         <div className="container mx-auto px-6 lg:px-8">
           {/* Section Header */}
-          <div className="text-center mb-16">
-            <p className="text-sm text-muted-foreground tracking-wide uppercase mb-2">
-              from muse to masterpiece
+          <div 
+            ref={headerRef}
+            className={`text-center mb-24 transition-all duration-1000 ${
+              headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+          >
+            <p className="text-sm text-gray-600 tracking-wide uppercase mb-2">
+              от вдъхновение до шедьовър
             </p>
-            <h2 className="font-playfair text-4xl lg:text-5xl font-light text-modern-dark">
-              Our Featured Models
+            <h2 className="font-playfair text-4xl lg:text-5xl font-light text-black">
+              Нашите избрани модели
             </h2>
           </div>
 
           {/* Models Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div 
+            ref={gridRef}
+            className={`grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto transition-all duration-1000 ${
+              gridVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
             {featuredCats.map((cat, index) => (
               <Card 
                 key={cat.id} 
-                className="group overflow-hidden bg-white shadow-card hover:shadow-hover transition-all duration-300 cursor-pointer border-0 rounded-xl"
+                className={`group overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-0 scroll-hidden ${
+                  gridVisible ? 'scroll-visible' : ''
+                }`}
                 onClick={() => openGallery(cat)}
                 style={{
-                  animationDelay: `${index * 0.1}s`
+                  animationDelay: `${index * 0.15}s`,
+                  transitionDelay: gridVisible ? `${index * 0.1}s` : '0s'
                 }}
               >
                 <div className="relative overflow-hidden">
@@ -103,73 +145,54 @@ const FeaturedModelsSection = () => {
                     className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   
-                  {/* Status Badge */}
-                  <div className="absolute top-4 right-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide ${
-                      cat.status === "Достъпен" 
-                        ? "bg-green-100 text-green-800" 
-                        : "bg-orange-100 text-orange-800"
-                    }`}>
-                      {cat.status}
-                    </span>
-                  </div>
-
-                  {/* Overlay with price */}
-                  <div className="absolute inset-0 bg-gradient-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-6">
+                  {/* Dark overlay with name */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-100 transition-opacity duration-300 flex items-end p-6">
                     <div className="text-white">
-                      <div className="text-2xl font-bold">{cat.price}</div>
+                      <h3 className="font-bold text-xl mb-1">{cat.name}</h3>
+                      <p className="text-sm uppercase tracking-wide text-gray-300">{cat.subtitle}</p>
                     </div>
-                    <Button variant="minimal" size="sm" className="bg-white/20 backdrop-blur-sm border-white text-white hover:bg-white hover:text-modern-dark">
-                      View Gallery
-                    </Button>
                   </div>
                 </div>
                 
-                <CardContent className="p-6">
-                  <div className="space-y-3">
-                    <div>
-                      <h3 className="font-playfair text-xl font-semibold text-modern-dark">
-                        {cat.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground uppercase tracking-wide">
-                        {cat.subtitle}
-                      </p>
-                    </div>
-                    
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Възраст:</span>
-                      <span className="font-medium">{cat.age}</span>
-                    </div>
-                  </div>
-                </CardContent>
-
-                <div className="px-6 pb-6">
+                <div className="p-6 text-center">
                   <Button 
-                    variant="minimal" 
-                    className="w-full justify-center rounded-none border-modern-dark/20 hover:border-modern-dark"
+                    variant="outline" 
+                    className="w-full justify-center border-black text-black hover:bg-black hover:text-white transition-colors"
                   >
-                    Use Model →
+                    Избери този модел
                   </Button>
                 </div>
               </Card>
             ))}
 
             {/* Add Model Card */}
-            <Card className="group overflow-hidden bg-gradient-subtle shadow-card hover:shadow-hover transition-all duration-300 cursor-pointer border-2 border-dashed border-modern-dark/20 rounded-xl">
+            <Card 
+              className={`group overflow-hidden bg-gray-50 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-dashed border-gray-300 scroll-hidden ${
+                gridVisible ? 'scroll-visible' : ''
+              }`}
+              style={{
+                transitionDelay: gridVisible ? `${featuredCats.length * 0.1}s` : '0s'
+              }}
+            >
               <CardContent className="p-12 flex flex-col items-center justify-center h-full text-center space-y-4">
-                <div className="w-16 h-16 rounded-full border-2 border-dashed border-modern-dark/30 flex items-center justify-center group-hover:border-modern-dark transition-colors">
-                  <svg className="w-8 h-8 text-modern-dark/60 group-hover:text-modern-dark transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center group-hover:border-black transition-colors">
+                  <svg className="w-8 h-8 text-gray-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-modern-dark mb-1">Create Your Model</h3>
-                  <p className="text-sm text-muted-foreground">Добавете нов модел</p>
+                  <h3 className="font-medium text-black mb-1">Създай свой модел</h3>
+                  <p className="text-sm text-gray-600">Добавете нов модел</p>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
+      </section>
+
+      {/* Gallery Section */}
+      <section className="py-20 bg-[#F5F4F0]">
+        <LayoutGridDemo />
       </section>
 
       {/* Gallery Modal */}
