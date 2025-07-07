@@ -2,41 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Maine Coon Radanov Pride - Luxury Design System
+All colors MUST be HSL. Elegant palette for premium cat breeding website.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Luxury color palette - rich browns, golds, creams */
+    --background: 28 15% 96%;
+    --foreground: 20 25% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 28 25% 98%;
+    --card-foreground: 20 25% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 28 25% 98%;
+    --popover-foreground: 20 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Rich brown primary inspired by Maine Coon coat */
+    --primary: 20 35% 25%;
+    --primary-foreground: 28 15% 96%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Warm cream secondary */
+    --secondary: 35 20% 88%;
+    --secondary-foreground: 20 35% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Soft muted tones */
+    --muted: 35 15% 90%;
+    --muted-foreground: 20 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Elegant gold accent */
+    --accent: 40 45% 70%;
+    --accent-foreground: 20 35% 25%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 28 15% 96%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 30 20% 85%;
+    --input: 30 20% 85%;
+    --ring: 40 45% 70%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Luxury-specific design tokens */
+    --luxury-brown: 20 35% 25%;
+    --luxury-gold: 40 45% 70%;
+    --luxury-cream: 35 25% 92%;
+    --luxury-dark-brown: 18 40% 18%;
+    --luxury-forest: 120 25% 35%;
+
+    /* Gradients for premium feel */
+    --gradient-luxury: linear-gradient(135deg, hsl(20 35% 25%), hsl(18 40% 18%));
+    --gradient-gold: linear-gradient(135deg, hsl(40 45% 70%), hsl(45 50% 75%));
+    --gradient-hero: linear-gradient(135deg, hsl(20 35% 25% / 0.8), hsl(18 40% 18% / 0.9));
+
+    /* Elegant shadows */
+    --shadow-luxury: 0 10px 40px -10px hsl(20 35% 25% / 0.3);
+    --shadow-gold: 0 5px 20px -5px hsl(40 45% 70% / 0.4);
+    --shadow-elegant: 0 2px 10px -2px hsl(20 25% 15% / 0.1);
+
+    /* Transitions */
+    --transition-luxury: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
