@@ -62,12 +62,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				luxury: {
-					brown: 'hsl(var(--luxury-brown))',
-					gold: 'hsl(var(--luxury-gold))',
-					cream: 'hsl(var(--luxury-cream))',
-					'dark-brown': 'hsl(var(--luxury-dark-brown))',
-					forest: 'hsl(var(--luxury-forest))'
+				modern: {
+					dark: 'hsl(var(--modern-dark))',
+					light: 'hsl(var(--modern-light))',
+					beige: 'hsl(var(--modern-beige))',
+					warm: 'hsl(var(--modern-warm))'
 				}
 			},
 			fontFamily: {
@@ -75,17 +74,17 @@ export default {
 				crimson: ['Crimson Text', 'serif'],
 			},
 			backgroundImage: {
-				'gradient-luxury': 'var(--gradient-luxury)',
-				'gradient-gold': 'var(--gradient-gold)',
-				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-subtle': 'var(--gradient-subtle)',
+				'gradient-overlay': 'var(--gradient-overlay)',
 			},
 			boxShadow: {
-				luxury: 'var(--shadow-luxury)',
-				gold: 'var(--shadow-gold)',
-				elegant: 'var(--shadow-elegant)',
+				modern: 'var(--shadow-modern)',
+				hover: 'var(--shadow-hover)',
+				card: 'var(--shadow-card)',
 			},
 			transitionProperty: {
-				luxury: 'var(--transition-luxury)',
+				smooth: 'var(--transition-smooth)',
+				bounce: 'var(--transition-bounce)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
