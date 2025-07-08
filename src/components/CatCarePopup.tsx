@@ -34,13 +34,13 @@ const CatCarePopup = ({ onClose }: CatCarePopupProps) => {
 
   return (
     <div 
-      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-300 ${
+      className={`fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 transition-all duration-300 ${
         isVisible ? 'bg-black/60 backdrop-blur-sm' : 'bg-transparent'
       }`}
       onClick={handleBackdropClick}
     >
       <div 
-        className={`relative max-w-2xl w-full bg-[#F5F4F0] rounded-2xl shadow-2xl transform transition-all duration-500 ${
+        className={`relative max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-[#F5F4F0] rounded-xl sm:rounded-2xl shadow-2xl transform transition-all duration-500 ${
           isVisible ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
         }`}
         style={{
@@ -50,13 +50,13 @@ const CatCarePopup = ({ onClose }: CatCarePopupProps) => {
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors z-10 group"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors z-10 group touch-manipulation"
         >
-          <X className="w-6 h-6 text-gray-600 group-hover:text-black transition-colors" />
+          <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 group-hover:text-black transition-colors" />
         </button>
 
         {/* Content */}
-        <div className="p-8 lg:p-12">
+        <div className="p-4 sm:p-6 lg:p-8 xl:p-12">
           {/* Header with Cat Paw Icons */}
           <div 
             className={`text-center mb-8 transition-all duration-700 ${
@@ -64,21 +64,21 @@ const CatCarePopup = ({ onClose }: CatCarePopupProps) => {
             }`}
           >
             <div className="flex justify-center items-center mb-4">
-              <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center mx-2">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-black rounded-full flex items-center justify-center mx-1 sm:mx-2">
+                <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M4.5 10.5c1.104 0 2-1.12 2-2.5s-.896-2.5-2-2.5-2 1.12-2 2.5.896 2.5 2 2.5zm15 0c1.104 0 2-1.12 2-2.5s-.896-2.5-2-2.5-2 1.12-2 2.5.896 2.5 2 2.5zm-12.5 7c1.381 0 2.5-1.12 2.5-2.5s-1.119-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.119 2.5 2.5 2.5zm10 0c1.381 0 2.5-1.12 2.5-2.5s-1.119-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.119 2.5 2.5 2.5zm-5-1c2.485 0 7-1.567 7-4.5 0-1.657-2.239-3-5-3s-5 1.343-5 3c0 2.933 4.515 4.5 7 4.5z"/>
                 </svg>
               </div>
-              <h2 className="font-playfair text-3xl lg:text-4xl font-light text-black">
+              <h2 className="font-playfair text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-light text-black text-center px-2">
                 Важна информация
               </h2>
-              <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center mx-2">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-black rounded-full flex items-center justify-center mx-1 sm:mx-2">
+                <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M4.5 10.5c1.104 0 2-1.12 2-2.5s-.896-2.5-2-2.5-2 1.12-2 2.5.896 2.5 2 2.5zm15 0c1.104 0 2-1.12 2-2.5s-.896-2.5-2-2.5-2 1.12-2 2.5.896 2.5 2 2.5zm-12.5 7c1.381 0 2.5-1.12 2.5-2.5s-1.119-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.119 2.5 2.5 2.5zm10 0c1.381 0 2.5-1.12 2.5-2.5s-1.119-2.5-2.5-2.5-2.5 1.12-2.5 2.5 1.119 2.5 2.5 2.5zm-5-1c2.485 0 7-1.567 7-4.5 0-1.657-2.239-3-5-3s-5 1.343-5 3c0 2.933 4.515 4.5 7 4.5z"/>
                 </svg>
               </div>
             </div>
-            <p className="text-sm text-gray-600 uppercase tracking-wide">
+            <p className="text-xs sm:text-sm text-gray-600 uppercase tracking-wide text-center">
               За грижата към Мейн Куун котките
             </p>
           </div>
@@ -89,8 +89,8 @@ const CatCarePopup = ({ onClose }: CatCarePopupProps) => {
               contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
             }`}
           >
-            <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-black">
-              <h3 className="font-semibold text-lg text-black mb-3">
+            <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg border-l-4 border-black">
+              <h3 className="font-semibold text-base sm:text-lg text-black mb-3">
                 🐱 Грижата към котка изисква отговорност
               </h3>
               <p className="text-gray-700 leading-relaxed mb-4">
