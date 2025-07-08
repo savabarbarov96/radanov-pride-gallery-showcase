@@ -342,3 +342,22 @@ Clean, sophisticated aesthetic inspired by modern cat portfolios
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
+
+/* Mobile touch improvements */
+@media (max-width: 640px) {
+  /* Ensure minimum touch target size */
+  button, .touch-manipulation {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve tap highlight */
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Prevent zoom on input focus on iOS */
+  input, textarea, select {
+    font-size: 16px;
+  }
+}
