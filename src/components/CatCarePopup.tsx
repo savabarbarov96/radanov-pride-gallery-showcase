@@ -99,38 +99,38 @@ const CatCarePopup = ({ onClose }: CatCarePopupProps) => {
               </p>
               
               <div className="space-y-3">
-                <div className="flex items-start space-x-3">
+                <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-2 h-2 bg-black rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-gray-600">
                     <strong>Финансови разходи:</strong> Храна, ветеринарни грижи, принадлежности - над 1000 лв. годишно
                   </p>
                 </div>
-                <div className="flex items-start space-x-3">
+                <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-2 h-2 bg-black rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-gray-600">
                     <strong>Време и внимание:</strong> Ежедневни грижи, четкане, игра и социализация
                   </p>
                 </div>
-                <div className="flex items-start space-x-3">
+                <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-2 h-2 bg-black rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-gray-600">
                     <strong>Дългосрочен ангажимент:</strong> Мейн Куун котките живеят 12-15 години
                   </p>
                 </div>
-                <div className="flex items-start space-x-3">
+                <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-2 h-2 bg-black rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs sm:text-sm text-gray-600">
                     <strong>Простор и условия:</strong> Достатъчно място, безопасна среда
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 border border-gray-200">
-              <p className="text-center text-gray-700 font-medium mb-4">
+            <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 sm:p-6 border border-gray-200">
+              <p className="text-center text-gray-700 font-medium mb-4 text-sm sm:text-base">
                 💝 Котката не е подарък или импулсивно решение
               </p>
-              <p className="text-center text-sm text-gray-600">
+              <p className="text-center text-xs sm:text-sm text-gray-600">
                 Ако сте готови за отговорния ангажимент, ние ще бъдем щастливи да ви помогнем 
                 да намерите перфектния спътник за вашето семейство.
               </p>
@@ -139,20 +139,20 @@ const CatCarePopup = ({ onClose }: CatCarePopupProps) => {
 
           {/* Action Buttons */}
           <div 
-            className={`flex flex-col sm:flex-row gap-4 mt-8 transition-all duration-700 delay-400 ${
+            className={`flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8 transition-all duration-700 delay-400 ${
               contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
             }`}
           >
             <Button 
               onClick={handleClose}
-              className="flex-1 bg-black text-white hover:bg-gray-800 transition-colors"
+              className="flex-1 bg-black text-white hover:bg-gray-800 transition-colors h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
             >
               Разбирам отговорността
             </Button>
             <Button 
               variant="outline"
               onClick={handleClose}
-              className="flex-1 border-black text-black hover:bg-black hover:text-white transition-colors"
+              className="flex-1 border-black text-black hover:bg-black hover:text-white transition-colors h-11 sm:h-10 text-sm sm:text-base touch-manipulation"
             >
               Искам повече информация
             </Button>

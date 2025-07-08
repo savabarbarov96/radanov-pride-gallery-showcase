@@ -34,25 +34,25 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+      <div className="bg-white rounded-lg max-w-md w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
         {/* Modal Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 className="font-playfair text-2xl font-semibold text-black">
+        <div className="flex justify-between items-center p-4 sm:p-6 border-b border-gray-200">
+          <h2 className="font-playfair text-xl sm:text-2xl font-semibold text-black">
             Свържете се с нас
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="rounded-full w-8 h-8 p-0 hover:bg-gray-100"
+            className="rounded-full w-10 h-10 sm:w-8 sm:h-8 p-0 hover:bg-gray-100 touch-manipulation"
           >
             ×
           </Button>
         </div>
 
         {/* Modal Content */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium text-gray-700">
               Име *
@@ -112,10 +112,10 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
             />
           </div>
 
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
             <Button
               type="submit"
-              className="flex-1 bg-black text-white hover:bg-gray-800 transition-colors"
+              className="flex-1 bg-black text-white hover:bg-gray-800 transition-colors h-11 sm:h-10 touch-manipulation"
             >
               Изпрати съобщение
             </Button>
@@ -123,7 +123,7 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 h-11 sm:h-10 touch-manipulation"
             >
               Откажи
             </Button>
