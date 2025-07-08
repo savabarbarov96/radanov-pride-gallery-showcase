@@ -99,6 +99,101 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Drag and drop animations */
+.dragging {
+  opacity: 0.8;
+  transform: scale(1.05);
+  z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.drag-preview {
+  pointer-events: none;
+  transform: rotate(5deg);
+}
+
+.drop-zone {
+  border: 2px dashed #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+  transition: all 0.3s ease;
+}
+
+.drop-zone.active {
+  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+/* Canvas background grid */
+.canvas-grid {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 0;
+  animation: gridPulse 4s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% {
+    background-image: 
+      linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  }
+  50% {
+    background-image: 
+      linear-gradient(rgba(59, 130, 246, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59, 130, 246, 0.08) 1px, transparent 1px);
+  }
+}
+
+/* Canvas drop zone active state */
+.canvas-drop-active {
+  background-color: rgba(59, 130, 246, 0.05);
+  border: 2px dashed #3b82f6;
+  box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+.canvas-drop-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(59, 130, 246, 0.1) 10px,
+    rgba(59, 130, 246, 0.1) 20px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Smooth transitions for canvas nodes */
+.canvas-node {
+  transition: all 0.2s ease;
+}
+
+.canvas-node:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Connection animation */
+.connection-line {
+  stroke-dasharray: 5,5;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
 .animate-spin-slow {
   animation: spin-slow 3s linear infinite;
 }

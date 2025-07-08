@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -6,91 +6,28 @@ import modelCat1 from "@/assets/model-cat-1.jpg";
 import modelCat2 from "@/assets/model-cat-2.jpg";
 import modelCat3 from "@/assets/model-cat-3.jpg";
 import LayoutGridDemo from "@/components/ui/layout-grid-demo";
-
-interface Cat {
-  id: number;
-  name: string;
-  subtitle: string;
-  image: string;
-  description: string;
-  age: string;
-  color: string;
-  status: string;
-  price: string;
-  gallery: string[];
-}
+import { catService, CatData } from "@/services/catService";
+import PedigreeModal from "./PedigreeModal";
 
 const FeaturedModelsSection = () => {
-  const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
+  const [selectedCat, setSelectedCat] = useState<CatData | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isPedigreeOpen, setIsPedigreeOpen] = useState(false);
+  const [pedigreeCat, setPedigreeCat] = useState<CatData | null>(null);
+  const [featuredCats, setFeaturedCats] = useState<CatData[]>([]);
   const { elementRef: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1);
   const { elementRef: headerRef, isVisible: headerVisible } = useScrollAnimation(0.3);
   const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation(0.2);
 
-  const featuredCats: Cat[] = [
-    {
-      id: 1,
-      name: "OLIVER",
-      subtitle: "GINGER MAGIC",
-      image: modelCat1,
-      description: "Величествен мъжки мейн кун с изключителни родословни линии. Характеризира се с благородна осанка и нежен темперамент.",
-      age: "2 години",
-      color: "Brown tabby с бели маркировки",
-      status: "Достъпен",
-      price: "2500 лв",
-      gallery: [modelCat1, modelCat2, modelCat3]
-    },
-    {
-      id: 2,
-      name: "TONY",
-      subtitle: "TABBY JUNGLE",
-      image: modelCat2,
-      description: "Елегантна женска с прекрасни сребристи маркировки и изключително социален характер. Перфектна за семейство.",
-      age: "1.5 години",
-      color: "Silver tabby",
-      status: "Достъпен",
-      price: "2800 лв",
-      gallery: [modelCat2, modelCat1, modelCat3]
-    },
-    {
-      id: 3,
-      name: "SALMA",
-      subtitle: "WHITE GLAM",
-      image: modelCat3,
-      description: "Нежна красавица с кремав цвят и изключителни качества. Идеална за ценители на рядката красота.",
-      age: "8 месеца",
-      color: "Cream с бели акценти",
-      status: "Резервиран",
-      price: "3000 лв",
-      gallery: [modelCat3, modelCat1, modelCat2]
-    },
-    {
-      id: 4,
-      name: "KATHERINE",
-      subtitle: "LE ARTISAN NOIR",
-      image: modelCat1,
-      description: "Изискана черна красавица с благородни черти и изключителен характер.",
-      age: "1 година",
-      color: "Solid black",
-      status: "Достъпен",
-      price: "2700 лв",
-      gallery: [modelCat1, modelCat2, modelCat3]
-    },
-    {
-      id: 5,
-      name: "ROB",
-      subtitle: "NOIR ELEGANCE",
-      image: modelCat2,
-      description: "Интелигентен мъжки с очила на модата и изключителни качества.",
-      age: "3 години",
-      color: "Brown tabby",
-      status: "Достъпен",
-      price: "2900 лв",
-      gallery: [modelCat2, modelCat1, modelCat3]
-    }
-  ];
+  useEffect(() => {
+    setFeaturedCats(catService.getDisplayedCats());
+    const unsubscribe = catService.subscribe(() => {
+      setFeaturedCats(catService.getDisplayedCats());
+    });
+    return unsubscribe;
+  }, []);
 
-  const openGallery = (cat: Cat) => {
+  const openGallery = (cat: CatData) => {
     setSelectedCat(cat);
     setIsGalleryOpen(true);
   };
@@ -98,6 +35,16 @@ const FeaturedModelsSection = () => {
   const closeGallery = () => {
     setIsGalleryOpen(false);
     setSelectedCat(null);
+  };
+
+  const openPedigree = (cat: CatData) => {
+    setPedigreeCat(cat);
+    setIsPedigreeOpen(true);
+  };
+
+  const closePedigree = () => {
+    setIsPedigreeOpen(false);
+    setPedigreeCat(null);
   };
 
   return (
@@ -154,12 +101,22 @@ const FeaturedModelsSection = () => {
                   </div>
                 </div>
                 
-                <div className="p-6 text-center">
+                <div className="p-6 text-center space-y-2">
                   <Button 
                     variant="outline" 
                     className="w-full justify-center border-black text-black hover:bg-black hover:text-white transition-colors"
                   >
                     Избери този модел
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-center border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openPedigree(cat);
+                    }}
+                  >
+                    Виж родословие
                   </Button>
                 </div>
               </Card>
@@ -281,6 +238,15 @@ const FeaturedModelsSection = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Pedigree Modal */}
+      {isPedigreeOpen && pedigreeCat && (
+        <PedigreeModal
+          cat={pedigreeCat}
+          isOpen={isPedigreeOpen}
+          onClose={closePedigree}
+        />
       )}
     </>
   );
