@@ -35,12 +35,12 @@ const CatCarePopup = ({ onClose }: CatCarePopupProps) => {
   return (
     <div 
       className={`fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 transition-all duration-300 ${
-        isVisible ? 'bg-foreground/60 backdrop-blur-sm' : 'bg-transparent'
+        isVisible ? 'bg-black/70 dark:bg-black/80 backdrop-blur-md' : 'bg-transparent'
       }`}
       onClick={handleBackdropClick}
     >
       <div 
-        className={`relative max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-card rounded-xl sm:rounded-2xl shadow-2xl transform transition-all duration-500 ${
+        className={`relative max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-card border border-border/50 dark:border-border rounded-xl sm:rounded-2xl shadow-2xl dark:shadow-black/50 transform transition-all duration-500 ${
           isVisible ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
         }`}
         style={{
@@ -89,7 +89,7 @@ const CatCarePopup = ({ onClose }: CatCarePopupProps) => {
               contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
             }`}
           >
-            <div className="bg-card rounded-xl p-4 sm:p-6 shadow-lg border-l-4 border-foreground">
+            <div className="bg-muted/50 dark:bg-muted/30 rounded-xl p-4 sm:p-6 shadow-lg border-l-4 border-primary">
               <h3 className="font-semibold text-base sm:text-lg text-foreground mb-3">
                 🐱 Грижата към котка изисква отговорност
               </h3>
@@ -126,7 +126,7 @@ const CatCarePopup = ({ onClose }: CatCarePopupProps) => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 sm:p-6 border border-gray-200">
+            <div className="bg-gradient-to-r from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-xl p-4 sm:p-6 border border-primary/20">
               <p className="text-center text-foreground font-medium mb-4 text-sm sm:text-base">
                 💝 Котката не е подарък или импулсивно решение
               </p>

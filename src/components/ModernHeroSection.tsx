@@ -63,7 +63,7 @@ const ModernHeroSection = () => {
               }}
             >
               {/* Decorative polaroids - hidden on mobile */}
-              <div className="hidden md:block absolute -top-10 -left-24 bg-white p-4 shadow-lg transform rotate-6 hover:rotate-0 transition-transform duration-300 animate-float-gentle z-10">
+              <div className="hidden md:block absolute -top-10 -left-24 bg-card p-4 shadow-lg transform rotate-6 hover:rotate-0 transition-transform duration-300 animate-float-gentle z-10">
                 <img 
                   src={modelCat1} 
                   alt="SILLY1"
@@ -74,7 +74,7 @@ const ModernHeroSection = () => {
                   <p className="text-xs text-muted-foreground uppercase tracking-wide">SILLY CAT</p>
                 </div>
               </div>
-              <div className="hidden lg:block absolute top-32 -right-32 bg-white p-4 shadow-lg transform -rotate-12 hover:rotate-0 transition-transform duration-300 animate-float-reverse z-10">
+              <div className="hidden lg:block absolute top-32 -right-32 bg-card p-4 shadow-lg transform -rotate-12 hover:rotate-0 transition-transform duration-300 animate-float-reverse z-10">
                 <img 
                   src={modelCat2} 
                   alt="SILLY2"
@@ -85,7 +85,7 @@ const ModernHeroSection = () => {
                   <p className="text-xs text-muted-foreground uppercase tracking-wide">SILLY CAT</p>
                 </div>
               </div>
-              <div className="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 bg-white p-4 shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300 animate-float-gentle z-10">
+              <div className="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 bg-card p-4 shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300 animate-float-gentle z-10">
                 <img 
                   src={modelCat3} 
                   alt="SILLY3"
@@ -97,7 +97,7 @@ const ModernHeroSection = () => {
                 </div>
               </div>
               {/* Main polaroids - responsive sizing */}
-              <div className="relative bg-white p-3 md:p-4 shadow-lg transform hover:rotate-0 transition-transform duration-300 animate-scale-in animate-delay-300 animate-float-gentle z-20">
+              <div className="relative bg-card p-3 md:p-4 shadow-lg transform hover:rotate-0 transition-transform duration-300 animate-scale-in animate-delay-300 animate-float-gentle z-20">
                 <img 
                   src={featuredCat1} 
                   alt="OLIVIA"
@@ -108,7 +108,7 @@ const ModernHeroSection = () => {
                   <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide">CHAT NOIR ELEGANCE</p>
                 </div>
               </div>
-              <div className="absolute top-6 md:top-8 left-16 md:left-20 bg-white p-3 md:p-4 shadow-lg transform hover:rotate-0 transition-transform duration-300 animate-scale-in animate-delay-500 animate-float-reverse z-20">
+              <div className="absolute top-6 md:top-8 left-16 md:left-20 bg-card p-3 md:p-4 shadow-lg transform hover:rotate-0 transition-transform duration-300 animate-scale-in animate-delay-500 animate-float-reverse z-20">
                 <img 
                   src={featuredCat2} 
                   alt="MIA"
@@ -120,8 +120,8 @@ const ModernHeroSection = () => {
                 </div>
               </div>
               {/* Circular timer badge */}
-              <div className="absolute -bottom-3 md:-bottom-4 -right-3 md:-right-4 bg-white rounded-full p-4 md:p-6 shadow-lg animate-float z-30">
-                <div className="w-16 h-16 md:w-24 md:h-24 border-2 border-black rounded-full flex items-center justify-center relative overflow-hidden">
+              <div className="absolute -bottom-3 md:-bottom-4 -right-3 md:-right-4 bg-card rounded-full p-4 md:p-6 shadow-lg animate-float z-30">
+                <div className="w-16 h-16 md:w-24 md:h-24 border-2 border-foreground rounded-full flex items-center justify-center relative overflow-hidden">
                   {/* Floating Cat Image */}
                   <img src={istockCat} alt="Котка" className="w-16 h-16 md:w-24 md:h-24 object-contain animate-float" />
                 </div>
