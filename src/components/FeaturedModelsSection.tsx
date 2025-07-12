@@ -49,7 +49,7 @@ const FeaturedModelsSection = () => {
 
   return (
     <>
-      <section ref={sectionRef} className="py-20 bg-[#F5F4F0] mb-24">
+      <section ref={sectionRef} className="py-20 bg-background mb-24">
         <div className="container mx-auto px-6 lg:px-8">
           {/* Section Header */}
           <div 
@@ -58,10 +58,10 @@ const FeaturedModelsSection = () => {
               headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-            <p className="text-sm text-gray-600 tracking-wide uppercase mb-2">
+            <p className="text-sm text-muted-foreground tracking-wide uppercase mb-2">
               от вдъхновение до шедьовър
             </p>
-            <h2 className="font-playfair text-4xl lg:text-5xl font-light text-black">
+            <h2 className="font-playfair text-4xl lg:text-5xl font-light text-foreground">
               Нашите избрани модели
             </h2>
           </div>
@@ -76,7 +76,7 @@ const FeaturedModelsSection = () => {
             {featuredCats.map((cat, index) => (
               <Card 
                 key={cat.id} 
-                className={`group overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-0 scroll-hidden ${
+                className={`group overflow-hidden bg-card shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-0 scroll-hidden ${
                   gridVisible ? 'scroll-visible' : ''
                 }`}
                 onClick={() => openGallery(cat)}
@@ -104,13 +104,13 @@ const FeaturedModelsSection = () => {
                 <div className="p-6 text-center space-y-2">
                   <Button 
                     variant="outline" 
-                    className="w-full justify-center border-black text-black hover:bg-black hover:text-white transition-colors"
+                    className="w-full justify-center border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
                   >
                     Избери този модел
                   </Button>
                   <Button 
                     variant="outline" 
-                    className="w-full justify-center border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors"
+                    className="w-full justify-center border-muted text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
                       openPedigree(cat);
@@ -124,7 +124,7 @@ const FeaturedModelsSection = () => {
 
             {/* Add Model Card */}
             <Card 
-              className={`group overflow-hidden bg-gray-50 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-dashed border-gray-300 scroll-hidden ${
+              className={`group overflow-hidden bg-muted shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-dashed border-border scroll-hidden ${
                 gridVisible ? 'scroll-visible' : ''
               }`}
               style={{
@@ -132,14 +132,14 @@ const FeaturedModelsSection = () => {
               }}
             >
               <CardContent className="p-12 flex flex-col items-center justify-center h-full text-center space-y-4">
-                <div className="w-16 h-16 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center group-hover:border-black transition-colors">
-                  <svg className="w-8 h-8 text-gray-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 rounded-full border-2 border-dashed border-muted-foreground flex items-center justify-center group-hover:border-foreground transition-colors">
+                  <svg className="w-8 h-8 text-muted-foreground group-hover:text-foreground transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-black mb-1">Създай свой модел</h3>
-                  <p className="text-sm text-gray-600">Добавете нов модел</p>
+                  <h3 className="font-medium text-foreground mb-1">Създай свой модел</h3>
+                  <p className="text-sm text-muted-foreground">Добавете нов модел</p>
                 </div>
               </CardContent>
             </Card>
@@ -148,14 +148,14 @@ const FeaturedModelsSection = () => {
       </section>
 
       {/* Gallery Section */}
-      <section className="py-20 bg-[#F5F4F0]">
+      <section className="py-20 bg-background">
         <LayoutGridDemo />
       </section>
 
       {/* Gallery Modal */}
       {isGalleryOpen && selectedCat && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-card rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-6 border-b border-border">
               <div>

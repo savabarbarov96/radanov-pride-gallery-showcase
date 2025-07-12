@@ -15,7 +15,7 @@ const ModernNavigation = () => {
     setIsOpen(false);
   }, []);
 
-  const navBg = scrollY > 50 ? 'bg-[#F5F4F0]/98' : 'bg-[#F5F4F0]/95';
+  const navBg = scrollY > 50 ? 'bg-background/98' : 'bg-background/95';
   const navShadow = scrollY > 50 ? 'shadow-lg' : '';
   
   // Calculate scroll progress
@@ -28,8 +28,8 @@ const ModernNavigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Cat Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <div className="w-8 h-8 bg-foreground rounded-full flex items-center justify-center">
+              <svg className="w-5 h-5 text-background" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.93-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
               </svg>
             </div>
@@ -40,7 +40,7 @@ const ModernNavigation = () => {
             <button 
               onClick={() => scrollToSection('home')}
               className={`transition-colors text-sm font-medium ${
-                activeSection === 'home' ? 'text-black border-b-2 border-black' : 'text-gray-600 hover:text-black'
+                activeSection === 'home' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Начало
@@ -48,7 +48,7 @@ const ModernNavigation = () => {
             <button 
               onClick={() => scrollToSection('models')}
               className={`transition-colors text-sm font-medium ${
-                activeSection === 'models' ? 'text-black border-b-2 border-black' : 'text-gray-600 hover:text-black'
+                activeSection === 'models' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Модели
@@ -56,7 +56,7 @@ const ModernNavigation = () => {
             <button 
               onClick={() => scrollToSection('tiktok')}
               className={`transition-colors text-sm font-medium ${
-                activeSection === 'tiktok' ? 'text-black border-b-2 border-black' : 'text-gray-600 hover:text-black'
+                activeSection === 'tiktok' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               TikTok
@@ -64,7 +64,7 @@ const ModernNavigation = () => {
             <button 
               onClick={() => scrollToSection('contact')}
               className={`transition-colors text-sm font-medium ${
-                activeSection === 'contact' ? 'text-black border-b-2 border-black' : 'text-gray-600 hover:text-black'
+                activeSection === 'contact' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Контакт
@@ -72,7 +72,7 @@ const ModernNavigation = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              className="bg-white border-gray-300 text-black hover:bg-gray-50"
+              className="bg-card border-border text-foreground hover:bg-muted"
               onClick={() => {
                 // This will be connected to Facebook chat
                 console.log('Opening Facebook chat...');
@@ -80,7 +80,7 @@ const ModernNavigation = () => {
             >
               Чат
             </Button>
-            <Button variant="outline" size="sm" className="ml-4 bg-white border-gray-300 text-black hover:bg-gray-50">
+            <Button variant="outline" size="sm" className="ml-4 bg-card border-border text-foreground hover:bg-muted">
               Вход
             </Button>
           </div>
@@ -89,7 +89,7 @@ const ModernNavigation = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-black hover:text-gray-600 focus:outline-none"
+              className="text-foreground hover:text-muted-foreground focus:outline-none"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isOpen ? (
@@ -109,7 +109,7 @@ const ModernNavigation = () => {
               <button 
                 onClick={() => scrollToSection('home')}
                 className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  activeSection === 'home' ? 'text-black font-medium' : 'text-gray-600 hover:text-black'
+                  activeSection === 'home' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Начало
@@ -117,7 +117,7 @@ const ModernNavigation = () => {
               <button 
                 onClick={() => scrollToSection('models')}
                 className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  activeSection === 'models' ? 'text-black font-medium' : 'text-gray-600 hover:text-black'
+                  activeSection === 'models' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Модели
@@ -125,7 +125,7 @@ const ModernNavigation = () => {
               <button 
                 onClick={() => scrollToSection('tiktok')}
                 className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  activeSection === 'tiktok' ? 'text-black font-medium' : 'text-gray-600 hover:text-black'
+                  activeSection === 'tiktok' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 TikTok
@@ -133,7 +133,7 @@ const ModernNavigation = () => {
               <button 
                 onClick={() => scrollToSection('contact')}
                 className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  activeSection === 'contact' ? 'text-black font-medium' : 'text-gray-600 hover:text-black'
+                  activeSection === 'contact' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Контакт
@@ -142,7 +142,7 @@ const ModernNavigation = () => {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="w-full mb-2 bg-white border-gray-300 text-black hover:bg-gray-50"
+                  className="w-full mb-2 bg-white border-gray-300 text-foreground hover:bg-gray-50"
                   onClick={() => {
                     // This will be connected to Facebook chat
                     console.log('Opening Facebook chat...');
@@ -150,7 +150,7 @@ const ModernNavigation = () => {
                 >
                   Чат
                 </Button>
-                <Button variant="outline" size="sm" className="w-full bg-white border-gray-300 text-black hover:bg-gray-50">
+                <Button variant="outline" size="sm" className="w-full bg-white border-gray-300 text-foreground hover:bg-gray-50">
                   Вход
                 </Button>
               </div>

@@ -574,7 +574,7 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
       {/* Canvas */}
       <div 
         ref={canvasRef}
-        className="flex-1 relative bg-[#F5F4F0] overflow-hidden canvas-grid"
+        className="flex-1 relative bg-background overflow-hidden canvas-grid"
         style={{ minHeight: '600px' }}
         data-drop-zone="canvas"
         onMouseMove={handleCanvasMouseMove}

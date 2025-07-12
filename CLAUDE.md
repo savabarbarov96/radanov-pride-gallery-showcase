@@ -53,3 +53,9 @@ The app uses a simple single-page layout with React Router handling navigation. 
 ## Development Notes
 
 This project was originally created with Lovable (a web-based development platform) and follows their standard Vite + React + shadcn/ui template structure.
+
+## Guidelines
+
+### Build and Localization
+- Do not run npm build commands, I can do that on my own
+- The website should be in Bulgarian by default

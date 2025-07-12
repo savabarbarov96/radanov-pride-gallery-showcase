@@ -21,7 +21,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F4F0] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <Card className="w-full max-w-md bg-white shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="font-playfair text-2xl text-black">

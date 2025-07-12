@@ -16,7 +16,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F4F0]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="flex items-center justify-between px-6 py-4">
@@ -50,7 +50,7 @@ const Admin = () => {
         </div>
 
         {/* Right Panel - Pedigree Canvas */}
-        <div className="flex-1 bg-[#F5F4F0]">
+        <div className="flex-1 bg-background">
           <PedigreeCanvas 
             selectedCat={selectedCat} 
             onCanvasReady={setCanvasInstance}
