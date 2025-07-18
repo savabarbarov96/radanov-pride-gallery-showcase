@@ -26,6 +26,43 @@ export const useDragFromGallery = (options: UseDragFromGalleryOptions = {}) => {
   const dragPreviewRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
+  // Cleanup function to ensure proper state reset
+  const cleanup = useCallback(() => {
+    console.log('Cleaning up drag state');
+    
+    // Clean up animation frame
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    // Remove drag preview
+    if (dragPreviewRef.current) {
+      try {
+        document.body.removeChild(dragPreviewRef.current);
+      } catch (e) {
+        console.warn('Failed to remove drag preview:', e);
+      }
+      dragPreviewRef.current = null;
+    }
+
+    // Reset drag state
+    setDragState({
+      isDragging: false,
+      draggedCat: null,
+      dragOffset: { x: 0, y: 0 },
+      currentPosition: { x: 0, y: 0 }
+    });
+
+    // Reset body styles
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    
+    // Clean up drop zone classes
+    const dropZones = document.querySelectorAll('[data-drop-zone="canvas"]');
+    dropZones.forEach(zone => zone.classList.remove('canvas-drop-active'));
+  }, []);
+
   const updateDragPreview = useCallback((clientX: number, clientY: number) => {
     if (!dragPreviewRef.current) return;
 
@@ -45,7 +82,10 @@ export const useDragFromGallery = (options: UseDragFromGalleryOptions = {}) => {
   }, [dragState.dragOffset, dragState.draggedCat, options]);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!dragState.isDragging || !dragState.draggedCat) return;
+    if (!dragState.isDragging || !dragState.draggedCat) {
+      console.warn('Mouse move without proper drag state', { isDragging: dragState.isDragging, draggedCat: dragState.draggedCat?.name });
+      return;
+    }
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -57,19 +97,15 @@ export const useDragFromGallery = (options: UseDragFromGalleryOptions = {}) => {
   }, [dragState.isDragging, dragState.draggedCat, updateDragPreview]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
-    if (!dragState.isDragging || !dragState.draggedCat) return;
-
-    // Clean up animation frame
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
+    console.log('Mouse up event', { isDragging: dragState.isDragging, draggedCat: dragState.draggedCat?.name });
+    
+    if (!dragState.isDragging || !dragState.draggedCat) {
+      cleanup();
+      return;
     }
 
-    // Remove drag preview
-    if (dragPreviewRef.current) {
-      document.body.removeChild(dragPreviewRef.current);
-      dragPreviewRef.current = null;
-    }
+    const draggedCat = dragState.draggedCat;
+    const currentPos = dragState.currentPosition;
 
     // Check if we're dropping on a valid drop zone
     const dropZone = document.elementFromPoint(e.clientX, e.clientY);
@@ -81,48 +117,59 @@ export const useDragFromGallery = (options: UseDragFromGalleryOptions = {}) => {
         x: e.clientX - canvasRect.left - 70, // Center the cat node
         y: e.clientY - canvasRect.top - 70
       };
-      options.onDrop?.(dragState.draggedCat, dropPosition);
+      console.log('=== DROPPING CAT ===');
+      console.log('Cat being dropped:', draggedCat.name, 'ID:', draggedCat.id, '_id:', draggedCat._id);
+      console.log('Drop position:', dropPosition);
+      options.onDrop?.(draggedCat, dropPosition);
     }
 
-    options.onDragEnd?.(dragState.draggedCat, dragState.currentPosition);
-
-    setDragState({
-      isDragging: false,
-      draggedCat: null,
-      dragOffset: { x: 0, y: 0 },
-      currentPosition: { x: 0, y: 0 }
-    });
-  }, [dragState.isDragging, dragState.draggedCat, dragState.currentPosition, options]);
+    options.onDragEnd?.(draggedCat, currentPos);
+    cleanup();
+  }, [dragState.isDragging, dragState.draggedCat, dragState.currentPosition, options, cleanup]);
 
   useEffect(() => {
+    const cancelDragOnEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && dragState.isDragging) {
+        console.log('Canceling drag with Escape key');
+        cleanup();
+      }
+    };
+
     if (dragState.isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      console.log('Adding global drag listeners for cat:', dragState.draggedCat?.name);
+      document.addEventListener('mousemove', handleMouseMove, { passive: false });
+      document.addEventListener('mouseup', handleMouseUp, { passive: false });
+      document.addEventListener('keydown', cancelDragOnEscape);
       document.body.style.cursor = 'grabbing';
       document.body.style.userSelect = 'none';
       
-      // Add visual feedback to drop zones
       const dropZones = document.querySelectorAll('[data-drop-zone="canvas"]');
-      dropZones.forEach(zone => {
-        zone.classList.add('canvas-drop-active');
-      });
+      dropZones.forEach(zone => zone.classList.add('canvas-drop-active'));
     }
 
     return () => {
+      console.log('Removing global drag listeners');
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('keydown', cancelDragOnEscape);
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
       
-      // Remove visual feedback from drop zones
       const dropZones = document.querySelectorAll('[data-drop-zone="canvas"]');
-      dropZones.forEach(zone => {
-        zone.classList.remove('canvas-drop-active');
-      });
+      dropZones.forEach(zone => zone.classList.remove('canvas-drop-active'));
     };
-  }, [dragState.isDragging, handleMouseMove, handleMouseUp]);
+  }, [dragState.isDragging, handleMouseMove, handleMouseUp, dragState.draggedCat, cleanup]);
 
   const startDrag = useCallback((cat: CatData, event: MouseEvent) => {
+    if (dragState.isDragging) {
+      console.warn('Attempted to start drag while already dragging', dragState.draggedCat?.name);
+      return;
+    }
+
+    console.log('=== STARTING DRAG ===');
+    console.log('Cat to drag:', cat.name, 'ID:', cat.id, '_id:', cat._id);
+    console.log('Event target:', event.target);
+    
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
     
     // Calculate offset from cursor to center of preview (60px = half of 120px preview size)
@@ -137,7 +184,7 @@ export const useDragFromGallery = (options: UseDragFromGalleryOptions = {}) => {
       y: event.clientY - dragOffset.y
     };
 
-    // Create drag preview
+    // Create drag preview with fallback image
     const preview = document.createElement('div');
     preview.className = 'fixed z-[9999] pointer-events-none bg-white rounded-lg shadow-2xl border-2 border-blue-500 opacity-80 transform rotate-3';
     preview.style.width = '120px';
@@ -145,10 +192,19 @@ export const useDragFromGallery = (options: UseDragFromGalleryOptions = {}) => {
     preview.style.left = `${startPosition.x}px`;
     preview.style.top = `${startPosition.y}px`;
     
+    // Use fallback image if no image available
+    const imageHtml = cat.image 
+      ? `<img src="${cat.image}" alt="${cat.name}" class="w-full h-full object-cover" />`
+      : `<div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+           <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+           </svg>
+         </div>`;
+    
     preview.innerHTML = `
       <div class="w-full h-full p-2 flex flex-col">
         <div class="flex-1 bg-gray-100 rounded overflow-hidden">
-          <img src="${cat.image}" alt="${cat.name}" class="w-full h-full object-cover" />
+          ${imageHtml}
         </div>
         <div class="mt-1 text-center">
           <p class="text-xs font-semibold truncate">${cat.name}</p>
@@ -168,7 +224,15 @@ export const useDragFromGallery = (options: UseDragFromGalleryOptions = {}) => {
     });
 
     options.onDragStart?.(cat);
-  }, [options]);
+  }, [options, dragState.isDragging, dragState.draggedCat]);
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      console.log('useDragFromGallery unmounting, cleaning up');
+      cleanup();
+    };
+  }, [cleanup]);
 
   return {
     dragState,

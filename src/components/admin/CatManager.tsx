@@ -41,7 +41,8 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
     status: 'Достъпен',
     isDisplayed: true,
     image: '',
-    gallery: [] as string[]
+    gallery: [] as string[],
+    tiktokVideo: ''
   });
 
 
@@ -60,7 +61,8 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       status: 'Достъпен',
       isDisplayed: true,
       image: '',
-      gallery: []
+      gallery: [],
+      tiktokVideo: ''
     });
   };
 
@@ -94,7 +96,8 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       status: cat.status,
       isDisplayed: cat.isDisplayed,
       image: cat.image,
-      gallery: cat.gallery
+      gallery: cat.gallery,
+      tiktokVideo: cat.tiktokVideo || ''
     });
   };
 
@@ -250,6 +253,18 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                     placeholder="Свободен текст..."
                     rows={2}
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="tiktokVideo">TikTok видео</Label>
+                  <Input
+                    id="tiktokVideo"
+                    value={formData.tiktokVideo}
+                    onChange={(e) => setFormData(prev => ({ ...prev, tiktokVideo: e.target.value }))}
+                    placeholder="https://www.tiktok.com/@username/video/1234567890"
+                    type="url"
+                  />
+                  <p className="text-xs text-gray-500">Добавете връзка към TikTok видео</p>
                 </div>
 
                 <div className="flex items-center space-x-2">

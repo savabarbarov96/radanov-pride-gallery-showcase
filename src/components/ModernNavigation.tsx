@@ -1,19 +1,32 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useActiveSection, useScrollPosition } from "@/hooks/useScrollAnimation";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ModernNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const activeSection = useActiveSection(['home', 'models', 'tiktok', 'contact']);
   const { scrollY } = useScrollPosition();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const scrollToSection = useCallback((sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
     setIsOpen(false);
-  }, []);
+  }, [navigate, location.pathname]);
 
   const navBg = scrollY > 50 ? 'bg-background/98' : 'bg-background/95';
   const navShadow = scrollY > 50 ? 'shadow-lg' : '';
@@ -60,6 +73,14 @@ const ModernNavigation = () => {
               }`}
             >
               TikTok
+            </button>
+            <button 
+              onClick={() => navigate('/information')}
+              className={`transition-colors text-sm font-medium ${
+                location.pathname === '/information' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Информация
             </button>
             <button 
               onClick={() => scrollToSection('contact')}
@@ -129,6 +150,14 @@ const ModernNavigation = () => {
                 }`}
               >
                 TikTok
+              </button>
+              <button 
+                onClick={() => navigate('/information')}
+                className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
+                  location.pathname === '/information' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Информация
               </button>
               <button 
                 onClick={() => scrollToSection('contact')}

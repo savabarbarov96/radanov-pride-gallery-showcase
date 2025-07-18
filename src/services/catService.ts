@@ -1,6 +1,7 @@
 import { PedigreeNode, PedigreeConnection, PedigreeTree } from '@/types/pedigree';
 
 export interface CatData {
+  _id?: string; // Add optional _id for Convex compatibility
   id: string;
   name: string;
   subtitle: string;

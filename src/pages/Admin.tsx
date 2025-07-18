@@ -9,7 +9,7 @@ import { CatData } from '@/services/catService';
 const Admin = () => {
   const { isAuthenticated, logout } = useAdminAuth();
   const [selectedCat, setSelectedCat] = useState<CatData | null>(null);
-  const [canvasInstance, setCanvasInstance] = useState<{ addCatToCanvas: (cat: CatData, position?: { x: number; y: number }) => void } | null>(null);
+  const [canvasInstance, setCanvasInstance] = useState<{ addCatToCanvas: (cat: CatData, position?: { x: number; y: number }, source?: string) => void } | null>(null);
 
   if (!isAuthenticated) {
     return <AdminLogin />;
@@ -41,7 +41,7 @@ const Admin = () => {
             onCatSelect={setSelectedCat}
             selectedCat={selectedCat}
             onAddToCanvas={(cat) => {
-              setSelectedCat(cat);
+              canvasInstance?.addCatToCanvas(cat);
             }}
             onDropCatToCanvas={(cat, position) => {
               canvasInstance?.addCatToCanvas(cat, position);

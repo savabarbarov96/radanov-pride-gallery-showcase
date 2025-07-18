@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { catService, CatData } from '@/services/catService';
 import { PedigreeTree } from '@/types/pedigree';
+import TikTokEmbed from './TikTokEmbed';
+import CatImageWithFallback from './CatImageWithFallback';
 
 interface PedigreeModalProps {
   cat: CatData;
@@ -79,10 +81,10 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
             {/* Main Cat Card */}
             <div className="bg-card rounded-lg shadow-lg p-6 w-80 text-center">
               <div className="w-full h-48 bg-muted rounded-lg overflow-hidden mb-4">
-                <img
+                <CatImageWithFallback
                   src={cat.image}
                   alt={cat.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full"
                 />
               </div>
               <h3 className="font-semibold text-lg text-foreground mb-2">
@@ -124,10 +126,10 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                     <div className="bg-card rounded-lg shadow-lg p-4 w-64 text-center cursor-pointer hover:shadow-xl transition-shadow"
                          onClick={() => openParentModal(mother)}>
                       <div className="w-full h-32 bg-muted rounded-lg overflow-hidden mb-3">
-                        <img
+                        <CatImageWithFallback
                           src={mother.image}
                           alt={mother.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full"
                         />
                       </div>
                       <h4 className="font-semibold text-foreground mb-1">
@@ -164,10 +166,10 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                     <div className="bg-card rounded-lg shadow-lg p-4 w-64 text-center cursor-pointer hover:shadow-xl transition-shadow"
                          onClick={() => openParentModal(father)}>
                       <div className="w-full h-32 bg-muted rounded-lg overflow-hidden mb-3">
-                        <img
+                        <CatImageWithFallback
                           src={father.image}
                           alt={father.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full"
                         />
                       </div>
                       <h4 className="font-semibold text-foreground mb-1">
@@ -266,6 +268,15 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                   <p className="text-foreground leading-relaxed">
                     {cat.freeText}
                   </p>
+                </div>
+              )}
+
+              {cat.tiktokVideo && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <h5 className="font-medium text-foreground mb-2">
+                    TikTok видео:
+                  </h5>
+                  <TikTokEmbed url={cat.tiktokVideo} className="w-full h-64" />
                 </div>
               )}
             </div>

@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useDragFromGallery } from '@/hooks/useDragFromGallery';
+import CatGalleryItem from './CatGalleryItem';
 
 interface CatGalleryProps {
   onCatSelect: (cat: any) => void;
@@ -19,16 +17,9 @@ interface CatGalleryProps {
 
 const CatGallery = ({ onCatSelect, selectedCat, onAddCat, onEditCat, onAddToCanvas, onDropCatToCanvas }: CatGalleryProps) => {
   const cats = useQuery(api.cats.getAllCats) || [];
-  const toggleCatDisplay = useMutation(api.cats.toggleCatDisplay);
   const [searchTerm, setSearchTerm] = useState('');
   const [genderFilter, setGenderFilter] = useState<'all' | 'male' | 'female'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'displayed' | 'hidden'>('all');
-
-  const { startDrag, isDragging } = useDragFromGallery({
-    onDrop: (cat, position) => {
-      onDropCatToCanvas?.(cat, position);
-    }
-  });
 
 
   const filteredCats = cats.filter(cat => {
@@ -42,13 +33,6 @@ const CatGallery = ({ onCatSelect, selectedCat, onAddCat, onEditCat, onAddToCanv
     return matchesSearch && matchesGender && matchesStatus;
   });
 
-  const getParentInfo = (cat: any) => {
-    // TODO: Implement with Convex queries for parents and children
-    return { 
-      parents: { mother: null, father: null }, 
-      children: [] 
-    };
-  };
 
   return (
     <div className="h-full flex flex-col">
@@ -101,102 +85,25 @@ const CatGallery = ({ onCatSelect, selectedCat, onAddCat, onEditCat, onAddToCanv
       <div className="flex-1 overflow-y-auto p-4">
         <div className="grid grid-cols-1 gap-3">
           {filteredCats.map((cat) => {
-            const { parents, children } = getParentInfo(cat);
-            const isSelected = selectedCat?._id === cat._id;
-            
+            const catUniqueId = ('id' in cat ? (cat as any).id : undefined) ?? cat._id;
+
+            const selectedUniqueId = selectedCat
+              ? (('id' in selectedCat ? (selectedCat as any).id : undefined) ?? selectedCat._id)
+              : undefined;
+
+            const isSelected = selectedUniqueId !== undefined && selectedUniqueId === catUniqueId;
+
             return (
-              <Card
-                key={cat._id}
-                className={`cursor-pointer transition-all hover:shadow-md ${
-                  isSelected ? 'ring-2 ring-blue-500 shadow-md' : ''
-                } ${onDropCatToCanvas ? 'hover:ring-1 hover:ring-green-400' : ''} ${
-                  isDragging ? 'opacity-50' : ''
-                }`}
-                onClick={() => onCatSelect(cat)}
-                onDoubleClick={() => onAddToCanvas?.(cat)}
-                onMouseDown={(e) => {
-                  if (onDropCatToCanvas && e.button === 0) {
-                    startDrag(cat, e.nativeEvent);
-                  }
-                }}
-                title={onDropCatToCanvas ? 'Влачете за добавяне на canvas или двойно кликнете' : ''}
-              >
-                <CardContent className="p-3">
-                  <div className="flex gap-3">
-                    {/* Cat Image */}
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                      <img
-                        src={cat.image || '/placeholder.jpg'}
-                        alt={cat.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    {/* Cat Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-sm truncate">{cat.name}</h3>
-                        <Badge variant={cat.gender === 'male' ? 'default' : 'secondary'} className="text-xs flex-shrink-0">
-                          {cat.gender === 'male' ? '♂' : '♀'}
-                        </Badge>
-                        {cat.isDisplayed && (
-                          <Badge variant="outline" className="text-xs text-green-600 flex-shrink-0">
-                            Показан
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <p className="text-xs text-gray-600 mb-1 truncate">{cat.subtitle}</p>
-                      <p className="text-xs text-gray-500 mb-2 truncate">{cat.age} • {cat.color}</p>
-                      
-                      {/* Pedigree Info */}
-                      <div className="text-xs text-gray-500 mb-2">
-                        {parents.mother || parents.father ? (
-                          <p className="truncate">
-                            📊 {parents.mother?.name || '?'} × {parents.father?.name || '?'}
-                          </p>
-                        ) : (
-                          <p>📊 Няма родители</p>
-                        )}
-                        {children.length > 0 && (
-                          <p>👶 {children.length} деца</p>
-                        )}
-                        {onDropCatToCanvas && (
-                          <p className="text-blue-600 font-medium">👆 Влачете или двойно кликни</p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-col gap-1 flex-shrink-0">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="w-8 h-8 p-0 text-xs"
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          await toggleCatDisplay({ id: cat._id });
-                        }}
-                        title={cat.isDisplayed ? 'Скрий' : 'Покажи'}
-                      >
-                        {cat.isDisplayed ? '👁️' : '🚫'}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="w-8 h-8 p-0 text-xs"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEditCat(cat);
-                        }}
-                        title="Редактирай"
-                      >
-                        ✏️
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <CatGalleryItem
+                key={catUniqueId}
+                cat={cat}
+                isSelected={isSelected}
+                onSelect={onCatSelect}
+                onEdit={onEditCat}
+                onAddToCanvas={onAddToCanvas}
+                onDropToCanvas={onDropCatToCanvas}
+                showDragHint={!!onDropCatToCanvas}
+              />
             );
           })}
         </div>

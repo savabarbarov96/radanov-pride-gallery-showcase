@@ -17,6 +17,7 @@ export default defineSchema({
     registrationNumber: v.optional(v.string()),
     isDisplayed: v.boolean(),
     freeText: v.optional(v.string()),
+    tiktokVideo: v.optional(v.string()),
   }),
   
   pedigreeConnections: defineTable({

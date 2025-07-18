@@ -10,6 +10,8 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import PedigreeModal from "./PedigreeModal";
 import FloatingSeparator from "@/components/FloatingSeparator";
+import TikTokEmbed from "./TikTokEmbed";
+import CatImageWithFallback from "./CatImageWithFallback";
 
 const FeaturedModelsSection = () => {
   const featuredCats = useQuery(api.cats.getDisplayedCats) || [];
@@ -86,10 +88,10 @@ const FeaturedModelsSection = () => {
                 }}
               >
                 <div className="relative overflow-hidden">
-                  <img 
-                    src={cat.image} 
+                  <CatImageWithFallback
+                    src={cat.image}
                     alt={cat.name}
-                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-80 group-hover:scale-105 transition-transform duration-500"
                   />
                   
                   {/* Dark overlay with name */}
@@ -181,18 +183,27 @@ const FeaturedModelsSection = () => {
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Gallery */}
                 <div className="space-y-4">
-                  <img 
-                    src={selectedCat.image} 
+                  <CatImageWithFallback
+                    src={selectedCat.image}
                     alt={selectedCat.name}
-                    className="w-full rounded-xl"
+                    className="w-full rounded-xl h-64"
                   />
+                  
+                  {/* TikTok Video */}
+                  {selectedCat.tiktokVideo && (
+                    <div className="w-full">
+                      <h4 className="font-semibold text-sm mb-2">TikTok видео</h4>
+                      <TikTokEmbed url={selectedCat.tiktokVideo} className="w-full h-64" />
+                    </div>
+                  )}
+                  
                   <div className="grid grid-cols-3 gap-2">
                     {selectedCat.gallery.slice(1).map((img, index) => (
-                      <img 
+                      <CatImageWithFallback
                         key={index}
-                        src={img} 
+                        src={img}
                         alt={`${selectedCat.name} ${index + 2}`}
-                        className="w-full h-20 object-cover rounded-lg"
+                        className="w-full h-20 rounded-lg"
                       />
                     ))}
                   </div>
