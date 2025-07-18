@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { catService, CatData } from '@/services/catService';
+import { useState } from 'react';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,16 +9,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useDragFromGallery } from '@/hooks/useDragFromGallery';
 
 interface CatGalleryProps {
-  onCatSelect: (cat: CatData) => void;
-  selectedCat: CatData | null;
+  onCatSelect: (cat: any) => void;
+  selectedCat: any | null;
   onAddCat: () => void;
-  onEditCat: (cat: CatData) => void;
-  onAddToCanvas?: (cat: CatData) => void;
-  onDropCatToCanvas?: (cat: CatData, position: { x: number; y: number }) => void;
+  onEditCat: (cat: any) => void;
+  onAddToCanvas?: (cat: any) => void;
+  onDropCatToCanvas?: (cat: any, position: { x: number; y: number }) => void;
 }
 
 const CatGallery = ({ onCatSelect, selectedCat, onAddCat, onEditCat, onAddToCanvas, onDropCatToCanvas }: CatGalleryProps) => {
-  const [cats, setCats] = useState<CatData[]>([]);
+  const cats = useQuery(api.cats.getAllCats) || [];
+  const toggleCatDisplay = useMutation(api.cats.toggleCatDisplay);
   const [searchTerm, setSearchTerm] = useState('');
   const [genderFilter, setGenderFilter] = useState<'all' | 'male' | 'female'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'displayed' | 'hidden'>('all');
@@ -28,13 +30,6 @@ const CatGallery = ({ onCatSelect, selectedCat, onAddCat, onEditCat, onAddToCanv
     }
   });
 
-  useEffect(() => {
-    setCats(catService.getAllCats());
-    const unsubscribe = catService.subscribe(() => {
-      setCats(catService.getAllCats());
-    });
-    return unsubscribe;
-  }, []);
 
   const filteredCats = cats.filter(cat => {
     const matchesSearch = cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -47,10 +42,12 @@ const CatGallery = ({ onCatSelect, selectedCat, onAddCat, onEditCat, onAddToCanv
     return matchesSearch && matchesGender && matchesStatus;
   });
 
-  const getParentInfo = (cat: CatData) => {
-    const parents = catService.getParents(cat.id);
-    const children = catService.getChildren(cat.id);
-    return { parents, children };
+  const getParentInfo = (cat: any) => {
+    // TODO: Implement with Convex queries for parents and children
+    return { 
+      parents: { mother: null, father: null }, 
+      children: [] 
+    };
   };
 
   return (
@@ -105,11 +102,11 @@ const CatGallery = ({ onCatSelect, selectedCat, onAddCat, onEditCat, onAddToCanv
         <div className="grid grid-cols-1 gap-3">
           {filteredCats.map((cat) => {
             const { parents, children } = getParentInfo(cat);
-            const isSelected = selectedCat?.id === cat.id;
+            const isSelected = selectedCat?._id === cat._id;
             
             return (
               <Card
-                key={cat.id}
+                key={cat._id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   isSelected ? 'ring-2 ring-blue-500 shadow-md' : ''
                 } ${onDropCatToCanvas ? 'hover:ring-1 hover:ring-green-400' : ''} ${
@@ -176,9 +173,9 @@ const CatGallery = ({ onCatSelect, selectedCat, onAddCat, onEditCat, onAddToCanv
                         size="sm"
                         variant="ghost"
                         className="w-8 h-8 p-0 text-xs"
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           e.stopPropagation();
-                          catService.toggleCatDisplay(cat.id);
+                          await toggleCatDisplay({ id: cat._id });
                         }}
                         title={cat.isDisplayed ? 'Скрий' : 'Покажи'}
                       >

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -6,28 +6,22 @@ import modelCat1 from "@/assets/model-cat-1.jpg";
 import modelCat2 from "@/assets/model-cat-2.jpg";
 import modelCat3 from "@/assets/model-cat-3.jpg";
 import LayoutGridDemo from "@/components/ui/layout-grid-demo";
-import { catService, CatData } from "@/services/catService";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import PedigreeModal from "./PedigreeModal";
+import FloatingSeparator from "@/components/FloatingSeparator";
 
 const FeaturedModelsSection = () => {
-  const [selectedCat, setSelectedCat] = useState<CatData | null>(null);
+  const featuredCats = useQuery(api.cats.getDisplayedCats) || [];
+  const [selectedCat, setSelectedCat] = useState<typeof featuredCats[0] | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isPedigreeOpen, setIsPedigreeOpen] = useState(false);
-  const [pedigreeCat, setPedigreeCat] = useState<CatData | null>(null);
-  const [featuredCats, setFeaturedCats] = useState<CatData[]>([]);
+  const [pedigreeCat, setPedigreeCat] = useState<typeof featuredCats[0] | null>(null);
   const { elementRef: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1);
   const { elementRef: headerRef, isVisible: headerVisible } = useScrollAnimation(0.3);
   const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation(0.2);
 
-  useEffect(() => {
-    setFeaturedCats(catService.getDisplayedCats());
-    const unsubscribe = catService.subscribe(() => {
-      setFeaturedCats(catService.getDisplayedCats());
-    });
-    return unsubscribe;
-  }, []);
-
-  const openGallery = (cat: CatData) => {
+  const openGallery = (cat: typeof featuredCats[0]) => {
     setSelectedCat(cat);
     setIsGalleryOpen(true);
   };
@@ -37,7 +31,7 @@ const FeaturedModelsSection = () => {
     setSelectedCat(null);
   };
 
-  const openPedigree = (cat: CatData) => {
+  const openPedigree = (cat: typeof featuredCats[0]) => {
     setPedigreeCat(cat);
     setIsPedigreeOpen(true);
   };
@@ -52,18 +46,24 @@ const FeaturedModelsSection = () => {
       <section ref={sectionRef} className="py-20 bg-background mb-24">
         <div className="container mx-auto px-6 lg:px-8">
           {/* Section Header */}
-          <div 
-            ref={headerRef}
-            className={`text-center mb-24 transition-all duration-1000 ${
-              headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}
-          >
-            <p className="text-sm text-muted-foreground tracking-wide uppercase mb-2">
-              от вдъхновение до шедьовър
-            </p>
-            <h2 className="font-playfair text-4xl lg:text-5xl font-light text-foreground">
-              Нашите избрани модели
-            </h2>
+          <div className="mb-24">
+            <FloatingSeparator 
+              text="от вдъхновение до шедьовър"
+              showText={true}
+              size="small"
+              variant="circles"
+              className="mb-8"
+            />
+            <div 
+              ref={headerRef}
+              className={`text-center transition-all duration-1000 ${
+                headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
+              <h2 className="font-playfair text-4xl lg:text-5xl font-light text-foreground">
+                Нашите избрани модели
+              </h2>
+            </div>
           </div>
 
           {/* Models Grid */}
@@ -75,7 +75,7 @@ const FeaturedModelsSection = () => {
           >
             {featuredCats.map((cat, index) => (
               <Card 
-                key={cat.id} 
+                key={cat._id} 
                 className={`group overflow-hidden bg-card shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-0 scroll-hidden ${
                   gridVisible ? 'scroll-visible' : ''
                 }`}

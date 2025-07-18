@@ -7,6 +7,7 @@ import istockCat from '@/assets/istockphoto-1092493548-612x612.jpg';
 import modelCat1 from '@/assets/model-cat-1.jpg';
 import modelCat2 from '@/assets/model-cat-2.jpg';
 import modelCat3 from '@/assets/model-cat-3.jpg';
+import FloatingSeparator from "@/components/FloatingSeparator";
 
 const ModernHeroSection = () => {
   const { elementRef: heroRef, isVisible: heroVisible } = useScrollAnimation(0.2);
@@ -130,15 +131,15 @@ const ModernHeroSection = () => {
           </div>
         </div>
 
-        {/* Bottom tagline */}
-        <div 
-          className={`text-center mt-20 transition-all duration-1000 delay-700 ${
-            heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-          }`}
-        >
-          <p className="text-sm text-muted-foreground tracking-wide uppercase">
-            от вдъхновение до шедьовър
-          </p>
+        {/* Bottom floating separator */}
+        <div className="mt-20">
+          <FloatingSeparator 
+            text="от вдъхновение до шедьовър"
+            showText={true}
+            size="medium"
+            variant="dots"
+            className="animate-delay-700"
+          />
         </div>
       </div>
     </section>

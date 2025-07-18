@@ -8,6 +8,7 @@ import SocialSidebar from "@/components/SocialSidebar";
 import ContactModal from "@/components/ContactModal";
 import CatCarePopup from "@/components/CatCarePopup";
 import BackgroundAnimations from "@/components/BackgroundAnimations";
+import FloatingSeparator from "@/components/FloatingSeparator";
 
 const Index = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -30,12 +31,39 @@ const Index = () => {
       <div id="home">
         <ModernHeroSection />
       </div>
+      
+      {/* Floating separator between sections */}
+      <FloatingSeparator 
+        showText={false}
+        size="small"
+        variant="lines"
+        className="my-8"
+      />
+      
       <div id="models">
         <FeaturedModelsSection />
       </div>
+      
+      {/* Floating separator between sections */}
+      <FloatingSeparator 
+        showText={false}
+        size="medium"
+        variant="dots"
+        className="my-12"
+      />
+      
       <div id="tiktok">
         <TikTokSection />
       </div>
+      
+      {/* Floating separator between sections */}
+      <FloatingSeparator 
+        showText={false}
+        size="small"
+        variant="circles"
+        className="my-8"
+      />
+      
       <div id="contact">
         <Footer />
       </div>

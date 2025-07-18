@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { catService, CatData } from '@/services/catService';
+import { useState } from 'react';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,16 +12,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import CatGallery from './CatGallery';
 
 interface CatManagerProps {
-  onCatSelect: (cat: CatData) => void;
-  selectedCat: CatData | null;
-  onAddToCanvas?: (cat: CatData) => void;
-  onDropCatToCanvas?: (cat: CatData, position: { x: number; y: number }) => void;
+  onCatSelect: (cat: any) => void;
+  selectedCat: any | null;
+  onAddToCanvas?: (cat: any) => void;
+  onDropCatToCanvas?: (cat: any, position: { x: number; y: number }) => void;
 }
 
 const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas }: CatManagerProps) => {
-  const [cats, setCats] = useState<CatData[]>([]);
+  const cats = useQuery(api.cats.getAllCats) || [];
+  const addCat = useMutation(api.cats.addCat);
+  const updateCat = useMutation(api.cats.updateCat);
+  const deleteCat = useMutation(api.cats.deleteCat);
+  const toggleCatDisplay = useMutation(api.cats.toggleCatDisplay);
+  
   const [isAddingCat, setIsAddingCat] = useState(false);
-  const [editingCat, setEditingCat] = useState<CatData | null>(null);
+  const [editingCat, setEditingCat] = useState<any | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     subtitle: '',
@@ -38,13 +44,6 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
     gallery: [] as string[]
   });
 
-  useEffect(() => {
-    setCats(catService.getAllCats());
-    const unsubscribe = catService.subscribe(() => {
-      setCats(catService.getAllCats());
-    });
-    return unsubscribe;
-  }, []);
 
   const resetForm = () => {
     setFormData({
@@ -65,21 +64,21 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (editingCat) {
-      catService.updateCat(editingCat.id, formData);
+      await updateCat({ id: editingCat._id, ...formData });
       setEditingCat(null);
     } else {
-      catService.addCat(formData);
+      await addCat(formData);
       setIsAddingCat(false);
     }
     
     resetForm();
   };
 
-  const handleEdit = (cat: CatData) => {
+  const handleEdit = (cat: any) => {
     setEditingCat(cat);
     setFormData({
       name: cat.name,
@@ -99,14 +98,14 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
     });
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Сигурни ли сте, че искате да изтриете тази котка?')) {
-      catService.deleteCat(id);
+      await deleteCat({ id });
     }
   };
 
-  const handleToggleDisplay = (id: string) => {
-    catService.toggleCatDisplay(id);
+  const handleToggleDisplay = async (id: string) => {
+    await toggleCatDisplay({ id });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
