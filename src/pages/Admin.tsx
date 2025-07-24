@@ -4,12 +4,17 @@ import { Button } from '@/components/ui/button';
 import AdminLogin from './AdminLogin';
 import CatManager from '@/components/admin/CatManager';
 import PedigreeCanvas from '@/components/admin/PedigreeCanvas';
+import TikTokVideoManager from '@/components/admin/TikTokVideoManager';
+import SocialMediaSettings from '@/components/admin/SocialMediaSettings';
 import { CatData } from '@/services/convexCatService';
+
+type AdminTab = 'pedigree' | 'tiktok' | 'social';
 
 const Admin = () => {
   const { isAuthenticated, isLoading, logout } = useAdminAuth();
   const [selectedCat, setSelectedCat] = useState<CatData | null>(null);
   const [canvasInstance, setCanvasInstance] = useState<{ addCatToCanvas: (cat: CatData, position?: { x: number; y: number }) => void } | null>(null);
+  const [activeTab, setActiveTab] = useState<AdminTab>('pedigree');
 
   // Show loading spinner while checking authentication
   if (isLoading) {
@@ -27,13 +32,50 @@ const Admin = () => {
     return <AdminLogin />;
   }
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'pedigree':
+        return (
+          <div className="flex h-[calc(100vh-121px)]">
+            {/* Left Panel - Cat Manager */}
+            <div className="w-2/5 bg-white border-r">
+              <CatManager
+                onCatSelect={setSelectedCat}
+                selectedCat={selectedCat}
+                onAddToCanvas={(cat) => {
+                  setSelectedCat(cat);
+                }}
+                onDropCatToCanvas={(cat, position) => {
+                  canvasInstance?.addCatToCanvas(cat, position);
+                }}
+              />
+            </div>
+
+            {/* Right Panel - Pedigree Canvas */}
+            <div className="flex-1 bg-background">
+              <PedigreeCanvas 
+                selectedCat={selectedCat} 
+                onCanvasReady={setCanvasInstance}
+              />
+            </div>
+          </div>
+        );
+      case 'tiktok':
+        return <TikTokVideoManager />;
+      case 'social':
+        return <SocialMediaSettings />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="flex items-center justify-between px-6 py-4">
           <h1 className="font-playfair text-2xl font-semibold text-black">
-            Pedigree Admin Dashboard
+            Admin Dashboard
           </h1>
           <Button
             onClick={logout}
@@ -45,30 +87,31 @@ const Admin = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex h-[calc(100vh-73px)]">
-        {/* Left Panel - Cat Manager */}
-        <div className="w-2/5 bg-white border-r">
-          <CatManager
-            onCatSelect={setSelectedCat}
-            selectedCat={selectedCat}
-            onAddToCanvas={(cat) => {
-              setSelectedCat(cat);
-            }}
-            onDropCatToCanvas={(cat, position) => {
-              canvasInstance?.addCatToCanvas(cat, position);
-            }}
-          />
-        </div>
-
-        {/* Right Panel - Pedigree Canvas */}
-        <div className="flex-1 bg-background">
-          <PedigreeCanvas 
-            selectedCat={selectedCat} 
-            onCanvasReady={setCanvasInstance}
-          />
+      {/* Tab Navigation */}
+      <div className="bg-white border-b">
+        <div className="flex px-6">
+          {[
+            { id: 'pedigree' as AdminTab, label: 'Родословие' },
+            { id: 'tiktok' as AdminTab, label: 'TikTok видеа' },
+            { id: 'social' as AdminTab, label: 'Социални мрежи' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === tab.id
+                  ? 'border-black text-black'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* Main Content */}
+      {renderTabContent()}
     </div>
   );
 };

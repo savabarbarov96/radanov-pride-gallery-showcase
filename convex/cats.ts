@@ -251,23 +251,39 @@ export const getCatsByCategory = query({
   },
 });
 
-// Get displayed cats by category for gallery filtering
+// Get displayed cats by category for gallery filtering (age-based)
 export const getDisplayedCatsByCategory = query({
   args: { category: v.union(v.literal("kitten"), v.literal("adult"), v.literal("all")) },
   handler: async (ctx, args) => {
+    const allDisplayedCats = await ctx.db
+      .query("cats")
+      .withIndex("by_displayed", (q) => q.eq("isDisplayed", true))
+      .collect();
+    
     if (args.category === "all") {
-      return await ctx.db
-        .query("cats")
-        .withIndex("by_displayed", (q) => q.eq("isDisplayed", true))
-        .collect();
+      return allDisplayedCats;
     }
     
-    return await ctx.db
-      .query("cats")
-      .withIndex("by_category_displayed", (q) => 
-        q.eq("category", args.category).eq("isDisplayed", true)
-      )
-      .collect();
+    // Calculate age-based category for each cat
+    const currentDate = new Date();
+    
+    return allDisplayedCats.filter(cat => {
+      if (!cat.birthDate) {
+        // If no birth date, fallback to manual category if available
+        return cat.category === args.category;
+      }
+      
+      const birthDate = new Date(cat.birthDate);
+      const ageInYears = (currentDate.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+      
+      if (args.category === "kitten") {
+        return ageInYears < 1;
+      } else if (args.category === "adult") {
+        return ageInYears >= 1;
+      }
+      
+      return false;
+    });
   },
 });
 

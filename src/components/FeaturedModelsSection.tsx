@@ -185,7 +185,7 @@ const FeaturedModelsSection = () => {
                 variant="minimal" 
                 size="sm" 
                 onClick={closeGallery}
-                className="rounded-full w-10 h-10 p-0"
+                className="rounded-full w-10 h-10 p-0 text-amber-500 hover:text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-400"
               >
                 ×
               </Button>

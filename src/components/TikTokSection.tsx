@@ -2,12 +2,99 @@ import React, { useState } from 'react';
 import { Play, Heart, MessageCircle, Share, Bookmark, MoreHorizontal, ExternalLink } from 'lucide-react';
 import { useTikTokVideosForMainSection } from '@/services/convexTikTokService';
 
+// Fallback static TikTok videos when no database content is available
+const FALLBACK_VIDEOS = [
+  {
+    _id: 'fallback-1',
+    title: 'Красиви Maine Coon котки',
+    description: 'Нашите прекрасни котки в техния дом',
+    thumbnail: '/featured-cat-1.jpg',
+    videoUrl: 'https://www.tiktok.com/@radanovpridemainecoon',
+    hashtags: ['#mainecoon', '#котки', '#радановпрайд'],
+    viewCount: 12500,
+    likeCount: 850,
+    commentCount: 45,
+    isActive: true,
+    catId: undefined,
+  },
+  {
+    _id: 'fallback-2',
+    title: 'Игриви момичета котенца',
+    description: 'Котенцата си играят заедно',
+    thumbnail: '/featured-cat-2.jpg',
+    videoUrl: 'https://www.tiktok.com/@radanovpridemainecoon',
+    hashtags: ['#котенца', '#игра', '#сладки'],
+    viewCount: 8900,
+    likeCount: 620,
+    commentCount: 32,
+    isActive: true,
+    catId: undefined,
+  },
+  {
+    _id: 'fallback-3',
+    title: 'Maine Coon семейство',
+    description: 'Майка с котенца - сърчицетопящи моменти',
+    thumbnail: '/model-cat-1.jpg',
+    videoUrl: 'https://www.tiktok.com/@radanovpridemainecoon',
+    hashtags: ['#семейство', '#майка', '#котенца'],
+    viewCount: 15600,
+    likeCount: 1200,
+    commentCount: 78,
+    isActive: true,
+    catId: undefined,
+  },
+  {
+    _id: 'fallback-4',
+    title: 'Красота и елегантност',
+    description: 'Възрастни котки показват своята красота',
+    thumbnail: '/model-cat-2.jpg',
+    videoUrl: 'https://www.tiktok.com/@radanovpridemainecoon',
+    hashtags: ['#красота', '#елегантност', '#maine'],
+    viewCount: 9300,
+    likeCount: 470,
+    commentCount: 28,
+    isActive: true,
+    catId: undefined,
+  },
+  {
+    _id: 'fallback-5',
+    title: 'Дневна рутина на котките',
+    description: 'Как прекарват деня нашите котки',
+    thumbnail: '/model-cat-3.jpg',
+    videoUrl: 'https://www.tiktok.com/@radanovpridemainecoon',
+    hashtags: ['#рутина', '#ден', '#живот'],
+    viewCount: 6800,
+    likeCount: 340,
+    commentCount: 19,
+    isActive: true,
+    catId: undefined,
+  },
+  {
+    _id: 'fallback-6',
+    title: 'Най-добрите моменти',
+    description: 'Компилация от най-сладките моменти',
+    thumbnail: '/istockphoto-1092493548-612x612.jpg',
+    videoUrl: 'https://www.tiktok.com/@radanovpridemainecoon',
+    hashtags: ['#моменти', '#компилация', '#сладко'],
+    viewCount: 11200,
+    likeCount: 890,
+    commentCount: 56,
+    isActive: true,
+    catId: undefined,
+  },
+];
+
 const TikTokSection = () => {
   const videos = useTikTokVideosForMainSection(6);
   const [likedVideos, setLikedVideos] = useState<Set<string>>(new Set());
   
-  // Use videos from database or show message if none available
-  const displayVideos = videos && videos.length > 0 ? videos : [];
+  // Three-tier fallback system: cat-specific videos → global admin videos → hardcoded fallback videos
+  const displayVideos = (() => {
+    if (videos && videos.length > 0) {
+      return videos; // Use database videos (cat-specific + global)
+    }
+    return FALLBACK_VIDEOS; // Use fallback videos when no database content
+  })();
 
   const handleLike = (videoId: string) => {
     setLikedVideos(prev => {
@@ -46,14 +133,13 @@ const TikTokSection = () => {
         </div>
 
         {/* Video Grid */}
-        {displayVideos.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-12">
-            {displayVideos.map((video) => (
-              <div key={video._id} className="relative group">
-                {/* Video Card */}
-                <div 
-                  className="relative bg-gray-900 rounded-lg overflow-hidden aspect-[9/16] cursor-pointer hover:scale-105 transition-transform duration-300"
-                  onClick={() => window.open(video.videoUrl, '_blank')}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-12">
+          {displayVideos.map((video) => (
+            <div key={video._id} className="relative group">
+              {/* Video Card */}
+              <div 
+                className="relative bg-gray-900 rounded-lg overflow-hidden aspect-[9/16] cursor-pointer hover:scale-105 transition-transform duration-300"
+                onClick={() => window.open(video.videoUrl, '_blank')}
                 >
                   {/* Thumbnail */}
                   <img 
@@ -146,17 +232,6 @@ const TikTokSection = () => {
               </div>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-12 mb-12">
-            <div className="text-gray-400 mb-4">
-              <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-              </svg>
-              <h3 className="text-xl font-bold text-white mb-2">Скоро ще добавим видеа</h3>
-              <p className="text-gray-300">Нашите TikTok видеа се подготвят. Междувременно ни последвайте!</p>
-            </div>
-          </div>
-        )}
 
         {/* CTA Section */}
         <div className="text-center">
