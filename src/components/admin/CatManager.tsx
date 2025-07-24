@@ -159,9 +159,11 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // For now, we'll still use data URL for profile images
+      // This can be updated later to use Convex storage as well
       const reader = new FileReader();
       reader.onload = (e) => {
         const imageUrl = e.target?.result as string;
@@ -331,6 +333,8 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                   onImagesChange={(images) => setFormData(prev => ({ ...prev, gallery: images }))}
                   label="Галерия със снимки"
                   maxImages={15}
+                  associatedCatId={editingCat?._id}
+                  imageType="gallery"
                 />
 
                 <div className="space-y-2">

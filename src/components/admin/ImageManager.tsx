@@ -2,42 +2,90 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X, Upload, Plus, Grip } from 'lucide-react';
+import { X, Upload, Plus, Grip, Loader2 } from 'lucide-react';
 import EnhancedImageGallery from '@/components/ui/enhanced-image-gallery';
+import { useFileUpload, validateImageFile, formatFileSize } from '@/services/convexFileService';
+import { Id } from '../../../convex/_generated/dataModel';
 
 interface ImageManagerProps {
   images: string[];
   onImagesChange: (images: string[]) => void;
   label?: string;
   maxImages?: number;
+  associatedCatId?: Id<"cats">;
+  imageType?: 'profile' | 'gallery' | 'general';
 }
 
 const ImageManager = ({ 
   images, 
   onImagesChange, 
   label = "Images",
-  maxImages = 10 
+  maxImages = 10,
+  associatedCatId,
+  imageType = 'gallery'
 }: ImageManagerProps) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [galleryStartIndex, setGalleryStartIndex] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  
+  const { uploadFile } = useFileUpload();
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     
-    files.forEach(file => {
-      if (images.length >= maxImages) {
-        alert(`Максимум ${maxImages} изображения са разрешени`);
-        return;
+    if (files.length === 0) return;
+    
+    // Check total limit
+    if (images.length + files.length > maxImages) {
+      alert(`Максимум ${maxImages} изображения са разрешени. Можете да добавите само ${maxImages - images.length} още.`);
+      return;
+    }
+
+    setIsUploading(true);
+    const newImages = [...images];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileKey = `${file.name}-${Date.now()}-${i}`;
+
+      // Validate file
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        alert(`${file.name}: ${validation.error}`);
+        continue;
       }
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const imageUrl = event.target?.result as string;
-        onImagesChange([...images, imageUrl]);
-      };
-      reader.readAsDataURL(file);
-    });
+      try {
+        // Upload to Convex storage
+        const result = await uploadFile(file, {
+          associatedCatId,
+          imageType,
+          onProgress: (progress) => {
+            setUploadProgress(prev => ({ ...prev, [fileKey]: progress }));
+          }
+        });
 
+        if (result.success && result.url) {
+          newImages.push(result.url);
+        } else {
+          alert(`Грешка при качване на ${file.name}: ${result.error}`);
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        alert(`Грешка при качване на ${file.name}`);
+      } finally {
+        // Remove progress tracking for this file
+        setUploadProgress(prev => {
+          const { [fileKey]: _, ...rest } = prev;
+          return rest;
+        });
+      }
+    }
+
+    onImagesChange(newImages);
+    setIsUploading(false);
+    
     // Reset input
     e.target.value = '';
   };
@@ -77,25 +125,49 @@ const ImageManager = ({
           onChange={handleImageUpload}
           className="hidden"
           id="image-upload"
-          disabled={images.length >= maxImages}
+          disabled={images.length >= maxImages || isUploading}
         />
         <Label
           htmlFor="image-upload"
           className={`flex flex-col items-center justify-center gap-2 cursor-pointer text-center ${
-            images.length >= maxImages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted/50'
+            images.length >= maxImages || isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted/50'
           } p-4 rounded-lg transition-colors`}
         >
-          <Upload className="w-8 h-8 text-muted-foreground" />
+          {isUploading ? (
+            <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+          ) : (
+            <Upload className="w-8 h-8 text-muted-foreground" />
+          )}
           <div>
             <p className="font-medium">
-              {images.length >= maxImages 
-                ? 'Достигнат е максимумът изображения'
-                : 'Кликнете за качване или плъзнете изображения тук'
+              {isUploading 
+                ? 'Качват се изображения...'
+                : images.length >= maxImages 
+                  ? 'Достигнат е максимумът изображения'
+                  : 'Кликнете за качване или плъзнете изображения тук'
               }
             </p>
             <p className="text-sm text-muted-foreground">
-              PNG, JPG, GIF до 10MB всяко
+              PNG, JPG, GIF, WebP до 10MB всяко
             </p>
+            {Object.keys(uploadProgress).length > 0 && (
+              <div className="mt-2 space-y-1">
+                {Object.entries(uploadProgress).map(([fileKey, progress]) => (
+                  <div key={fileKey} className="text-xs">
+                    <div className="flex justify-between items-center">
+                      <span>Качва се...</span>
+                      <span>{progress}%</span>
+                    </div>
+                    <div className="w-full bg-muted h-1 rounded">
+                      <div 
+                        className="bg-primary h-1 rounded transition-all"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </Label>
       </div>
