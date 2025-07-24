@@ -119,26 +119,28 @@ const ModernHeroSection = () => {
                   <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide">NOIR</p>
                 </div>
               </div>
-              {/* Circular timer badge */}
-              <div className="absolute -bottom-3 md:-bottom-4 -right-3 md:-right-4 bg-card rounded-full p-4 md:p-6 shadow-lg animate-float z-30">
-                <div className="w-16 h-16 md:w-24 md:h-24 border-2 border-foreground rounded-full flex items-center justify-center relative overflow-hidden">
-                  {/* Floating Cat Image */}
-                  <img src={istockCat} alt="Котка" className="w-16 h-16 md:w-24 md:h-24 object-contain animate-float" />
+              {/* Circular logo badge */}
+              <div className="absolute -bottom-3 md:-bottom-4 -right-3 md:-right-4 bg-card rounded-full p-6 md:p-8 shadow-lg animate-float z-30">
+                <div className="w-24 h-24 md:w-32 md:h-32 border-2 border-foreground rounded-full flex items-center justify-center relative overflow-hidden">
+                  {/* Floating Logo */}
+                  <img src="/src/assets/radanov-pride-logo.png" alt="Radanov Pride Logo" className="w-16 h-16 md:w-20 md:h-20 object-contain animate-float" />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom tagline */}
+        {/* Bottom separator */}
         <div 
           className={`text-center mt-20 transition-all duration-1000 delay-700 ${
             heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
           }`}
         >
-          <p className="text-sm text-muted-foreground tracking-wide uppercase">
-            от вдъхновение до шедьовър
-          </p>
+          <div className="flex items-center justify-center space-x-4">
+            <div className="w-12 h-px bg-muted-foreground/30"></div>
+            <div className="w-2 h-2 rounded-full bg-muted-foreground/50"></div>
+            <div className="w-12 h-px bg-muted-foreground/30"></div>
+          </div>
         </div>
       </div>
     </section>

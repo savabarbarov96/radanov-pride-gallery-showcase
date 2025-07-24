@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import ModernNavigation from "@/components/ModernNavigation";
 import ModernHeroSection from "@/components/ModernHeroSection";
 import FeaturedModelsSection from "@/components/FeaturedModelsSection";
+import CatGallery from "@/components/ui/cat-gallery";
 import TikTokSection from "@/components/TikTokSection";
 import Footer from "@/components/Footer";
 import SocialSidebar from "@/components/SocialSidebar";
@@ -32,6 +33,9 @@ const Index = () => {
       </div>
       <div id="models">
         <FeaturedModelsSection />
+      </div>
+      <div id="gallery">
+        <CatGallery />
       </div>
       <div id="tiktok">
         <TikTokSection />

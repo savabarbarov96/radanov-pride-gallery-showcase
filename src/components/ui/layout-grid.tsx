@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 type Card = {
-  id: number;
+  id: number | string;
   content: JSX.Element | React.ReactNode | string;
   className: string;
   thumbnail: string;

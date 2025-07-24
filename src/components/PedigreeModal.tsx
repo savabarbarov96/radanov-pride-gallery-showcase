@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { catService, CatData } from '@/services/catService';
-import { PedigreeTree } from '@/types/pedigree';
+import { CatData, useParents } from '@/services/convexCatService';
 
 interface PedigreeModalProps {
   cat: CatData;
@@ -10,21 +9,10 @@ interface PedigreeModalProps {
 }
 
 const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
-  const [pedigreeTree, setPedigreeTree] = useState<PedigreeTree | null>(null);
   const [parentModalOpen, setParentModalOpen] = useState(false);
   const [selectedParent, setSelectedParent] = useState<CatData | null>(null);
-
-  useEffect(() => {
-    if (isOpen && cat) {
-      try {
-        const tree = catService.getPedigreeTree(cat.id);
-        setPedigreeTree(tree);
-      } catch (error) {
-        console.error('Failed to load pedigree tree:', error);
-        setPedigreeTree(null);
-      }
-    }
-  }, [isOpen, cat]);
+  
+  const parents = useParents(cat?._id);
 
   const openParentModal = (parent: CatData) => {
     setSelectedParent(parent);
@@ -38,8 +26,10 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
 
   if (!isOpen) return null;
 
-  const parents = catService.getParents(cat.id);
-  const { mother, father } = parents;
+  // Handle loading state
+  const isLoadingParents = parents === undefined;
+  const mother = parents?.mother || null;
+  const father = parents?.father || null;
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -72,7 +62,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                 {cat.name}
               </h3>
               <p className="text-muted-foreground text-sm">
-                Връзка: radanov-pride.com/{cat.id}
+                Връзка: radanov-pride.com/{cat._id}
               </p>
             </div>
 
@@ -100,8 +90,15 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
               </div>
             </div>
 
+            {/* Loading State */}
+            {isLoadingParents && (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Зареждане на родословието...</p>
+              </div>
+            )}
+
             {/* Connection Lines */}
-            {(mother || father) && (
+            {!isLoadingParents && (mother || father) && (
               <div className="relative flex flex-col items-center">
                 {/* Vertical line down */}
                 <div className="w-px h-8 bg-border"></div>
@@ -116,7 +113,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
             )}
 
             {/* Parents Section */}
-            {(mother || father) && (
+            {!isLoadingParents && (mother || father) && (
               <div className="flex justify-center items-start gap-16">
                 {/* Mother */}
                 <div className="flex flex-col items-center">
@@ -141,7 +138,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                         <span>•</span>
                         <span>{mother.age}</span>
                       </div>
-                      <div className="text-xs text-blue-600 hover:text-blue-800">
+                      <div className="text-xs text-primary hover:text-primary/80">
                         Кликни за повече информация
                       </div>
                     </div>
@@ -153,7 +150,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                       </div>
                     </div>
                   )}
-                  <div className="mt-2 text-sm font-medium text-pink-600">
+                  <div className="mt-2 text-sm font-medium text-pink-600 dark:text-pink-400">
                     Майка
                   </div>
                 </div>
@@ -181,7 +178,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                         <span>•</span>
                         <span>{father.age}</span>
                       </div>
-                      <div className="text-xs text-blue-600 hover:text-blue-800">
+                      <div className="text-xs text-primary hover:text-primary/80">
                         Кликни за повече информация
                       </div>
                     </div>
@@ -193,7 +190,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                       </div>
                     </div>
                   )}
-                  <div className="mt-2 text-sm font-medium text-blue-600">
+                  <div className="mt-2 text-sm font-medium text-blue-600 dark:text-blue-400">
                     Баща
                   </div>
                 </div>
@@ -201,7 +198,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
             )}
 
             {/* No Parents Message */}
-            {!mother && !father && (
+            {!isLoadingParents && !mother && !father && (
               <div className="text-center py-8">
                 <p className="text-muted-foreground text-lg">
                   Няма налична информация за родителите
@@ -239,10 +236,6 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Цена:</span>
-                  <span className="ml-2 font-medium">{cat.price}</span>
-                </div>
-                <div>
                   <span className="text-muted-foreground">Пол:</span>
                   <span className="ml-2 font-medium">
                     {cat.gender === 'male' ? 'Мъжки' : 'Женски'}
@@ -251,7 +244,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
               </div>
               
               {cat.description && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-4 pt-4 border-t border-border">
                   <p className="text-foreground leading-relaxed">
                     {cat.description}
                   </p>
@@ -259,7 +252,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
               )}
 
               {cat.freeText && (
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-4 pt-4 border-t border-border">
                   <h5 className="font-medium text-foreground mb-2">
                     Допълнителна информация:
                   </h5>

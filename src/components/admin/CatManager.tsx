@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { catService, CatData } from '@/services/catService';
+import { useCreateCat, useUpdateCat, useDeleteCat, useToggleCatDisplay, useCats, CatData } from '@/services/convexCatService';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,6 +9,8 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import CatGallery from './CatGallery';
+import ImageManager from './ImageManager';
+import { Id } from '../../../convex/_generated/dataModel';
 
 interface CatManagerProps {
   onCatSelect: (cat: CatData) => void;
@@ -18,7 +20,12 @@ interface CatManagerProps {
 }
 
 const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas }: CatManagerProps) => {
-  const [cats, setCats] = useState<CatData[]>([]);
+  const cats = useCats();
+  const createCat = useCreateCat();
+  const updateCat = useUpdateCat();
+  const deleteCat = useDeleteCat();
+  const toggleCatDisplay = useToggleCatDisplay();
+
   const [isAddingCat, setIsAddingCat] = useState(false);
   const [editingCat, setEditingCat] = useState<CatData | null>(null);
   const [formData, setFormData] = useState({
@@ -27,7 +34,6 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
     description: '',
     age: '',
     color: '',
-    price: '',
     gender: 'male' as 'male' | 'female',
     birthDate: '',
     registrationNumber: '',
@@ -35,16 +41,10 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
     status: 'Достъпен',
     isDisplayed: true,
     image: '',
-    gallery: [] as string[]
+    gallery: [] as string[],
+    // New fields for gallery filtering
+    category: 'adult' as 'kitten' | 'adult' | 'all' | undefined
   });
-
-  useEffect(() => {
-    setCats(catService.getAllCats());
-    const unsubscribe = catService.subscribe(() => {
-      setCats(catService.getAllCats());
-    });
-    return unsubscribe;
-  }, []);
 
   const resetForm = () => {
     setFormData({
@@ -53,7 +53,6 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       description: '',
       age: '',
       color: '',
-      price: '',
       gender: 'male',
       birthDate: '',
       registrationNumber: '',
@@ -61,22 +60,62 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       status: 'Достъпен',
       isDisplayed: true,
       image: '',
-      gallery: []
+      gallery: [],
+      // New fields for gallery filtering
+      category: 'adult'
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (editingCat) {
-      catService.updateCat(editingCat.id, formData);
-      setEditingCat(null);
-    } else {
-      catService.addCat(formData);
-      setIsAddingCat(false);
+    try {
+      if (editingCat) {
+        await updateCat({
+          id: editingCat._id,
+          name: formData.name,
+          subtitle: formData.subtitle,
+          description: formData.description,
+          age: formData.age,
+          color: formData.color,
+          gender: formData.gender,
+          birthDate: formData.birthDate,
+          registrationNumber: formData.registrationNumber || undefined,
+          freeText: formData.freeText || undefined,
+          status: formData.status,
+          isDisplayed: formData.isDisplayed,
+          image: formData.image,
+          gallery: formData.gallery,
+          // New fields for gallery filtering
+          category: formData.category
+        });
+        setEditingCat(null);
+      } else {
+        await createCat({
+          name: formData.name,
+          subtitle: formData.subtitle,
+          description: formData.description,
+          age: formData.age,
+          color: formData.color,
+          gender: formData.gender,
+          birthDate: formData.birthDate,
+          registrationNumber: formData.registrationNumber || undefined,
+          freeText: formData.freeText || undefined,
+          status: formData.status,
+          isDisplayed: formData.isDisplayed,
+          image: formData.image,
+          gallery: formData.gallery,
+          // New fields for gallery filtering
+          category: formData.category
+        });
+        setIsAddingCat(false);
+      }
+      
+      resetForm();
+    } catch (error) {
+      console.error('Error saving cat:', error);
+      alert('Грешка при запазването на котката');
     }
-    
-    resetForm();
   };
 
   const handleEdit = (cat: CatData) => {
@@ -87,7 +126,6 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       description: cat.description,
       age: cat.age,
       color: cat.color,
-      price: cat.price,
       gender: cat.gender,
       birthDate: cat.birthDate,
       registrationNumber: cat.registrationNumber || '',
@@ -95,18 +133,30 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       status: cat.status,
       isDisplayed: cat.isDisplayed,
       image: cat.image,
-      gallery: cat.gallery
+      gallery: cat.gallery,
+      // New fields for gallery filtering
+      category: cat.category || 'adult'
     });
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: Id<"cats">) => {
     if (confirm('Сигурни ли сте, че искате да изтриете тази котка?')) {
-      catService.deleteCat(id);
+      try {
+        await deleteCat({ id });
+      } catch (error) {
+        console.error('Error deleting cat:', error);
+        alert('Грешка при изтриването на котката');
+      }
     }
   };
 
-  const handleToggleDisplay = (id: string) => {
-    catService.toggleCatDisplay(id);
+  const handleToggleDisplay = async (id: Id<"cats">) => {
+    try {
+      await toggleCatDisplay({ id });
+    } catch (error) {
+      console.error('Error toggling cat display:', error);
+      alert('Грешка при промяната на видимостта');
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,14 +252,14 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="price">Цена</Label>
+                    <Label htmlFor="status">Статус</Label>
                     <Input
-                      id="price"
-                      value={formData.price}
-                      onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
-                      placeholder="Например: 2500 лв"
+                      id="status"
+                      value={formData.status}
+                      onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
+                      placeholder="Например: Достъпен"
                     />
                   </div>
                   <div className="space-y-2">
@@ -224,10 +274,44 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                       </SelectContent>
                     </Select>
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Категория</Label>
+                    <Select value={formData.category} onValueChange={(value: 'kitten' | 'adult' | 'all') => setFormData(prev => ({ ...prev, category: value }))}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="kitten">Коте</SelectItem>
+                        <SelectItem value="adult">Възрастна</SelectItem>
+                        <SelectItem value="all">Всички</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="birthDate">Дата на раждане</Label>
+                    <Input
+                      id="birthDate"
+                      type="date"
+                      value={formData.birthDate}
+                      onChange={(e) => setFormData(prev => ({ ...prev, birthDate: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="registrationNumber">Регистрационен номер</Label>
+                    <Input
+                      id="registrationNumber"
+                      value={formData.registrationNumber}
+                      onChange={(e) => setFormData(prev => ({ ...prev, registrationNumber: e.target.value }))}
+                      placeholder="Например: MC-2022-001"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="image">Снимка</Label>
+                  <Label htmlFor="image">Основна снимка</Label>
                   <Input
                     id="image"
                     type="file"
@@ -242,6 +326,13 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                   )}
                 </div>
 
+                <ImageManager
+                  images={formData.gallery}
+                  onImagesChange={(images) => setFormData(prev => ({ ...prev, gallery: images }))}
+                  label="Галерия със снимки"
+                  maxImages={15}
+                />
+
                 <div className="space-y-2">
                   <Label htmlFor="freeText">Допълнителна информация</Label>
                   <Textarea
@@ -252,6 +343,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                     rows={2}
                   />
                 </div>
+
 
                 <div className="flex items-center space-x-2">
                   <Switch
@@ -294,6 +386,9 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       onEditCat={handleEdit}
       onAddToCanvas={onAddToCanvas}
       onDropCatToCanvas={onDropCatToCanvas}
+      onDeleteCat={handleDelete}
+      onToggleDisplay={handleToggleDisplay}
+      cats={cats || []}
     />
   );
 };

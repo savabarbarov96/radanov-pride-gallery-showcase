@@ -1,120 +1,35 @@
 import React, { useState } from 'react';
-import { Play, Heart, MessageCircle, Share, Bookmark, MoreHorizontal } from 'lucide-react';
-
-interface TikTokVideo {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  likes: string;
-  comments: string;
-  shares: string;
-  thumbnail: string;
-  avatar: string;
-  username: string;
-  isPlaying: boolean;
-}
+import { Play, Heart, MessageCircle, Share, Bookmark, MoreHorizontal, ExternalLink } from 'lucide-react';
+import { useTikTokVideosForMainSection } from '@/services/convexTikTokService';
 
 const TikTokSection = () => {
-  const [videos, setVideos] = useState<TikTokVideo[]>([
-    {
-      id: '1',
-      title: 'Видео материал',
-      description: 'Красивите ни Maine Coon котки играят в градината 🐱 #MaineCoon #RadanovPride #КотешкаЛюбов #България',
-      duration: '0:45',
-      likes: '12.4K',
-      comments: '892',
-      shares: '234',
-      thumbnail: '/src/assets/model-cat-1.jpg',
-      avatar: '/src/assets/istockphoto-1092493548-612x612.jpg',
-      username: 'radanovpridemainecoon',
-      isPlaying: false
-    },
-    {
-      id: '2',
-      title: 'Видео материал',
-      description: 'Малките котенца растат бързо! Вижте как се развиват нашите бебета 💕 #MaineCoonKittens #CatBreeder #България',
-      duration: '1:12',
-      likes: '8.7K',
-      comments: '456',
-      shares: '189',
-      thumbnail: '/src/assets/model-cat-2.jpg',
-      avatar: '/src/assets/istockphoto-1092493548-612x612.jpg',
-      username: 'radanovpridemainecoon',
-      isPlaying: false
-    },
-    {
-      id: '3',
-      title: 'Видео материал',
-      description: 'Грижата за Maine Coon котките - всичко което трябва да знаете 🏠 #CatCare #MaineCoon #RadanovPride',
-      duration: '2:34',
-      likes: '15.2K',
-      comments: '1.2K',
-      shares: '567',
-      thumbnail: '/src/assets/model-cat-3.jpg',
-      avatar: '/src/assets/istockphoto-1092493548-612x612.jpg',
-      username: 'radanovpridemainecoon',
-      isPlaying: false
-    },
-    {
-      id: '4',
-      title: 'Видео материал',
-      description: 'Време за игра! Нашите котки обичат да се забавляват 🎾 #PlayTime #MaineCoon #HappyCats #България',
-      duration: '0:58',
-      likes: '9.8K',
-      comments: '623',
-      shares: '298',
-      thumbnail: '/src/assets/featured-cat-1.jpg',
-      avatar: '/src/assets/istockphoto-1092493548-612x612.jpg',
-      username: 'radanovpridemainecoon',
-      isPlaying: false
-    },
-    {
-      id: '5',
-      title: 'Видео материал',
-      description: 'Красотата на Maine Coon породата - величествени и грациозни 👑 #MaineCoonBeauty #CatBreeder #RadanovPride',
-      duration: '1:45',
-      likes: '18.9K',
-      comments: '1.8K',
-      shares: '789',
-      thumbnail: '/src/assets/featured-cat-2.jpg',
-      avatar: '/src/assets/istockphoto-1092493548-612x612.jpg',
-      username: 'radanovpridemainecoon',
-      isPlaying: false
-    },
-    {
-      id: '6',
-      title: 'Видео материал',
-      description: 'Срещете нашите родители - здрави и красиви Maine Coon котки 🌟 #BreedingCats #MaineCoon #България',
-      duration: '3:21',
-      likes: '22.1K',
-      comments: '2.3K',
-      shares: '1.1K',
-      thumbnail: '/src/assets/hero-maine-coon.jpg',
-      avatar: '/src/assets/istockphoto-1092493548-612x612.jpg',
-      username: 'radanovpridemainecoon',
-      isPlaying: false
-    }
-  ]);
-
-  const handlePlayToggle = (videoId: string) => {
-    setVideos(videos.map(video => 
-      video.id === videoId 
-        ? { ...video, isPlaying: !video.isPlaying }
-        : { ...video, isPlaying: false }
-    ));
-  };
+  const videos = useTikTokVideosForMainSection(6);
+  const [likedVideos, setLikedVideos] = useState<Set<string>>(new Set());
+  
+  // Use videos from database or show message if none available
+  const displayVideos = videos && videos.length > 0 ? videos : [];
 
   const handleLike = (videoId: string) => {
-    setVideos(videos.map(video => {
-      if (video.id === videoId) {
-        const currentLikes = parseFloat(video.likes.replace('K', '')) * 1000;
-        const newLikes = currentLikes + 1;
-        const formattedLikes = newLikes >= 1000 ? `${(newLikes / 1000).toFixed(1)}K` : newLikes.toString();
-        return { ...video, likes: formattedLikes };
+    setLikedVideos(prev => {
+      const newLiked = new Set(prev);
+      if (newLiked.has(videoId)) {
+        newLiked.delete(videoId);
+      } else {
+        newLiked.add(videoId);
       }
-      return video;
-    }));
+      return newLiked;
+    });
+  };
+
+  const formatCount = (count?: number) => {
+    if (!count) return '0';
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    }
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
   };
 
   return (
@@ -131,80 +46,117 @@ const TikTokSection = () => {
         </div>
 
         {/* Video Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-12">
-          {videos.map((video) => (
-            <div key={video.id} className="relative group">
-              {/* Video Card */}
-              <div className="relative bg-gray-900 rounded-lg overflow-hidden aspect-[9/16] cursor-pointer hover:scale-105 transition-transform duration-300">
-                {/* Thumbnail */}
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title}
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Play Button Overlay */}
-                {!video.isPlaying && (
-                  <div 
-                    className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"
-                    onClick={() => handlePlayToggle(video.id)}
-                  >
-                    <div className="bg-white bg-opacity-90 rounded-full p-3 hover:bg-opacity-100 transition-all duration-200">
+        {displayVideos.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-12">
+            {displayVideos.map((video) => (
+              <div key={video._id} className="relative group">
+                {/* Video Card */}
+                <div 
+                  className="relative bg-gray-900 rounded-lg overflow-hidden aspect-[9/16] cursor-pointer hover:scale-105 transition-transform duration-300"
+                  onClick={() => window.open(video.videoUrl, '_blank')}
+                >
+                  {/* Thumbnail */}
+                  <img 
+                    src={video.thumbnail} 
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                  />
+                  
+                  {/* Play Button Overlay */}
+                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center group-hover:bg-opacity-50 transition-all">
+                    <div className="bg-white bg-opacity-90 rounded-full p-3 hover:bg-opacity-100 transition-all duration-200 group-hover:scale-110">
                       <Play className="w-8 h-8 text-black ml-1" fill="currentColor" />
                     </div>
                   </div>
-                )}
 
-                {/* Duration Badge */}
-                <div className="absolute top-3 right-3 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
-                  {video.duration}
-                </div>
-
-                {/* Bottom Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black via-black/50 to-transparent">
-                  {/* User Info */}
-                  <div className="flex items-center mb-2">
-                    <img 
-                      src={video.avatar} 
-                      alt={video.username}
-                      className="w-8 h-8 rounded-full border-2 border-white mr-2"
-                    />
-                    <span className="text-white text-sm font-semibold">@{video.username}</span>
+                  {/* External Link Icon */}
+                  <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="bg-black bg-opacity-70 text-white p-1 rounded">
+                      <ExternalLink className="w-3 h-3" />
+                    </div>
                   </div>
 
-                  {/* Description */}
-                  <p className="text-white text-xs mb-3 line-clamp-2">
-                    {video.description}
-                  </p>
-
-                  {/* Engagement Stats */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <button 
-                        onClick={() => handleLike(video.id)}
-                        className="flex items-center space-x-1 text-white hover:text-red-500 transition-colors"
-                      >
-                        <Heart className="w-4 h-4" />
-                        <span className="text-xs">{video.likes}</span>
-                      </button>
-                      <div className="flex items-center space-x-1 text-white">
-                        <MessageCircle className="w-4 h-4" />
-                        <span className="text-xs">{video.comments}</span>
+                  {/* Bottom Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black via-black/70 to-transparent">
+                    {/* User Info */}
+                    <div className="flex items-center mb-2">
+                      <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center mr-2">
+                        <span className="text-white text-xs font-bold">R</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-white">
-                        <Share className="w-4 h-4" />
-                        <span className="text-xs">{video.shares}</span>
+                      <span className="text-white text-sm font-semibold">@radanovpridemainecoon</span>
+                    </div>
+
+                    {/* Title */}
+                    <p className="text-white text-xs font-medium mb-1 line-clamp-1">
+                      {video.title}
+                    </p>
+
+                    {/* Description */}
+                    {video.description && (
+                      <p className="text-white text-xs mb-2 line-clamp-2 opacity-90">
+                        {video.description}
+                      </p>
+                    )}
+
+                    {/* Hashtags */}
+                    {video.hashtags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {video.hashtags.slice(0, 2).map((tag, index) => (
+                          <span key={index} className="text-blue-300 text-xs">
+                            {tag.startsWith('#') ? tag : `#${tag}`}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Engagement Stats */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLike(video._id);
+                          }}
+                          className={`flex items-center space-x-1 transition-colors ${
+                            likedVideos.has(video._id) ? 'text-red-500' : 'text-white hover:text-red-500'
+                          }`}
+                        >
+                          <Heart className="w-4 h-4" fill={likedVideos.has(video._id) ? 'currentColor' : 'none'} />
+                          <span className="text-xs">{formatCount(video.likeCount)}</span>
+                        </button>
+                        {video.commentCount !== undefined && (
+                          <div className="flex items-center space-x-1 text-white">
+                            <MessageCircle className="w-4 h-4" />
+                            <span className="text-xs">{formatCount(video.commentCount)}</span>
+                          </div>
+                        )}
+                        {video.viewCount !== undefined && (
+                          <div className="flex items-center space-x-1 text-white">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                              <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
+                            </svg>
+                            <span className="text-xs">{formatCount(video.viewCount)}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <button className="text-white hover:text-gray-300 transition-colors">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 mb-12">
+            <div className="text-gray-400 mb-4">
+              <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+              </svg>
+              <h3 className="text-xl font-bold text-white mb-2">Скоро ще добавим видеа</h3>
+              <p className="text-gray-300">Нашите TikTok видеа се подготвят. Междувременно ни последвайте!</p>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
         {/* CTA Section */}
         <div className="text-center">

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { CatData } from '@/services/catService';
+import { CatData } from '@/services/convexCatService';
 
 interface DragFromGalleryState {
   isDragging: boolean;

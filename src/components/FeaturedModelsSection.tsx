@@ -1,31 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import modelCat1 from "@/assets/model-cat-1.jpg";
-import modelCat2 from "@/assets/model-cat-2.jpg";
-import modelCat3 from "@/assets/model-cat-3.jpg";
-import LayoutGridDemo from "@/components/ui/layout-grid-demo";
-import { catService, CatData } from "@/services/catService";
+import { useDisplayedCats, CatData } from "@/services/convexCatService";
 import PedigreeModal from "./PedigreeModal";
+import SocialContactModal from "./SocialContactModal";
+import EnhancedImageGallery from "./ui/enhanced-image-gallery";
+import CatTikTokVideos from "./CatTikTokVideos";
+import { useTikTokVideosByCat } from "@/services/convexTikTokService";
 
 const FeaturedModelsSection = () => {
   const [selectedCat, setSelectedCat] = useState<CatData | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isPedigreeOpen, setIsPedigreeOpen] = useState(false);
   const [pedigreeCat, setPedigreeCat] = useState<CatData | null>(null);
-  const [featuredCats, setFeaturedCats] = useState<CatData[]>([]);
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
+  const [socialCat, setSocialCat] = useState<CatData | null>(null);
+  const [isEnhancedGalleryOpen, setIsEnhancedGalleryOpen] = useState(false);
+  const [enhancedGalleryImages, setEnhancedGalleryImages] = useState<string[]>([]);
+  const [enhancedGalleryTitle, setEnhancedGalleryTitle] = useState("");
+  const featuredCats = useDisplayedCats();
   const { elementRef: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1);
-  const { elementRef: headerRef, isVisible: headerVisible } = useScrollAnimation(0.3);
-  const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation(0.2);
-
-  useEffect(() => {
-    setFeaturedCats(catService.getDisplayedCats());
-    const unsubscribe = catService.subscribe(() => {
-      setFeaturedCats(catService.getDisplayedCats());
-    });
-    return unsubscribe;
-  }, []);
+  const { elementRef: headerRef, isVisible: headerVisible } = useScrollAnimation(0.1);
+  const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation(0.1);
 
   const openGallery = (cat: CatData) => {
     setSelectedCat(cat);
@@ -47,6 +44,34 @@ const FeaturedModelsSection = () => {
     setPedigreeCat(null);
   };
 
+  const openSocialModal = (cat: CatData) => {
+    setSocialCat(cat);
+    setIsSocialModalOpen(true);
+  };
+
+  const closeSocialModal = () => {
+    setIsSocialModalOpen(false);
+    setSocialCat(null);
+  };
+
+  const openEnhancedGallery = (images: string[], title: string) => {
+    setEnhancedGalleryImages(images);
+    setEnhancedGalleryTitle(title);
+    setIsEnhancedGalleryOpen(true);
+  };
+
+  const closeEnhancedGallery = () => {
+    setIsEnhancedGalleryOpen(false);
+    setEnhancedGalleryImages([]);
+    setEnhancedGalleryTitle("");
+  };
+
+  // Always show the section structure, even when loading
+  // This prevents the disappearing issue
+  const isLoading = featuredCats === undefined;
+  const isEmpty = featuredCats !== undefined && featuredCats !== null && featuredCats.length === 0;
+
+
   return (
     <>
       <section ref={sectionRef} className="py-20 bg-background mb-24">
@@ -58,30 +83,45 @@ const FeaturedModelsSection = () => {
               headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-            <p className="text-sm text-muted-foreground tracking-wide uppercase mb-2">
-              от вдъхновение до шедьовър
-            </p>
+            <div className="flex items-center justify-center space-x-4 mb-4">
+              <div className="w-12 h-px bg-muted-foreground/30"></div>
+              <div className="w-2 h-2 rounded-full bg-muted-foreground/50"></div>
+              <div className="w-12 h-px bg-muted-foreground/30"></div>
+            </div>
             <h2 className="font-playfair text-4xl lg:text-5xl font-light text-foreground">
               Нашите избрани модели
             </h2>
           </div>
 
-          {/* Models Grid */}
+          {/* Content Area */}
           <div 
             ref={gridRef}
-            className={`grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto transition-all duration-1000 ${
-              gridVisible ? 'opacity-100' : 'opacity-0'
+            className={`max-w-6xl mx-auto transition-all duration-1000 ${
+              gridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-            {featuredCats.map((cat, index) => (
+            {isLoading && (
+              <div className="text-center">
+                <p className="text-muted-foreground">Зареждане на котките...</p>
+              </div>
+            )}
+            
+            {isEmpty && (
+              <div className="text-center">
+                <p className="text-muted-foreground">Няма налични котки в момента</p>
+              </div>
+            )}
+            
+            {!isLoading && !isEmpty && (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredCats.map((cat, index) => (
               <Card 
-                key={cat.id} 
-                className={`group overflow-hidden bg-card shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-0 scroll-hidden ${
-                  gridVisible ? 'scroll-visible' : ''
+                key={cat._id} 
+                className={`group overflow-hidden bg-card shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-0 ${
+                  gridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
                 }`}
                 onClick={() => openGallery(cat)}
                 style={{
-                  animationDelay: `${index * 0.15}s`,
                   transitionDelay: gridVisible ? `${index * 0.1}s` : '0s'
                 }}
               >
@@ -120,36 +160,11 @@ const FeaturedModelsSection = () => {
                   </Button>
                 </div>
               </Card>
-            ))}
-
-            {/* Add Model Card */}
-            <Card 
-              className={`group overflow-hidden bg-muted shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-dashed border-border scroll-hidden ${
-                gridVisible ? 'scroll-visible' : ''
-              }`}
-              style={{
-                transitionDelay: gridVisible ? `${featuredCats.length * 0.1}s` : '0s'
-              }}
-            >
-              <CardContent className="p-12 flex flex-col items-center justify-center h-full text-center space-y-4">
-                <div className="w-16 h-16 rounded-full border-2 border-dashed border-muted-foreground flex items-center justify-center group-hover:border-foreground transition-colors">
-                  <svg className="w-8 h-8 text-muted-foreground group-hover:text-foreground transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-medium text-foreground mb-1">Създай свой модел</h3>
-                  <p className="text-sm text-muted-foreground">Добавете нов модел</p>
-                </div>
-              </CardContent>
-            </Card>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </section>
-
-      {/* Gallery Section */}
-      <section className="py-20 bg-background">
-        <LayoutGridDemo />
       </section>
 
       {/* Gallery Modal */}
@@ -184,18 +199,50 @@ const FeaturedModelsSection = () => {
                   <img 
                     src={selectedCat.image} 
                     alt={selectedCat.name}
-                    className="w-full rounded-xl"
+                    className="w-full rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={() => {
+                      const allImages = [selectedCat.image, ...selectedCat.gallery];
+                      openEnhancedGallery(allImages, `${selectedCat.name} - Галерия`);
+                    }}
                   />
-                  <div className="grid grid-cols-3 gap-2">
-                    {selectedCat.gallery.slice(1).map((img, index) => (
-                      <img 
-                        key={index}
-                        src={img} 
-                        alt={`${selectedCat.name} ${index + 2}`}
-                        className="w-full h-20 object-cover rounded-lg"
-                      />
-                    ))}
-                  </div>
+                  
+                  {/* Thumbnail Gallery */}
+                  {selectedCat.gallery.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <h4 className="text-sm font-medium text-muted-foreground">
+                          Още снимки ({selectedCat.gallery.length})
+                        </h4>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const allImages = [selectedCat.image, ...selectedCat.gallery];
+                            openEnhancedGallery(allImages, `${selectedCat.name} - Галерия`);
+                          }}
+                        >
+                          Виж всички
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {selectedCat.gallery.slice(0, 6).map((img, index) => (
+                          <img 
+                            key={index}
+                            src={img} 
+                            alt={`${selectedCat.name} ${index + 2}`}
+                            className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => {
+                              const allImages = [selectedCat.image, ...selectedCat.gallery];
+                              openEnhancedGallery(allImages, `${selectedCat.name} - Галерия`);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TikTok Videos Section */}
+                  <CatTikTokVideos catId={selectedCat._id} catName={selectedCat.name} />
                 </div>
 
                 {/* Details */}
@@ -219,17 +266,33 @@ const FeaturedModelsSection = () => {
                         {selectedCat.status}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Цена</span>
-                      <span className="font-bold text-lg">{selectedCat.price}</span>
-                    </div>
+                    {selectedCat.registrationNumber && (
+                      <div className="flex justify-between border-b border-border pb-2">
+                        <span className="text-muted-foreground">Регистрационен номер</span>
+                        <span className="font-medium">{selectedCat.registrationNumber}</span>
+                      </div>
+                    )}
+                    {selectedCat.freeText && (
+                      <div className="border-b border-border pb-2">
+                        <span className="text-muted-foreground block mb-1">Допълнителна информация</span>
+                        <span className="font-medium">{selectedCat.freeText}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-3">
-                    <Button variant="modern" className="w-full">
+                    <Button 
+                      variant="modern" 
+                      className="w-full"
+                      onClick={() => openSocialModal(selectedCat)}
+                    >
                       Заявете сега
                     </Button>
-                    <Button variant="minimal" className="w-full">
+                    <Button 
+                      variant="outline" 
+                      className="w-full bg-amber-500 border-amber-500 text-white hover:bg-amber-600 hover:border-amber-600"
+                      onClick={() => openPedigree(selectedCat)}
+                    >
                       Повече информация
                     </Button>
                   </div>
@@ -248,6 +311,23 @@ const FeaturedModelsSection = () => {
           onClose={closePedigree}
         />
       )}
+
+      {/* Social Contact Modal */}
+      {isSocialModalOpen && socialCat && (
+        <SocialContactModal
+          cat={socialCat}
+          isOpen={isSocialModalOpen}
+          onClose={closeSocialModal}
+        />
+      )}
+
+      {/* Enhanced Image Gallery */}
+      <EnhancedImageGallery
+        images={enhancedGalleryImages}
+        isOpen={isEnhancedGalleryOpen}
+        onClose={closeEnhancedGallery}
+        title={enhancedGalleryTitle}
+      />
     </>
   );
 };

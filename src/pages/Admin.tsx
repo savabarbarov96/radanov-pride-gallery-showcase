@@ -4,12 +4,24 @@ import { Button } from '@/components/ui/button';
 import AdminLogin from './AdminLogin';
 import CatManager from '@/components/admin/CatManager';
 import PedigreeCanvas from '@/components/admin/PedigreeCanvas';
-import { CatData } from '@/services/catService';
+import { CatData } from '@/services/convexCatService';
 
 const Admin = () => {
-  const { isAuthenticated, logout } = useAdminAuth();
+  const { isAuthenticated, isLoading, logout } = useAdminAuth();
   const [selectedCat, setSelectedCat] = useState<CatData | null>(null);
   const [canvasInstance, setCanvasInstance] = useState<{ addCatToCanvas: (cat: CatData, position?: { x: number; y: number }) => void } | null>(null);
+
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Зареждане...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <AdminLogin />;

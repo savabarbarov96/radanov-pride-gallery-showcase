@@ -7,16 +7,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAdminAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsSubmitting(true);
     
-    const success = login(password);
-    if (!success) {
-      setError('Неправилна парола');
-      setPassword('');
+    try {
+      const success = await login(password);
+      if (!success) {
+        setError('Неправилна парола');
+        setPassword('');
+      }
+    } catch (error) {
+      setError('Грешка при влизане. Опитайте отново.');
+      console.error('Login error:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -41,6 +50,7 @@ const AdminLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full"
                 autoFocus
+                disabled={isSubmitting}
               />
               {error && (
                 <p className="text-red-600 text-sm">{error}</p>
@@ -49,8 +59,9 @@ const AdminLogin = () => {
             <Button 
               type="submit" 
               className="w-full bg-black text-white hover:bg-gray-800"
+              disabled={isSubmitting || !password.trim()}
             >
-              Влез
+              {isSubmitting ? 'Влизане...' : 'Влез'}
             </Button>
           </form>
         </CardContent>

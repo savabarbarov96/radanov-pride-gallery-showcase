@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 type Theme = 'dark' | 'light';
 
@@ -19,19 +20,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return 'dark';
   });
 
-  useEffect(() => {
-    const root = window.document.documentElement;
-    
-    // Remove previous theme class
-    root.classList.remove('light', 'dark');
-    
-    // Add current theme class
-    root.classList.add(theme);
-    
-    // Save to localStorage
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
@@ -41,6 +29,35 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       {children}
     </ThemeContext.Provider>
   );
+};
+
+// Component that handles location-based theme logic
+export const LocationBasedTheme: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const location = useLocation();
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    
+    // Remove previous theme class
+    root.classList.remove('light', 'dark');
+    
+    // Check if current route is admin route
+    const isAdminRoute = location.pathname.startsWith('/admin');
+    
+    // Force light theme for admin routes, otherwise use user's theme preference
+    const effectiveTheme = isAdminRoute ? 'light' : theme;
+    
+    // Add current theme class
+    root.classList.add(effectiveTheme);
+    
+    // Save to localStorage only if not admin route
+    if (!isAdminRoute) {
+      localStorage.setItem('theme', theme);
+    }
+  }, [theme, location.pathname]);
+
+  return <>{children}</>;
 };
 
 export const useTheme = (): ThemeContextType => {
