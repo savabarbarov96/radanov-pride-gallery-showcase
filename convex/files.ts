@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, action, query } from "./_generated/server";
+import { mutation, action, query, internalMutation } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
 
@@ -19,12 +19,12 @@ export const storeFile = action({
     associatedCatId: v.optional(v.id("cats")),
     imageType: v.union(v.literal("profile"), v.literal("gallery"), v.literal("general"))
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ storageId: Id<"_storage">; imageId: Id<"images"> }> => {
     // Store the file in Convex storage
     const storageId = await ctx.storage.store(args.file);
     
     // Save metadata in the images table
-    const imageId = await ctx.runMutation(internal.files.saveImageMetadata, {
+    const imageId: Id<"images"> = await ctx.runMutation(internal.files.saveImageMetadata, {
       storageId,
       filename: args.filename,
       associatedCatId: args.associatedCatId,
@@ -36,7 +36,7 @@ export const storeFile = action({
 });
 
 // Internal mutation to save image metadata
-export const saveImageMetadata = mutation({
+export const saveImageMetadata = internalMutation({
   args: {
     storageId: v.id("_storage"),
     filename: v.string(),

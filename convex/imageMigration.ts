@@ -1,6 +1,8 @@
 import { v } from "convex/values";
-import { action, internalMutation } from "./_generated/server";
+import { action, internalMutation, internalAction, internalQuery } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { api } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 
 // Define the image mapping for migration
 const IMAGE_MAPPINGS = [
@@ -26,14 +28,22 @@ const IMAGE_MAPPINGS = [
 ];
 
 // Upload a single image from a public URL or local path
-export const uploadImageFromUrl = action({
+export const uploadImageFromUrl = internalAction({
   args: {
     imageUrl: v.string(),
     filename: v.string(),
     imageType: v.union(v.literal("profile"), v.literal("gallery"), v.literal("general")),
     associatedCatId: v.optional(v.id("cats"))
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{
+    success: boolean;
+    filename: string;
+    storageId?: Id<"_storage">;
+    storageUrl?: string;
+    imageId?: Id<"images">;
+    originalPath: string;
+    error?: string;
+  }> => {
     try {
       // Try to fetch the image from public folder first (if running locally)
       let imageUrl = args.imageUrl;
@@ -59,7 +69,7 @@ export const uploadImageFromUrl = action({
       console.log(`Stored ${args.filename} with storage ID: ${storageId}`);
 
       // Save metadata
-      const result = await ctx.runMutation(internal.files.saveImageMetadata, {
+      const result: Id<"images"> = await ctx.runMutation(internal.files.saveImageMetadata, {
         storageId,
         filename: args.filename,
         associatedCatId: args.associatedCatId,
@@ -72,7 +82,7 @@ export const uploadImageFromUrl = action({
         success: true,
         filename: args.filename,
         storageId,
-        storageUrl,
+        storageUrl: storageUrl || undefined,
         imageId: result,
         originalPath: args.imageUrl
       };
@@ -90,9 +100,15 @@ export const uploadImageFromUrl = action({
 });
 
 // Migrate all images from local paths to Convex storage
-export const migrateAllImages = action({
-  handler: async (ctx) => {
-    const results = [];
+export const migrateAllImages = internalAction({
+  handler: async (ctx): Promise<{
+    total: number;
+    successful: number;
+    failed: number;
+    results: any[];
+    urlMappings: Record<string, string>;
+  }> => {
+    const results: any[] = [];
     
     console.log(`Starting migration of ${IMAGE_MAPPINGS.length} images...`);
     
@@ -126,7 +142,7 @@ export const migrateAllImages = action({
       successful: successful.length,
       failed: failed.length,
       results: results,
-      urlMappings: successful.reduce((acc, result) => {
+      urlMappings: successful.reduce((acc: Record<string, string>, result: any) => {
         if (result.storageUrl && result.originalPath) {
           acc[result.originalPath] = result.storageUrl;
         }
@@ -139,7 +155,7 @@ export const migrateAllImages = action({
 // Update cat records to use new storage URLs
 export const updateCatImagesWithStorageUrls = internalMutation({
   args: {
-    urlMappings: v.object({}) // Record<string, string> - maps old paths to new URLs
+    urlMappings: v.any() // Record<string, string> - maps old paths to new URLs
   },
   handler: async (ctx, args) => {
     const cats = await ctx.db.query("cats").collect();
@@ -151,16 +167,16 @@ export const updateCatImagesWithStorageUrls = internalMutation({
       let newGallery = [...cat.gallery];
       
       // Update main image if it's a local path
-      if (args.urlMappings[cat.image]) {
-        newImage = args.urlMappings[cat.image];
+      if ((args.urlMappings as Record<string, string>)[cat.image]) {
+        newImage = (args.urlMappings as Record<string, string>)[cat.image];
         updated = true;
       }
       
       // Update gallery images
-      newGallery = cat.gallery.map(galleryImage => {
-        if (args.urlMappings[galleryImage]) {
+      newGallery = cat.gallery.map((galleryImage: string) => {
+        if ((args.urlMappings as Record<string, string>)[galleryImage]) {
           updated = true;
-          return args.urlMappings[galleryImage];
+          return (args.urlMappings as Record<string, string>)[galleryImage];
         }
         return galleryImage;
       });
@@ -192,18 +208,27 @@ export const updateCatImagesWithStorageUrls = internalMutation({
 
 // Complete migration workflow
 export const runFullImageMigration = action({
-  handler: async (ctx) => {
+  handler: async (ctx): Promise<{
+    uploadResults: any;
+    updateResults: any;
+    summary: {
+      imagesUploaded: number;
+      imagesFailed: number;
+      catsUpdated: number;
+      totalCats: number;
+    };
+  }> => {
     console.log("Starting full image migration...");
     
     // Step 1: Upload all images to Convex storage
-    const uploadResults = await ctx.runAction(internal.imageMigration.migrateAllImages);
+    const uploadResults: any = await ctx.runAction(internal.imageMigration.migrateAllImages);
     
     if (uploadResults.failed > 0) {
       console.warn(`${uploadResults.failed} images failed to upload. Continuing with partial migration...`);
     }
     
     // Step 2: Update cat records with new storage URLs
-    const updateResults = await ctx.runMutation(internal.imageMigration.updateCatImagesWithStorageUrls, {
+    const updateResults: any = await ctx.runMutation(internal.imageMigration.updateCatImagesWithStorageUrls, {
       urlMappings: uploadResults.urlMappings
     });
     
@@ -224,13 +249,18 @@ export const runFullImageMigration = action({
 
 // Get migration status - check which images are still using local paths
 export const getMigrationStatus = action({
-  handler: async (ctx) => {
-    const cats = await ctx.runQuery(internal.cats.getAllCats);
-    const localPathCats = [];
+  handler: async (ctx): Promise<{
+    totalCats: number;
+    catsWithLocalPaths: number;
+    allMigrated: boolean;
+    catsNeedingMigration: any[];
+  }> => {
+    const cats: any = await ctx.runQuery(api.cats.getAllCats);
+    const localPathCats: any[] = [];
     
     for (const cat of cats) {
       const hasLocalImage = cat.image.startsWith('/') && !cat.image.startsWith('http');
-      const hasLocalGallery = cat.gallery.some(img => img.startsWith('/') && !img.startsWith('http'));
+      const hasLocalGallery = cat.gallery.some((img: string) => img.startsWith('/') && !img.startsWith('http'));
       
       if (hasLocalImage || hasLocalGallery) {
         localPathCats.push({
@@ -239,7 +269,7 @@ export const getMigrationStatus = action({
           hasLocalImage,
           hasLocalGallery,
           localImage: hasLocalImage ? cat.image : null,
-          localGalleryImages: cat.gallery.filter(img => img.startsWith('/') && !img.startsWith('http'))
+          localGalleryImages: cat.gallery.filter((img: string) => img.startsWith('/') && !img.startsWith('http'))
         });
       }
     }
