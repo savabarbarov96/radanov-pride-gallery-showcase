@@ -122,8 +122,8 @@ const ModernHeroSection = () => {
               {/* Circular logo badge */}
               <div className="absolute -bottom-3 md:-bottom-4 -right-3 md:-right-4 bg-card rounded-full p-6 md:p-8 shadow-lg animate-float z-30">
                 <div className="w-24 h-24 md:w-32 md:h-32 border-2 border-foreground rounded-full flex items-center justify-center relative overflow-hidden">
-                  {/* Floating Logo */}
-                  <img src="/src/assets/radanov-pride-logo.png" alt="Radanov Pride Logo" className="w-16 h-16 md:w-20 md:h-20 object-contain animate-float" />
+                            {/* Floating Logo */}
+          <img src="/radanov-pride-logo.png" alt="Radanov Pride Logo" className="w-16 h-16 md:w-20 md:h-20 object-contain animate-float" />
                 </div>
               </div>
             </div>

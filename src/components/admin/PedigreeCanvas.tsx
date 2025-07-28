@@ -606,7 +606,7 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
             <div className="w-full h-full p-2 flex flex-col">
               <div className="flex-1 bg-gray-100 rounded overflow-hidden">
                 <img
-                  src={node.cat.image || '/placeholder.jpg'}
+                  src={node.cat.image || '/placeholder.svg'}
                   alt={node.cat.name}
                   className="w-full h-full object-cover"
                 />

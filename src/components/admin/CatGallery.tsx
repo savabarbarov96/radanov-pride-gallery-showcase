@@ -224,7 +224,7 @@ const CatGallery = ({
                     {/* Cat Image */}
                     <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                       <img
-                        src={cat.image || '/placeholder.jpg'}
+                        src={cat.image || '/placeholder.svg'}
                         alt={cat.name}
                         className="w-full h-full object-cover"
                       />

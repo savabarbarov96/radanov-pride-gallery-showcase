@@ -29,7 +29,7 @@ const ModernNavigation = () => {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <img 
-              src="/src/assets/radanov-pride-logo.png" 
+              src="/radanov-pride-logo.png" 
               alt="Radanov Pride Logo" 
               className="w-20 h-20 object-contain"
             />
