@@ -174,7 +174,7 @@ const ImageManager = ({
 
       {/* Image Grid */}
       {images.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {images.map((image, index) => (
             <div
               key={index}
@@ -187,14 +187,14 @@ const ImageManager = ({
                 onClick={() => openGallery(index)}
               />
               
-              {/* Overlay Controls */}
+              {/* Mobile-friendly Controls */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                <div className="opacity-0 group-hover:opacity-100 sm:transition-opacity flex flex-col sm:flex-row gap-2 sm:opacity-100 md:opacity-0 md:group-hover:opacity-100">
                   <Button
                     size="sm"
                     variant="secondary"
                     onClick={() => openGallery(index)}
-                    className="text-xs"
+                    className="text-xs min-h-[36px] min-w-[36px] bg-white/90 hover:bg-white"
                   >
                     Преглед
                   </Button>
@@ -202,15 +202,15 @@ const ImageManager = ({
                     size="sm"
                     variant="destructive"
                     onClick={() => removeImage(index)}
-                    className="text-xs"
+                    className="text-xs min-h-[36px] min-w-[36px] bg-white/90 hover:bg-destructive hover:text-white"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
 
-              {/* Drag Handle */}
-              <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Drag Handle - Hidden on mobile */}
+              <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
                 <div className="bg-black/60 text-white p-1 rounded cursor-move">
                   <Grip className="w-3 h-3" />
                 </div>
@@ -238,11 +238,12 @@ const ImageManager = ({
 
       {/* Quick Actions */}
       {images.length > 0 && (
-        <div className="flex gap-2 pt-2 border-t">
+        <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t">
           <Button
             variant="outline"
             size="sm"
             onClick={() => openGallery(0)}
+            className="min-h-[44px] w-full sm:w-auto"
           >
             Преглед на всички ({images.length})
           </Button>
@@ -250,7 +251,7 @@ const ImageManager = ({
             variant="outline"
             size="sm"
             onClick={() => onImagesChange([])}
-            className="text-destructive hover:text-destructive"
+            className="text-destructive hover:text-destructive min-h-[44px] w-full sm:w-auto"
           >
             Изчисти всички
           </Button>

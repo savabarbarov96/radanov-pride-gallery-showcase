@@ -190,6 +190,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
               resetForm();
             }}
             variant="outline"
+            className="min-h-[44px]"
           >
             ← Назад
           </Button>
@@ -200,7 +201,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
           <Card>
             <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Име</Label>
                     <Input
@@ -233,7 +234,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="age">Възраст</Label>
                     <Input
@@ -254,7 +255,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="status">Статус</Label>
                     <Input
@@ -291,7 +292,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="birthDate">Дата на раждане</Label>
                     <Input
@@ -358,13 +359,14 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                   <Label htmlFor="isDisplayed">Показване на сайта</Label>
                 </div>
 
-                <div className="flex gap-2">
-                  <Button type="submit" className="bg-black text-white hover:bg-gray-800">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
+                  <Button type="submit" className="bg-black text-white hover:bg-gray-800 min-h-[44px] w-full sm:w-auto">
                     {editingCat ? 'Запази' : 'Добави'}
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
+                    className="min-h-[44px] w-full sm:w-auto"
                     onClick={() => {
                       setIsAddingCat(false);
                       setEditingCat(null);

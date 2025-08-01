@@ -75,6 +75,7 @@ const SiteSettingsManager = () => {
           onClick={handleInitializeDefaults}
           variant="outline"
           disabled={isLoading}
+          className="min-h-[44px] text-xs sm:text-sm"
         >
           Инициализирай по подразбиране
         </Button>
@@ -83,11 +84,11 @@ const SiteSettingsManager = () => {
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4">
         <Tabs defaultValue="social" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="social">Социални мрежи</TabsTrigger>
-            <TabsTrigger value="contact">Контакти</TabsTrigger>
-            <TabsTrigger value="content">Съдържание</TabsTrigger>
-            <TabsTrigger value="features">Функции</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1">
+            <TabsTrigger value="social" className="text-xs sm:text-sm">Социални мрежи</TabsTrigger>
+            <TabsTrigger value="contact" className="text-xs sm:text-sm">Контакти</TabsTrigger>
+            <TabsTrigger value="content" className="text-xs sm:text-sm">Съдържание</TabsTrigger>
+            <TabsTrigger value="features" className="text-xs sm:text-sm">Функции</TabsTrigger>
           </TabsList>
 
           <TabsContent value="social" className="space-y-4">
@@ -133,7 +134,7 @@ const SiteSettingsManager = () => {
                     />
                   </div>
 
-                  <Button type="submit" disabled={isLoading} className="w-full">
+                  <Button type="submit" disabled={isLoading} className="w-full min-h-[44px]">
                     {isLoading ? 'Запазване...' : 'Запази настройките'}
                   </Button>
                 </form>

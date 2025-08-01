@@ -1,9 +1,11 @@
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useActiveSection, useScrollPosition } from "@/hooks/useScrollAnimation";
+import SocialContactModal from "./SocialContactModal";
 
 const ModernNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const activeSection = useActiveSection(['home', 'models', 'tiktok', 'contact']);
   const { scrollY } = useScrollPosition();
 
@@ -61,27 +63,13 @@ const ModernNavigation = () => {
             >
               TikTok
             </button>
-            <button 
-              onClick={() => scrollToSection('contact')}
-              className={`transition-colors text-sm font-medium ${
-                activeSection === 'contact' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Контакт
-            </button>
             <Button 
               variant="outline" 
               size="sm" 
               className="bg-card border-border text-foreground hover:bg-muted"
-              onClick={() => {
-                // This will be connected to Facebook chat
-                console.log('Opening Facebook chat...');
-              }}
+              onClick={() => setIsContactModalOpen(true)}
             >
-              Чат
-            </Button>
-            <Button variant="outline" size="sm" className="ml-4 bg-card border-border text-foreground hover:bg-muted">
-              Вход
+              Контакт
             </Button>
           </div>
 
@@ -130,28 +118,17 @@ const ModernNavigation = () => {
               >
                 TikTok
               </button>
-              <button 
-                onClick={() => scrollToSection('contact')}
-                className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  activeSection === 'contact' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                Контакт
-              </button>
               <div className="px-3 py-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="w-full mb-2 bg-white border-gray-300 text-foreground hover:bg-gray-50"
+                  className="w-full bg-white border-gray-300 text-foreground hover:bg-gray-50"
                   onClick={() => {
-                    // This will be connected to Facebook chat
-                    console.log('Opening Facebook chat...');
+                    setIsContactModalOpen(true);
+                    setIsOpen(false);
                   }}
                 >
-                  Чат
-                </Button>
-                <Button variant="outline" size="sm" className="w-full bg-white border-gray-300 text-foreground hover:bg-gray-50">
-                  Вход
+                  Контакт
                 </Button>
               </div>
             </div>
@@ -166,6 +143,13 @@ const ModernNavigation = () => {
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
+
+      {/* Contact Modal */}
+      <SocialContactModal
+        cat={null}
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
     </nav>
   );
 };

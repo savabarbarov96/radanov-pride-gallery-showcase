@@ -1,9 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
-import { CatData, usePedigreeConnections, useAddConnection, useRemoveConnection, useParents, useChildren } from '@/services/convexCatService';
+import { CatData, usePedigreeConnections, useAddConnection, useRemoveConnection, useParents, useChildren, useCats } from '@/services/convexCatService';
 import { PedigreeConnection } from '@/types/pedigree';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
+import { useMobileDetection } from '@/hooks/useMobileDetection';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { Search, Smartphone, Plus } from 'lucide-react';
 
 interface PedigreeCanvasProps {
   selectedCat: CatData | null;
@@ -24,13 +29,19 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
   const [connectingFrom, setConnectingFrom] = useState<CatData | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [cursorPosition, setCursorPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isAddCatModalOpen, setIsAddCatModalOpen] = useState(false);
+  const [catSearchQuery, setCatSearchQuery] = useState('');
   const canvasRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  
+  // Mobile detection
+  const { isMobile, screenSize } = useMobileDetection();
 
   // Convex hooks
   const connections = usePedigreeConnections() || [];
   const addConnection = useAddConnection();
   const removeConnection = useRemoveConnection();
+  const allCats = useCats() || [];
 
   const { startDrag, setContainer, isDragging } = useDragAndDrop({
     constrainToParent: true,
@@ -57,7 +68,7 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
     setContainer(canvasRef.current);
   }, [setContainer]);
 
-  const loadPedigreeForCat = (cat: CatData) => {
+  const loadPedigreeForCat = async (cat: CatData) => {
     // Clear existing nodes
     setNodes([]);
     
@@ -68,9 +79,30 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
       y: 200,
       id: cat._id
     };
-    setNodes([mainNode]);
+    
+    const newNodes: CanvasNode[] = [mainNode];
 
-    // Parents will be loaded via hooks when needed
+    // Load parents if they exist
+    try {
+      const parentConnections = connections.filter(conn => conn.childId === cat._id);
+      
+      for (const connection of parentConnections) {
+        const parentCat = allCats.find(c => c._id === connection.parentId);
+        if (parentCat) {
+          const parentNode: CanvasNode = {
+            cat: parentCat,
+            x: connection.type === 'father' ? 500 : 100, // Father on right, mother on left
+            y: 50, // Parents above the main cat
+            id: parentCat._id
+          };
+          newNodes.push(parentNode);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading parents:', error);
+    }
+    
+    setNodes(newNodes);
   };
 
   const handleNodeMouseDown = (e: React.MouseEvent, node: CanvasNode) => {
@@ -81,7 +113,10 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
       return;
     }
 
-    startDrag(e.currentTarget as HTMLElement, node.id, node.x, node.y, e.nativeEvent);
+    // Disable drag and drop on mobile devices
+    if (!isMobile) {
+      startDrag(e.currentTarget as HTMLElement, node.id, node.x, node.y, e.nativeEvent);
+    }
   };
 
   const handleConnectionClick = async (cat: CatData) => {
@@ -254,6 +289,19 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
       description: `${cat.name} е добавена на canvas-а`,
       variant: "default"
     });
+  };
+
+  // Filter cats for search
+  const filteredCats = allCats.filter(cat =>
+    cat.name.toLowerCase().includes(catSearchQuery.toLowerCase()) &&
+    !nodes.some(node => node.cat._id === cat._id)
+  );
+
+  // Mobile-specific helper to add cat from modal
+  const handleAddCatFromModal = (cat: CatData) => {
+    addCatToCanvas(cat);
+    setIsAddCatModalOpen(false);
+    setCatSearchQuery('');
   };
 
   const removeCatFromCanvas = (catId: string) => {
@@ -436,10 +484,10 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
 
   // Auto-load pedigree when a cat is selected
   useEffect(() => {
-    if (selectedCat) {
+    if (selectedCat && connections && allCats) {
       loadPedigreeForCat(selectedCat);
     }
-  }, [selectedCat]);
+  }, [selectedCat, connections, allCats]);
 
   // Expose canvas methods to parent
   useEffect(() => {
@@ -483,8 +531,80 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b bg-white">
-        <h2 className="font-playfair text-xl font-semibold">Pedigree Canvas</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="font-playfair text-xl font-semibold">Pedigree Canvas</h2>
+          {isMobile && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+              <Smartphone className="w-3 h-3" />
+              Мобилен режим
+            </div>
+          )}
+        </div>
         <div className="flex gap-2">
+          {isMobile && (
+            <Dialog open={isAddCatModalOpen} onOpenChange={setIsAddCatModalOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  className="bg-green-600 text-white hover:bg-green-700 text-sm px-3 py-2"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Добави котка
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Добавяне на котка към родословието</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="relative">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <Input
+                      placeholder="Търсене на котка..."
+                      value={catSearchQuery}
+                      onChange={(e) => setCatSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <ScrollArea className="h-64">
+                    <div className="space-y-2">
+                      {filteredCats.map((cat) => (
+                        <div
+                          key={cat._id}
+                          className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                          onClick={() => handleAddCatFromModal(cat)}
+                        >
+                          <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                            <img
+                              src={cat.image || '/placeholder.svg'}
+                              alt={cat.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{cat.name}</p>
+                            <p className="text-sm text-gray-500">
+                              {cat.gender === 'male' ? '♂' : '♀'} {cat.age}
+                            </p>
+                          </div>
+                          <Button size="sm" variant="outline">
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                      {filteredCats.length === 0 && (
+                        <div className="text-center py-8 text-gray-500">
+                          <p>Няма намерени котки</p>
+                          {catSearchQuery && (
+                            <p className="text-sm">Опитайте различен термин за търсене</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
           {isConnecting && (
             <Button
               onClick={cancelConnection}
@@ -501,7 +621,9 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
         <p>
           {isConnecting 
             ? `🔗 Свързване от ${connectingFrom?.name} като ${connectionMode === 'father' ? 'баща' : 'майка'} - кликнете върху дете`
-            : '💡 Инструкции: Влачете котки от лявата част → Използвайте ♂/♀ иконите за свързване → Влачете за преместване'
+            : isMobile
+              ? '📱 Мобилни инструкции: Използвайте "Добави котка" бутона → ♂/♀ иконите за свързване → Котките са неподвижни на мобилни устройства'
+              : '💡 Инструкции: Влачете котки от лявата част → Използвайте ♂/♀ иконите за свързване → Влачете за преместване'
           }
         </p>
       </div>
@@ -585,7 +707,9 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
             key={node.id}
             data-cat-id={node.cat._id}
             className={`absolute bg-white rounded-lg shadow-lg border-2 transition-all duration-200 z-20 canvas-node ${
-              isDragging ? 'cursor-grabbing' : isConnecting && connectingFrom?._id !== node.id ? 'cursor-pointer' : 'cursor-grab'
+              isDragging ? 'cursor-grabbing' : 
+              isConnecting && connectingFrom?._id !== node.id ? 'cursor-pointer' : 
+              isMobile ? 'cursor-default' : 'cursor-grab'
             } ${
               hoveredNode === node.id ? 'shadow-xl scale-105' : ''
             } ${
@@ -672,8 +796,17 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
             <div className="text-center p-8 bg-white rounded-lg shadow-lg border-2 border-dashed border-gray-300">
               <p className="text-2xl mb-3">📊</p>
               <p className="text-lg mb-2 font-semibold">Празен canvas</p>
-              <p className="text-sm mb-1">👆 <strong>Влачете котки</strong> от лявата част</p>
-              <p className="text-sm mb-1">🎯 Или <strong>изберете котка</strong> за автоматично зареждане</p>
+              {isMobile ? (
+                <>
+                  <p className="text-sm mb-1">📱 <strong>Използвайте "Добави котка"</strong> бутона горе</p>
+                  <p className="text-sm mb-1">🎯 Или <strong>изберете котка</strong> за автоматично зареждане</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm mb-1">👆 <strong>Влачете котки</strong> от лявата част</p>
+                  <p className="text-sm mb-1">🎯 Или <strong>изберете котка</strong> за автоматично зареждане</p>
+                </>
+              )}
               <p className="text-xs text-gray-400 mt-3">Родословието ще се покаже автоматично</p>
             </div>
           </div>

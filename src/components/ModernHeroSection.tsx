@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import ContainerTextFlipDemo from "@/components/ui/container-text-flip-demo";
 import featuredCat1 from "@/assets/featured-cat-1.jpg";
@@ -7,8 +8,10 @@ import istockCat from '@/assets/istockphoto-1092493548-612x612.jpg';
 import modelCat1 from '@/assets/model-cat-1.jpg';
 import modelCat2 from '@/assets/model-cat-2.jpg';
 import modelCat3 from '@/assets/model-cat-3.jpg';
+import SocialContactModal from "./SocialContactModal";
 
 const ModernHeroSection = () => {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const { elementRef: heroRef, isVisible: heroVisible } = useScrollAnimation(0.2);
   const { elementRef: textRef, isVisible: textVisible } = useScrollAnimation(0.3);
   const { elementRef: photosRef, isVisible: photosVisible } = useScrollAnimation(0.1);
@@ -42,8 +45,9 @@ const ModernHeroSection = () => {
             <div className="flex justify-center lg:justify-start">
               <Button 
                 className="px-6 md:px-8 py-3 md:py-4 text-sm md:text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors animate-fade-in-up animate-delay-400"
+                onClick={() => setIsContactModalOpen(true)}
               >
-                Позвъни за информация.
+                Кликни за връзка
               </Button>
             </div>
           </div>
@@ -130,9 +134,144 @@ const ModernHeroSection = () => {
           </div>
         </div>
 
+        {/* Hanging Cat Animation */}
+        <div 
+          className={`text-center mt-16 transition-all duration-1000 delay-500 ${
+            heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+          }`}
+        >
+          <div className="hanging-cat-animation">
+            <div className="all-wrap">  
+              <div className="all">
+                <div className="yarn"></div>
+                <div className="cat-wrap">    
+                  <div className="cat">
+                    <div className="cat-upper">
+                      <div className="cat-leg"></div>
+                      <div className="cat-leg"></div>
+                      <div className="cat-head">
+                        <div className="cat-ears">
+                          <div className="cat-ear"></div>
+                          <div className="cat-ear"></div>
+                        </div>
+                        <div className="cat-face">
+                          <div className="cat-eyes"></div>
+                          <div className="cat-mouth"></div>
+                          <div className="cat-whiskers"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="cat-lower-wrap">
+                      <div className="cat-lower">
+                        <div className="cat-leg">
+                          <div className="cat-leg">
+                            <div className="cat-leg">
+                              <div className="cat-leg">
+                                <div className="cat-leg">
+                                  <div className="cat-leg">
+                                    <div className="cat-leg">
+                                      <div className="cat-leg">
+                                        <div className="cat-leg">
+                                          <div className="cat-leg">
+                                            <div className="cat-leg">
+                                              <div className="cat-leg">
+                                                <div className="cat-leg">
+                                                  <div className="cat-leg">
+                                                    <div className="cat-leg">
+                                                      <div className="cat-leg">
+                                                        <div className="cat-paw"></div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="cat-leg">
+                          <div className="cat-leg">
+                            <div className="cat-leg">
+                              <div className="cat-leg">
+                                <div className="cat-leg">
+                                  <div className="cat-leg">
+                                    <div className="cat-leg">
+                                      <div className="cat-leg">
+                                        <div className="cat-leg">
+                                          <div className="cat-leg">
+                                            <div className="cat-leg">
+                                              <div className="cat-leg">
+                                                <div className="cat-leg">
+                                                  <div className="cat-leg">
+                                                    <div className="cat-leg">
+                                                      <div className="cat-leg">
+                                                        <div className="cat-paw"></div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="cat-tail">
+                          <div className="cat-tail">
+                            <div className="cat-tail">
+                              <div className="cat-tail">
+                                <div className="cat-tail">
+                                  <div className="cat-tail">
+                                    <div className="cat-tail">
+                                      <div className="cat-tail">
+                                        <div className="cat-tail">
+                                          <div className="cat-tail">
+                                            <div className="cat-tail">
+                                              <div className="cat-tail">
+                                                <div className="cat-tail">
+                                                  <div className="cat-tail">
+                                                    <div className="cat-tail">
+                                                      <div className="cat-tail -end"></div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom separator */}
         <div 
-          className={`text-center mt-20 transition-all duration-1000 delay-700 ${
+          className={`text-center mt-12 transition-all duration-1000 delay-700 ${
             heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
           }`}
         >
@@ -143,6 +282,13 @@ const ModernHeroSection = () => {
           </div>
         </div>
       </div>
+      
+      {/* Contact Modal */}
+      <SocialContactModal
+        cat={null}
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
     </section>
   );
 };

@@ -36,9 +36,9 @@ const Admin = () => {
     switch (activeTab) {
       case 'pedigree':
         return (
-          <div className="flex h-[calc(100vh-121px)]">
+          <div className="flex flex-col lg:flex-row min-h-0 flex-1">
             {/* Left Panel - Cat Manager */}
-            <div className="w-2/5 bg-white border-r">
+            <div className="w-full lg:w-2/5 bg-white lg:border-r border-b lg:border-b-0">
               <CatManager
                 onCatSelect={setSelectedCat}
                 selectedCat={selectedCat}
@@ -52,7 +52,7 @@ const Admin = () => {
             </div>
 
             {/* Right Panel - Pedigree Canvas */}
-            <div className="flex-1 bg-background">
+            <div className="flex-1 bg-background min-h-[400px] lg:min-h-0">
               <PedigreeCanvas 
                 selectedCat={selectedCat} 
                 onCanvasReady={setCanvasInstance}
@@ -70,17 +70,17 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-        <div className="flex items-center justify-between px-6 py-4">
-          <h1 className="font-playfair text-2xl font-semibold text-black">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4">
+          <h1 className="font-playfair text-xl sm:text-2xl font-semibold text-black">
             Admin Dashboard
           </h1>
           <Button
             onClick={logout}
             variant="outline"
-            className="border-black text-black hover:bg-black hover:text-white"
+            className="border-black text-black hover:bg-black hover:text-white min-h-[44px] px-4"
           >
             Изход
           </Button>
@@ -89,7 +89,7 @@ const Admin = () => {
 
       {/* Tab Navigation */}
       <div className="bg-white border-b">
-        <div className="flex px-6">
+        <div className="flex px-4 sm:px-6 overflow-x-auto">
           {[
             { id: 'pedigree' as AdminTab, label: 'Родословие' },
             { id: 'tiktok' as AdminTab, label: 'TikTok видеа' },
@@ -98,7 +98,7 @@ const Admin = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`px-4 sm:px-6 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-h-[44px] ${
                 activeTab === tab.id
                   ? 'border-black text-black'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -111,7 +111,9 @@ const Admin = () => {
       </div>
 
       {/* Main Content */}
-      {renderTabContent()}
+      <div className="flex-1 flex flex-col min-h-0">
+        {renderTabContent()}
+      </div>
     </div>
   );
 };

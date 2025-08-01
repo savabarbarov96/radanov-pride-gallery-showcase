@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ImageUpload } from '@/components/ui/ImageUpload';
 import { Trash2, Edit, Eye, EyeOff, Plus, ExternalLink } from 'lucide-react';
 import { 
   useAllTikTokVideos, 
@@ -150,6 +151,7 @@ const TikTokVideoManager = () => {
               resetForm();
             }}
             variant="outline"
+            className="min-h-[44px]"
           >
             ← Назад
           </Button>
@@ -160,7 +162,7 @@ const TikTokVideoManager = () => {
           <Card>
             <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="title">Заглавие *</Label>
                     <Input
@@ -204,22 +206,22 @@ const TikTokVideoManager = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="thumbnail">URL на thumbnail *</Label>
-                  <Input
-                    id="thumbnail"
-                    type="url"
-                    value={formData.thumbnail}
-                    onChange={(e) => setFormData(prev => ({ ...prev, thumbnail: e.target.value }))}
-                    placeholder="https://..."
-                    required
-                  />
-                  {formData.thumbnail && (
-                    <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
-                      <img src={formData.thumbnail} alt="Thumbnail preview" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                </div>
+                <ImageUpload
+                  label="Thumbnail изображение *"
+                  placeholder="Изберете thumbnail изображение"
+                  required
+                  currentImageUrl={formData.thumbnail}
+                  onUploadSuccess={(url, storageId) => {
+                    setFormData(prev => ({ ...prev, thumbnail: url }));
+                  }}
+                  onUploadError={(error) => {
+                    console.error('Thumbnail upload error:', error);
+                  }}
+                  uploadOptions={{
+                    imageType: 'general'
+                  }}
+                  previewSize="medium"
+                />
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Описание</Label>
@@ -242,7 +244,7 @@ const TikTokVideoManager = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="viewCount">Брой гледания</Label>
                     <Input
@@ -274,13 +276,14 @@ const TikTokVideoManager = () => {
                   <Label htmlFor="isActive">Активно видео</Label>
                 </div>
 
-                <div className="flex gap-2">
-                  <Button type="submit" className="bg-black text-white hover:bg-gray-800">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
+                  <Button type="submit" className="bg-black text-white hover:bg-gray-800 min-h-[44px] w-full sm:w-auto">
                     {editingVideo ? 'Запази' : 'Добави'}
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
+                    className="min-h-[44px] w-full sm:w-auto"
                     onClick={() => {
                       setIsAddingVideo(false);
                       setEditingVideo(null);
@@ -305,7 +308,7 @@ const TikTokVideoManager = () => {
         <h2 className="font-playfair text-xl font-semibold">TikTok видеа</h2>
         <Button
           onClick={() => setIsAddingVideo(true)}
-          className="bg-black text-white hover:bg-gray-800"
+          className="bg-black text-white hover:bg-gray-800 min-h-[44px]"
         >
           <Plus className="w-4 h-4 mr-2" />
           Добави видео
@@ -368,38 +371,42 @@ const TikTokVideoManager = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => window.open(video.videoUrl, '_blank')}
-                    className="flex-1"
+                    className="flex-1 min-h-[44px] sm:min-h-[36px]"
                   >
-                    <ExternalLink className="w-3 h-3 mr-1" />
+                    <ExternalLink className="w-4 h-4 mr-2" />
                     Виж
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleToggleActive(video._id)}
-                  >
-                    {video.isActive ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleEdit(video)}
-                  >
-                    <Edit className="w-3 h-3" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDelete(video._id)}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
+                  <div className="flex gap-2 sm:gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleToggleActive(video._id)}
+                      className="flex-1 sm:flex-none min-h-[44px] sm:min-h-[36px] min-w-[44px]"
+                    >
+                      {video.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEdit(video)}
+                      className="flex-1 sm:flex-none min-h-[44px] sm:min-h-[36px] min-w-[44px]"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDelete(video._id)}
+                      className="text-destructive hover:text-destructive flex-1 sm:flex-none min-h-[44px] sm:min-h-[36px] min-w-[44px]"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

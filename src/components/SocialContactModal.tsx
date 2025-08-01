@@ -12,7 +12,7 @@ interface SocialContactModalProps {
 const SocialContactModal = ({ cat, isOpen, onClose }: SocialContactModalProps) => {
   const socialSettings = useSocialMediaSettings();
   
-  if (!isOpen || !cat) return null;
+  if (!isOpen) return null;
 
   // Use global social media settings
   const socialPlatforms = [
@@ -67,12 +67,25 @@ const SocialContactModal = ({ cat, isOpen, onClose }: SocialContactModalProps) =
 
         {/* Message */}
         <div className="text-center mb-8">
-          <p className="text-foreground text-lg mb-2">
-            За да започнем процеса за <span className="font-semibold">{cat.name}</span>
-          </p>
-          <p className="text-muted-foreground text-sm leading-relaxed">
-            Изпратете ни съобщение с името на котката в някоя от тези социални платформи, за да започнем процеса
-          </p>
+          {cat ? (
+            <>
+              <p className="text-foreground text-lg mb-2">
+                За да започнем процеса за <span className="font-semibold">{cat.name}</span>
+              </p>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Изпратете ни съобщение с името на котката в някоя от тези социални платформи, за да започнем процеса
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-foreground text-lg mb-2">
+                Свържете се с нас
+              </p>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Изберете една от социалните платформи за да се свържете с нас за информация
+              </p>
+            </>
+          )}
         </div>
 
         {/* Social Media Buttons */}
@@ -93,11 +106,13 @@ const SocialContactModal = ({ cat, isOpen, onClose }: SocialContactModalProps) =
         </div>
 
         {/* Footer Note */}
-        <div className="text-center mt-6 pt-4 border-t border-border">
-          <p className="text-muted-foreground text-xs">
-            Не забравяйте да споменете името на котката: <span className="font-medium text-foreground">{cat.name}</span>
-          </p>
-        </div>
+        {cat && (
+          <div className="text-center mt-6 pt-4 border-t border-border">
+            <p className="text-muted-foreground text-xs">
+              Не забравяйте да споменете името на котката: <span className="font-medium text-foreground">{cat.name}</span>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

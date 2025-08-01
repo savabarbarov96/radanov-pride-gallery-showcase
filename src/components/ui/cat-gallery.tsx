@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { LayoutGrid } from "@/components/ui/layout-grid";
 import { useDisplayedCatsByCategory } from "@/services/convexCatService";
 import { CatData } from "@/services/convexCatService";
+import CatStatusTag from "./cat-status-tag";
 
 type CategoryFilter = 'all' | 'kitten' | 'adult';
 
@@ -53,6 +54,11 @@ export default function CatGallery() {
       id: cat._id,
       content: (
         <div>
+          {/* Status Tag at the top */}
+          <div className="mb-3">
+            <CatStatusTag status={cat.status} variant="compact" />
+          </div>
+          
           <p className="font-bold md:text-4xl text-xl text-white">
             {cat.name}
           </p>
