@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useCreateCat, useUpdateCat, useDeleteCat, useToggleCatDisplay, useCats, CatData } from '@/services/convexCatService';
+import { useFileUpload, validateImageFile } from '@/services/convexFileService';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -25,6 +26,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
   const updateCat = useUpdateCat();
   const deleteCat = useDeleteCat();
   const toggleCatDisplay = useToggleCatDisplay();
+  const { uploadFile } = useFileUpload();
 
   const [isAddingCat, setIsAddingCat] = useState(false);
   const [editingCat, setEditingCat] = useState<CatData | null>(null);
@@ -161,15 +163,30 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // For now, we'll still use data URL for profile images
-      // This can be updated later to use Convex storage as well
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const imageUrl = e.target?.result as string;
-        setFormData(prev => ({ ...prev, image: imageUrl }));
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Validate the file
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
+
+    try {
+      // Upload to Convex storage with compression
+      const result = await uploadFile(file, {
+        imageType: 'profile',
+        associatedCatId: editingCat?._id,
+      });
+
+      if (result.success && result.url) {
+        setFormData(prev => ({ ...prev, image: result.url }));
+      } else {
+        alert(result.error || 'Грешка при качването на изображението');
+      }
+    } catch (error) {
+      console.error('Image upload error:', error);
+      alert('Грешка при качването на изображението');
     }
   };
 
