@@ -40,6 +40,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
     birthDate: '',
     registrationNumber: '',
     freeText: '',
+    internalNotes: '',
     status: 'Достъпен',
     isDisplayed: true,
     image: '',
@@ -59,6 +60,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       birthDate: '',
       registrationNumber: '',
       freeText: '',
+      internalNotes: '',
       status: 'Достъпен',
       isDisplayed: true,
       image: '',
@@ -84,6 +86,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
           birthDate: formData.birthDate,
           registrationNumber: formData.registrationNumber || undefined,
           freeText: formData.freeText || undefined,
+          internalNotes: formData.internalNotes || undefined,
           status: formData.status,
           isDisplayed: formData.isDisplayed,
           image: formData.image,
@@ -103,6 +106,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
           birthDate: formData.birthDate,
           registrationNumber: formData.registrationNumber || undefined,
           freeText: formData.freeText || undefined,
+          internalNotes: formData.internalNotes || undefined,
           status: formData.status,
           isDisplayed: formData.isDisplayed,
           image: formData.image,
@@ -132,6 +136,7 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       birthDate: cat.birthDate,
       registrationNumber: cat.registrationNumber || '',
       freeText: cat.freeText || '',
+      internalNotes: cat.internalNotes || '',
       status: cat.status,
       isDisplayed: cat.isDisplayed,
       image: cat.image,
@@ -366,6 +371,16 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                   />
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="internalNotes">Бележка (вътрешна)</Label>
+                  <Textarea
+                    id="internalNotes"
+                    value={formData.internalNotes}
+                    onChange={(e) => setFormData(prev => ({ ...prev, internalNotes: e.target.value }))}
+                    placeholder="Вътрешни бележки..."
+                    rows={2}
+                  />
+                </div>
 
                 <div className="flex items-center space-x-2">
                   <Switch

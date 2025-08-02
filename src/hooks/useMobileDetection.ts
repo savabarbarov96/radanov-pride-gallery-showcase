@@ -27,7 +27,7 @@ export const useMobileDetection = (): MobileDetectionResult => {
       const isTouchDevice = (
         'ontouchstart' in window ||
         navigator.maxTouchPoints > 0 ||
-        // @ts-ignore - for older browsers
+        // @ts-expect-error - Browser compatibility check for older browsers
         navigator.msMaxTouchPoints > 0
       );
       

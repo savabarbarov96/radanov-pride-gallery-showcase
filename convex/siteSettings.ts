@@ -39,7 +39,7 @@ export const getSocialMediaSettings = query({
       .collect();
     
     // Convert to key-value object
-    const socialMedia: Record<string, any> = {};
+    const socialMedia: Record<string, unknown> = {};
     settings.forEach(setting => {
       try {
         socialMedia[setting.key] = JSON.parse(setting.value);

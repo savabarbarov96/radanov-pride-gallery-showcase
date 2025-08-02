@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { CatData, usePedigreeConnections, useAddConnection, useRemoveConnection, useParents, useChildren, useCats } from '@/services/convexCatService';
 import { PedigreeConnection } from '@/types/pedigree';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
@@ -38,10 +38,12 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
   const { isMobile, screenSize } = useMobileDetection();
 
   // Convex hooks
-  const connections = usePedigreeConnections() || [];
+  const connectionsData = usePedigreeConnections();
+  const connections = useMemo(() => connectionsData || [], [connectionsData]);
   const addConnection = useAddConnection();
   const removeConnection = useRemoveConnection();
-  const allCats = useCats() || [];
+  const allCatsData = useCats();
+  const allCats = useMemo(() => allCatsData || [], [allCatsData]);
 
   const { startDrag, setContainer, isDragging } = useDragAndDrop({
     constrainToParent: true,
@@ -68,7 +70,7 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
     setContainer(canvasRef.current);
   }, [setContainer]);
 
-  const loadPedigreeForCat = async (cat: CatData) => {
+  const loadPedigreeForCat = useCallback(async (cat: CatData) => {
     // Clear existing nodes
     setNodes([]);
     
@@ -103,7 +105,7 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
     }
     
     setNodes(newNodes);
-  };
+  }, [connections, allCats]);
 
   const handleNodeMouseDown = (e: React.MouseEvent, node: CanvasNode) => {
     e.preventDefault();
@@ -253,7 +255,7 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
     setConnectionMode(null);
   };
 
-  const addCatToCanvas = (cat: CatData, position?: { x: number; y: number }) => {
+  const addCatToCanvas = useCallback((cat: CatData, position?: { x: number; y: number }) => {
     // Check if cat is already on canvas
     if (nodes.some(node => node.cat._id === cat._id)) {
       // Show visual feedback that cat is already on canvas
@@ -289,7 +291,7 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
       description: `${cat.name} е добавена на canvas-а`,
       variant: "default"
     });
-  };
+  }, [nodes, toast]);
 
   // Filter cats for search
   const filteredCats = allCats.filter(cat =>
@@ -487,12 +489,12 @@ const PedigreeCanvas = ({ selectedCat, onCanvasReady }: PedigreeCanvasProps) => 
     if (selectedCat && connections && allCats) {
       loadPedigreeForCat(selectedCat);
     }
-  }, [selectedCat, connections, allCats]);
+  }, [selectedCat, connections, allCats, loadPedigreeForCat]);
 
   // Expose canvas methods to parent
   useEffect(() => {
     onCanvasReady?.({ addCatToCanvas });
-  }, [onCanvasReady]);
+  }, [onCanvasReady, addCatToCanvas]);
 
   // Add keyboard shortcuts
   useEffect(() => {

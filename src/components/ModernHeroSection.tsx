@@ -4,7 +4,6 @@ import ContainerTextFlipDemo from "@/components/ui/container-text-flip-demo";
 import featuredCat1 from "@/assets/featured-cat-1.jpg";
 import featuredCat2 from "@/assets/featured-cat-2.jpg";
 import { useScrollAnimation, useParallax } from "@/hooks/useScrollAnimation";
-import istockCat from '@/assets/istockphoto-1092493548-612x612.jpg';
 import modelCat1 from '@/assets/model-cat-1.jpg';
 import modelCat2 from '@/assets/model-cat-2.jpg';
 import modelCat3 from '@/assets/model-cat-3.jpg';

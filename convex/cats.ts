@@ -76,6 +76,8 @@ export const createCat = mutation({
     registrationNumber: v.optional(v.string()),
     isDisplayed: v.optional(v.boolean()),
     freeText: v.optional(v.string()),
+    // Internal notes field (not displayed publicly)
+    internalNotes: v.optional(v.string()),
     // New fields for gallery filtering
     category: v.optional(v.union(v.literal("kitten"), v.literal("adult"), v.literal("all"))),
   },
@@ -105,6 +107,8 @@ export const updateCat = mutation({
     registrationNumber: v.optional(v.string()),
     isDisplayed: v.optional(v.boolean()),
     freeText: v.optional(v.string()),
+    // Internal notes field (not displayed publicly)
+    internalNotes: v.optional(v.string()),
     // New fields for gallery filtering
     category: v.optional(v.union(v.literal("kitten"), v.literal("adult"), v.literal("all"))),
   },

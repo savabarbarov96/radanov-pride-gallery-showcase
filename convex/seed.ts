@@ -5,7 +5,7 @@ import { internal } from "./_generated/api";
 interface SeedDatabaseResult {
   success: boolean;
   message: string;
-  cats?: Array<{ id: any; name: string }>;
+  cats?: Array<{ id: string; name: string }>;
 }
 
 interface ClearDatabaseResult {

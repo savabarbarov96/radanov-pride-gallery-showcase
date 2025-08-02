@@ -193,6 +193,8 @@ export type CatData = {
   registrationNumber?: string;
   isDisplayed: boolean;
   freeText?: string;
+  // Internal notes field (not displayed publicly)
+  internalNotes?: string;
   // New fields for gallery filtering
   category?: 'kitten' | 'adult' | 'all';
 };
