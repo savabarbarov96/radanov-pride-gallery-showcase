@@ -6,24 +6,35 @@ import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import { LocationBasedTheme } from "@/hooks/useTheme";
 import { Helmet } from 'react-helmet-async';
+import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
+
+const AppContent = () => {
+  const { t } = useLanguage();
+  
+  return (
+    <>
+      <Toaster />
+      <Sonner />
+      <Helmet>
+        <title>{t('meta.title')}</title>
+        <meta name="description" content={t('meta.description')} />
+      </Helmet>
+      <LocationBasedTheme>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/admin" element={<Admin />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </LocationBasedTheme>
+    </>
+  );
+};
 
 const App = () => (
-  <>
-    <Toaster />
-    <Sonner />
-    <Helmet>
-      <title>Чистокръвни Мейн Куун Котки</title>
-      <meta name="description" content="Чистокръвни Maine Coon котки от развъдник Radanov Pride. Красота, характер и здраве в едно!" />
-    </Helmet>
-    <LocationBasedTheme>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/admin" element={<Admin />} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </LocationBasedTheme>
-  </>
+  <LanguageProvider>
+    <AppContent />
+  </LanguageProvider>
 );
 
 export default App;

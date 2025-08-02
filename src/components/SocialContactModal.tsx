@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Facebook, Instagram } from 'lucide-react';
 import { CatData } from '@/services/convexCatService';
 import { useSocialMediaSettings } from '@/services/convexSiteSettingsService';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface SocialContactModalProps {
   cat: CatData | null;
@@ -11,6 +12,7 @@ interface SocialContactModalProps {
 
 const SocialContactModal = ({ cat, isOpen, onClose }: SocialContactModalProps) => {
   const socialSettings = useSocialMediaSettings();
+  const { t } = useLanguage();
   
   if (!isOpen) return null;
 
@@ -54,7 +56,7 @@ const SocialContactModal = ({ cat, isOpen, onClose }: SocialContactModalProps) =
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="font-playfair text-2xl font-semibold text-foreground">
-            Свържете се с нас
+            {t('contact.modalTitle')}
           </h2>
           <Button
             onClick={onClose}
@@ -70,19 +72,19 @@ const SocialContactModal = ({ cat, isOpen, onClose }: SocialContactModalProps) =
           {cat ? (
             <>
               <p className="text-foreground text-lg mb-2">
-                За да започнем процеса за <span className="font-semibold">{cat.name}</span>
+                {t('contact.processStart')} <span className="font-semibold">{cat.name}</span>
               </p>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Изпратете ни съобщение с името на котката в някоя от тези социални платформи, за да започнем процеса
+                {t('contact.sendMessage')}
               </p>
             </>
           ) : (
             <>
               <p className="text-foreground text-lg mb-2">
-                Свържете се с нас
+                {t('contact.getInTouch')}
               </p>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Изберете една от социалните платформи за да се свържете с нас за информация
+                {t('contact.socialPlatforms')}
               </p>
             </>
           )}
@@ -99,7 +101,7 @@ const SocialContactModal = ({ cat, isOpen, onClose }: SocialContactModalProps) =
                 className={`w-full flex items-center justify-center gap-3 py-4 px-6 rounded-xl text-white font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 ${platform.color}`}
               >
                 <IconComponent />
-                <span>Свържете се чрез {platform.name}</span>
+                <span>{t('contact.connectVia')} {platform.name}</span>
               </button>
             );
           })}
@@ -109,7 +111,7 @@ const SocialContactModal = ({ cat, isOpen, onClose }: SocialContactModalProps) =
         {cat && (
           <div className="text-center mt-6 pt-4 border-t border-border">
             <p className="text-muted-foreground text-xs">
-              Не забравяйте да споменете името на котката: <span className="font-medium text-foreground">{cat.name}</span>
+  {t('contact.mentionCat')} <span className="font-medium text-foreground">{cat.name}</span>
             </p>
           </div>
         )}

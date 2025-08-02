@@ -8,6 +8,7 @@ import modelCat1 from '@/assets/model-cat-1.jpg';
 import modelCat2 from '@/assets/model-cat-2.jpg';
 import modelCat3 from '@/assets/model-cat-3.jpg';
 import SocialContactModal from "./SocialContactModal";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const ModernHeroSection = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -15,6 +16,7 @@ const ModernHeroSection = () => {
   const { elementRef: textRef, isVisible: textVisible } = useScrollAnimation(0.3);
   const { elementRef: photosRef, isVisible: photosVisible } = useScrollAnimation(0.1);
   const { elementRef: parallaxRef, offset: parallaxOffset } = useParallax(0.3);
+  const { t } = useLanguage();
 
   return (
     <section className="min-h-[85vh] flex items-center justify-center py-10 md:py-20 bg-background relative overflow-hidden">
@@ -33,10 +35,10 @@ const ModernHeroSection = () => {
                   <ContainerTextFlipDemo />
                 </div>
                 <span className="block border-l-4 border-foreground pl-4 md:pl-6 ml-0 font-normal mt-3 md:mt-4 animate-fade-in-left animate-delay-200">
-                  Мейн Куун
+                  {t('hero.mainTitle')}
                 </span>
                 <span className="block text-2xl md:text-4xl lg:text-5xl xl:text-6xl mt-3 md:mt-4 font-light text-muted-foreground animate-fade-in-left animate-delay-300">
-                  котки
+                  {t('hero.subtitle')}
                 </span>
               </div>
             </div>
@@ -46,7 +48,7 @@ const ModernHeroSection = () => {
                 className="px-6 md:px-8 py-3 md:py-4 text-sm md:text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors animate-fade-in-up animate-delay-400"
                 onClick={() => setIsContactModalOpen(true)}
               >
-                Кликни за връзка
+                {t('hero.ctaButton')}
               </Button>
             </div>
           </div>

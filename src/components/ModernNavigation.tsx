@@ -2,12 +2,15 @@ import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useActiveSection, useScrollPosition } from "@/hooks/useScrollAnimation";
 import SocialContactModal from "./SocialContactModal";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const ModernNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const activeSection = useActiveSection(['home', 'models', 'tiktok', 'contact']);
   const { scrollY } = useScrollPosition();
+  const { t } = useLanguage();
 
   const scrollToSection = useCallback((sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -45,7 +48,7 @@ const ModernNavigation = () => {
                 activeSection === 'home' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              Начало
+              {t('navigation.home')}
             </button>
             <button 
               onClick={() => scrollToSection('models')}
@@ -53,7 +56,7 @@ const ModernNavigation = () => {
                 activeSection === 'models' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              Модели
+              {t('navigation.models')}
             </button>
             <button 
               onClick={() => scrollToSection('tiktok')}
@@ -61,15 +64,19 @@ const ModernNavigation = () => {
                 activeSection === 'tiktok' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              TikTok
+              {t('navigation.tiktok')}
             </button>
+            
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+            
             <Button 
               variant="outline" 
               size="sm" 
               className="bg-card border-border text-foreground hover:bg-muted"
               onClick={() => setIsContactModalOpen(true)}
             >
-              Контакт
+              {t('navigation.contact')}
             </Button>
           </div>
 
@@ -100,7 +107,7 @@ const ModernNavigation = () => {
                   activeSection === 'home' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                Начало
+                {t('navigation.home')}
               </button>
               <button 
                 onClick={() => scrollToSection('models')}
@@ -108,7 +115,7 @@ const ModernNavigation = () => {
                   activeSection === 'models' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                Модели
+                {t('navigation.models')}
               </button>
               <button 
                 onClick={() => scrollToSection('tiktok')}
@@ -116,8 +123,14 @@ const ModernNavigation = () => {
                   activeSection === 'tiktok' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                TikTok
+                {t('navigation.tiktok')}
               </button>
+              
+              {/* Mobile Language Switcher */}
+              <div className="px-3 py-2">
+                <LanguageSwitcher />
+              </div>
+              
               <div className="px-3 py-2">
                 <Button 
                   variant="outline" 
@@ -128,7 +141,7 @@ const ModernNavigation = () => {
                     setIsOpen(false);
                   }}
                 >
-                  Контакт
+                  {t('navigation.contact')}
                 </Button>
               </div>
             </div>

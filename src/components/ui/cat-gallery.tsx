@@ -5,16 +5,18 @@ import { LayoutGrid } from "@/components/ui/layout-grid";
 import { useDisplayedCatsByCategory } from "@/services/convexCatService";
 import { CatData } from "@/services/convexCatService";
 import CatStatusTag from "./cat-status-tag";
+import { useLanguage } from "@/hooks/useLanguage";
 
 type CategoryFilter = 'all' | 'kitten' | 'adult';
 
-const categoryLabels = {
-  all: 'Всички',
-  kitten: 'Котенца', 
-  adult: 'Възрастни'
-};
-
 export default function CatGallery() {
+  const { t } = useLanguage();
+  
+  const categoryLabels = {
+    all: t('gallery.categories.all'),
+    kitten: t('gallery.categories.kitten'),
+    adult: t('gallery.categories.adult')
+  };
   const [isVisible, setIsVisible] = useState(true);
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
   const ref = useRef(null);
@@ -103,10 +105,10 @@ export default function CatGallery() {
       <div className="container mx-auto px-6 lg:px-8">
         <div className="text-center mb-16">
           <p className="text-sm text-muted-foreground tracking-wide uppercase mb-2">
-            Премиум колекция
+            {t('gallery.subtitle')}
           </p>
           <h2 className="font-playfair text-4xl lg:text-5xl font-light text-foreground">
-            Галерия
+            {t('gallery.title')}
           </h2>
         </div>
 

@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "title": "Чистокръвни Мейн Куун Котки",
+    "description": "Чистокръвни Maine Coon котки от развъдник Radanov Pride. Красота, характер и здраве в едно!"
+  },
+  "navigation": {
+    "home": "Начало",
+    "models": "Модели",
+    "tiktok": "TikTok",
+    "contact": "Контакт"
+  },
+  "hero": {
+    "mainTitle": "Мейн Куун",
+    "subtitle": "котки",
+    "ctaButton": "Кликни за връзка",
+    "flipWords": ["Чистокръвни", "Гальовни", "Красиви"]
+  },
+  "featuredModels": {
+    "title": "Познайте нашите звезди",
+    "categories": {
+      "all": "Всички",
+      "adult": "Възрастни",
+      "kitten": "Котенца",
+      "retired": "В пенсия"
+    },
+    "galleryLabel": "Галерия"
+  },
+  "gallery": {
+    "subtitle": "Премиум колекция",
+    "title": "Галерия",
+    "categories": {
+      "all": "Всички",
+      "adult": "Възрастни",
+      "kitten": "Котенца",
+      "retired": "В пенсия"
+    }
+  },
+  "tiktok": {
+    "title": "Нашите TikTok Видеа",
+    "subtitle": "Последвайте ни в TikTok за ежедневни моменти с нашите красиви Maine Coon котки",
+    "followButton": "Последвайте ни в TikTok",
+    "followDescription": "@radanovpridemainecoon - Ежедневни моменти с нашите Maine Coon котки"
+  },
+  "contact": {
+    "modalTitle": "Свържете се с нас",
+    "processStart": "За да започнем процеса за",
+    "sendMessage": "Изпратете ни съобщение с името на котката в някоя от тези социални платформи, за да започнем процеса",
+    "getInTouch": "Свържете се с нас",
+    "socialPlatforms": "Изберете една от социалните платформи за да се свържете с нас за информация",
+    "connectVia": "Свържете се чрез",
+    "mentionCat": "Не забравяйте да споменете името на котката:"
+  },
+  "pedigree": {
+    "title": "Родословие",
+    "familyTree": "Семейно дърво на",
+    "link": "Връзка: radanov-pride.com",
+    "loading": "Зареждане на родословието...",
+    "clickInfo": "Кликни за повече информация",
+    "mother": "Майка",
+    "father": "Баща",
+    "noData": "Няма данни",
+    "noParentInfo": "Няма налична информация за родителите",
+    "notEntered": "Родословието все още не е въведено в системата",
+    "catInfo": "Информация за котката",
+    "name": "Име:",
+    "age": "Възраст:",
+    "color": "Цвят:",
+    "status": "Статус:",
+    "gender": "Пол:",
+    "male": "Мъжки",
+    "female": "Женски",
+    "additionalInfo": "Допълнителна информация:"
+  },
+  "featuredModels": {
+    "title": "Познайте нашите звезди",
+    "categories": {
+      "all": "Всички",
+      "adult": "Възрастни",
+      "kitten": "Котенца",
+      "retired": "В пенсия"
+    },
+    "galleryLabel": "Галерия",
+    "loading": "Зареждане на котките...",
+    "noAvailable": "Няма налични котки в момента",
+    "selectModel": "Избери този модел",
+    "viewPedigree": "Виж родословие",
+    "morePhotos": "Още снимки"
+  },
+  "footer": {
+    "address": "България, Разлог, България, 2760",
+    "copyright": "© 2024 Radanov Pride. Всички права запазени."
+  }
+}

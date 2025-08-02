@@ -9,15 +9,17 @@ import EnhancedImageGallery from "./ui/enhanced-image-gallery";
 import CatTikTokVideos from "./CatTikTokVideos";
 import { useTikTokVideosByCat } from "@/services/convexTikTokService";
 import CatStatusTag from "./ui/cat-status-tag";
+import { useLanguage } from "@/hooks/useLanguage";
 
 type CategoryFilter = 'all' | 'kitten';
 
-const categoryLabels = {
-  all: 'Всички',
-  kitten: 'Коте'
-};
-
 const FeaturedModelsSection = () => {
+  const { t } = useLanguage();
+  
+  const categoryLabels = {
+    all: t('featuredModels.categories.all'),
+    kitten: t('featuredModels.categories.kitten')
+  };
   const [selectedCat, setSelectedCat] = useState<CatData | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isPedigreeOpen, setIsPedigreeOpen] = useState(false);
@@ -94,7 +96,7 @@ const FeaturedModelsSection = () => {
             }`}
           >
             <h2 className="font-playfair text-4xl lg:text-5xl font-light text-foreground">
-              Познайте нашите звезди
+              {t('featuredModels.title')}
             </h2>
           </div>
 
@@ -126,13 +128,13 @@ const FeaturedModelsSection = () => {
           >
             {isLoading && (
               <div className="text-center">
-                <p className="text-muted-foreground">Зареждане на котките...</p>
+                <p className="text-muted-foreground">{t('featuredModels.loading')}</p>
               </div>
             )}
             
             {isEmpty && (
               <div className="text-center">
-                <p className="text-muted-foreground">Няма налични котки в момента</p>
+                <p className="text-muted-foreground">{t('featuredModels.noAvailable')}</p>
               </div>
             )}
             
@@ -193,7 +195,7 @@ const FeaturedModelsSection = () => {
                           className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-xs sm:text-sm"
                           onClick={() => openGallery(cat)}
                         >
-                          Избери този модел
+                          {t('featuredModels.selectModel')}
                         </Button>
                         <Button 
                           variant="outline" 
@@ -204,7 +206,7 @@ const FeaturedModelsSection = () => {
                             openPedigree(cat);
                           }}
                         >
-                          Виж родословие
+                          {t('featuredModels.viewPedigree')}
                         </Button>
                       </div>
                     </div>
@@ -251,7 +253,7 @@ const FeaturedModelsSection = () => {
                     className="w-full rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
                     onClick={() => {
                       const allImages = [selectedCat.image, ...selectedCat.gallery];
-                      openEnhancedGallery(allImages, `${selectedCat.name} - Галерия`);
+                      openEnhancedGallery(allImages, `${selectedCat.name} - ${t('featuredModels.galleryLabel')}`);
                     }}
                   />
                   
@@ -260,14 +262,14 @@ const FeaturedModelsSection = () => {
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <h4 className="text-sm font-medium text-muted-foreground">
-                          Още снимки ({selectedCat.gallery.length})
+                          {t('featuredModels.morePhotos')} ({selectedCat.gallery.length})
                         </h4>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => {
                             const allImages = [selectedCat.image, ...selectedCat.gallery];
-                            openEnhancedGallery(allImages, `${selectedCat.name} - Галерия`);
+                            openEnhancedGallery(allImages, `${selectedCat.name} - ${t('featuredModels.galleryLabel')}`);
                           }}
                         >
                           Виж всички
@@ -282,7 +284,7 @@ const FeaturedModelsSection = () => {
                             className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
                             onClick={() => {
                               const allImages = [selectedCat.image, ...selectedCat.gallery];
-                              openEnhancedGallery(allImages, `${selectedCat.name} - Галерия`);
+                              openEnhancedGallery(allImages, `${selectedCat.name} - ${t('featuredModels.galleryLabel')}`);
                             }}
                           />
                         ))}

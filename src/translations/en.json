@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "title": "Purebred Maine Coon Cats",
+    "description": "Purebred Maine Coon cats from Radanov Pride cattery. Beauty, character and health in one!"
+  },
+  "navigation": {
+    "home": "Home",
+    "models": "Models",
+    "tiktok": "TikTok",
+    "contact": "Contact"
+  },
+  "hero": {
+    "mainTitle": "Maine Coon",
+    "subtitle": "cats",
+    "ctaButton": "Click to Contact",
+    "flipWords": ["Purebred", "Majestic", "Beautiful"]
+  },
+  "featuredModels": {
+    "title": "Meet Our Stars",
+    "categories": {
+      "all": "All",
+      "adult": "Adults",
+      "kitten": "Kittens",
+      "retired": "Retired"
+    },
+    "galleryLabel": "Gallery"
+  },
+  "gallery": {
+    "subtitle": "Premium Collection",
+    "title": "Gallery",
+    "categories": {
+      "all": "All",
+      "adult": "Adults",
+      "kitten": "Kittens",
+      "retired": "Retired"
+    }
+  },
+  "tiktok": {
+    "title": "Our TikTok Videos",
+    "subtitle": "Follow us on TikTok for daily moments with our beautiful Maine Coon cats",
+    "followButton": "Follow us on TikTok",
+    "followDescription": "@radanovpridemainecoon - Daily moments with our Maine Coon cats"
+  },
+  "contact": {
+    "modalTitle": "Contact Us",
+    "processStart": "To start the process for",
+    "sendMessage": "Send us a message with the cat's name on any of these social platforms to start the process",
+    "getInTouch": "Get in touch with us",
+    "socialPlatforms": "Choose one of the social platforms to contact us for information",
+    "connectVia": "Connect via",
+    "mentionCat": "Don't forget to mention the cat's name:"
+  },
+  "pedigree": {
+    "title": "Pedigree",
+    "familyTree": "Family tree of",
+    "link": "Link: radanov-pride.com",
+    "loading": "Loading pedigree...",
+    "clickInfo": "Click for more information",
+    "mother": "Mother",
+    "father": "Father",
+    "noData": "No data available",
+    "noParentInfo": "No parent information available",
+    "notEntered": "Pedigree not yet entered in the system",
+    "catInfo": "Cat Information",
+    "name": "Name:",
+    "age": "Age:",
+    "color": "Color:",
+    "status": "Status:",
+    "gender": "Gender:",
+    "male": "Male",
+    "female": "Female",
+    "additionalInfo": "Additional Information:"
+  },
+  "featuredModels": {
+    "title": "Meet Our Stars",
+    "categories": {
+      "all": "All",
+      "adult": "Adults",
+      "kitten": "Kittens",
+      "retired": "Retired"
+    },
+    "galleryLabel": "Gallery",
+    "loading": "Loading cats...",
+    "noAvailable": "No cats available at the moment",
+    "selectModel": "Select This Model",
+    "viewPedigree": "View Pedigree",
+    "morePhotos": "More Photos"
+  },
+  "footer": {
+    "address": "Bulgaria, Razlog, Bulgaria, 2760",
+    "copyright": "© 2024 Radanov Pride. All rights reserved."
+  }
+}

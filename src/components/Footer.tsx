@@ -1,4 +1,7 @@
+import { useLanguage } from "@/hooks/useLanguage";
+
 const Footer = () => {
+  const { t } = useLanguage();
   return (
     <footer className="bg-black text-white py-8">
       <div className="container mx-auto px-6 lg:px-8">
@@ -6,7 +9,7 @@ const Footer = () => {
           {/* Contact Information */}
           <div className="space-y-2">
             <p className="text-white/90 text-sm">
-              България, Разлог, България, 2760
+  {t('footer.address')}
             </p>
             <p className="text-white/90 text-sm">
               088 851 9001
@@ -37,10 +40,21 @@ const Footer = () => {
             </a>
           </div>
 
-          {/* Copyright */}
-          <div className="border-t border-white/10 pt-4">
+          {/* Copyright and Credits */}
+          <div className="border-t border-white/10 pt-4 space-y-2">
             <p className="text-white/40 text-sm">
-              © 2024 Radanov Pride. Всички права запазени.
+      {t('footer.copyright')}
+            </p>
+            <p className="text-white/60 text-sm">
+              Website created by{' '}
+              <a 
+                href="https://automationaid.eu" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-white hover:text-white/80 underline underline-offset-2 transition-colors font-medium"
+              >
+                AutomationAid.eu
+              </a>
             </p>
           </div>
         </div>
