@@ -28,7 +28,7 @@ const CareGuide = () => {
 						className="w-full h-[42vh] md:h-[52vh] bg-center bg-cover"
 						style={{
 							backgroundImage:
-								"linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.55)), url('https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=1800&auto=format&fit=crop')",
+								"linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.55)), url('/cats/2071859f-7f45-484c-94fb-ff3327c92edd.jpg')",
 						}}
 					>
 						<div className="container mx-auto px-6 lg:px-8 h-full flex items-end pb-10">
@@ -135,7 +135,7 @@ const CareGuide = () => {
 							<Card className="shadow-card overflow-hidden">
 								<CardContent className="p-0">
 									<img
-										src="https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?q=80&w=1200&auto=format&fit=crop"
+										src="/cats/f8a10b0a-5ca9-484c-afe3-c1b626fa6730.jpg"
 										alt="Maine Coon cat portrait"
 										className="w-full h-48 object-cover"
 									/>

@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import ContainerTextFlipDemo from "@/components/ui/container-text-flip-demo";
-import featuredCat1 from "@/assets/featured-cat-1.jpg";
-import featuredCat2 from "@/assets/featured-cat-2.jpg";
 import { useScrollAnimation, useParallax } from "@/hooks/useScrollAnimation";
-import modelCat1 from '@/assets/model-cat-1.jpg';
-import modelCat2 from '@/assets/model-cat-2.jpg';
-import modelCat3 from '@/assets/model-cat-3.jpg';
 import SocialContactModal from "./SocialContactModal";
 import { useLanguage } from "@/hooks/useLanguage";
+
+// Using images from /public/cats/ directory
+const heroImages = {
+  // Main polaroids - front and center
+  main1: "/cats/14fc2162-3763-4a37-8f97-eb7ac21c085d.jpg", // Аврора - elegant white
+  main2: "/cats/ac9cd5e7-9503-4fb8-97c3-9b5a8c066e7f.jpg", // Аполон - golden cream
+  
+  // Decorative polaroids - background
+  deco1: "/cats/1686e1a3-9356-4416-887d-62cf35aa68cf.jpg", // Максимус - dark tabby
+  deco2: "/cats/311b6cf8-a6aa-4314-99a6-3d8be864aea5.jpg", // Титан - red tabby
+  deco3: "/cats/83ba538a-d468-41b3-b667-c1b921e30a5f.jpg", // София - grey-white
+};
 
 const ModernHeroSection = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -70,58 +77,58 @@ const ModernHeroSection = () => {
               {/* Decorative polaroids - hidden on mobile */}
               <div className="hidden md:block absolute -top-10 -left-24 bg-card p-4 shadow-lg transform rotate-6 hover:rotate-0 transition-transform duration-300 animate-float-gentle z-10">
                 <img 
-                  src={modelCat1} 
-                  alt="SILLY1"
+                  src={heroImages.deco1} 
+                  alt="МАКСИМУС"
                   className="w-40 h-40 object-cover"
                 />
                 <div className="mt-2 text-center">
-                  <h3 className="font-bold text-base text-foreground">BUBBLE</h3>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide">SILLY CAT</p>
+                  <h3 className="font-bold text-base text-foreground">МАКСИМУС</h3>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">БЛАГОРОДЕН ГОСПОДИН</p>
                 </div>
               </div>
               <div className="hidden lg:block absolute top-32 -right-32 bg-card p-4 shadow-lg transform -rotate-12 hover:rotate-0 transition-transform duration-300 animate-float-reverse z-10">
                 <img 
-                  src={modelCat2} 
-                  alt="SILLY2"
+                  src={heroImages.deco2} 
+                  alt="ТИТАН"
                   className="w-44 h-44 object-cover"
                 />
                 <div className="mt-2 text-center">
-                  <h3 className="font-bold text-base text-foreground">ZIGGY</h3>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide">SILLY CAT</p>
+                  <h3 className="font-bold text-base text-foreground">ТИТАН</h3>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">МОГЪЩ ВОИН</p>
                 </div>
               </div>
               <div className="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2 bg-card p-4 shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300 animate-float-gentle z-10">
                 <img 
-                  src={modelCat3} 
-                  alt="SILLY3"
+                  src={heroImages.deco3} 
+                  alt="СОФИЯ"
                   className="w-36 h-36 object-cover"
                 />
                 <div className="mt-2 text-center">
-                  <h3 className="font-bold text-base text-foreground">MOMO</h3>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide">SILLY CAT</p>
+                  <h3 className="font-bold text-base text-foreground">СОФИЯ</h3>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">МЪДРАТА ПРИНЦЕСА</p>
                 </div>
               </div>
               {/* Main polaroids - responsive sizing */}
               <div className="relative bg-card p-3 md:p-4 shadow-lg transform hover:rotate-0 transition-transform duration-300 animate-scale-in animate-delay-300 animate-float-gentle z-20">
                 <img 
-                  src={featuredCat1} 
-                  alt="OLIVIA"
+                  src={heroImages.main1} 
+                  alt="АВРОРА"
                   className="w-48 h-48 md:w-60 md:h-60 object-cover"
                 />
                 <div className="mt-3 md:mt-4 text-center">
-                  <h3 className="font-bold text-base md:text-lg text-foreground">OLIVIA</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide">CHAT NOIR ELEGANCE</p>
+                  <h3 className="font-bold text-base md:text-lg text-foreground">АВРОРА</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide">ЕЛЕГАНТНА ПРИНЦЕСА</p>
                 </div>
               </div>
               <div className="absolute top-6 md:top-8 left-16 md:left-20 bg-card p-3 md:p-4 shadow-lg transform hover:rotate-0 transition-transform duration-300 animate-scale-in animate-delay-500 animate-float-reverse z-20">
                 <img 
-                  src={featuredCat2} 
-                  alt="MIA"
+                  src={heroImages.main2} 
+                  alt="АПОЛОН"
                   className="w-48 h-48 md:w-60 md:h-60 object-cover"
                 />
                 <div className="mt-3 md:mt-4 text-center">
-                  <h3 className="font-bold text-base md:text-lg text-foreground">MIA</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide">NOIR</p>
+                  <h3 className="font-bold text-base md:text-lg text-foreground">АПОЛОН</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground uppercase tracking-wide">ЗЛАТНИЯТ ПРИНЦ</p>
                 </div>
               </div>
               {/* Circular logo badge */}

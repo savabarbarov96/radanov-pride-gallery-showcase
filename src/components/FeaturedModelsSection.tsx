@@ -9,6 +9,7 @@ import EnhancedImageGallery from "./ui/enhanced-image-gallery";
 import CatTikTokVideos from "./CatTikTokVideos";
 import { useTikTokVideosByCat } from "@/services/convexTikTokService";
 import CatStatusTag from "./ui/cat-status-tag";
+import JonaliBadge from "./ui/jonali-badge";
 import { useLanguage } from "@/hooks/useLanguage";
 
 type CategoryFilter = 'all' | 'kitten';
@@ -31,6 +32,7 @@ const FeaturedModelsSection = () => {
   const [enhancedGalleryTitle, setEnhancedGalleryTitle] = useState("");
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
   const featuredCats = useDisplayedCatsByCategory(activeFilter);
+  
   const { elementRef: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1);
   const { elementRef: headerRef, isVisible: headerVisible } = useScrollAnimation(0.1);
   const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation(0.1);
@@ -158,11 +160,22 @@ const FeaturedModelsSection = () => {
                       {/* Circular image container */}
                       <div className="relative w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 mx-auto">
                         {/* Status Tag - positioned at top center */}
-                        <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-20">
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
                           <CatStatusTag status={cat.status} />
                         </div>
 
-                        <div className="w-full h-full rounded-full overflow-hidden shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border-4 border-white">
+                        {/* Jonali ribbon - corner */}
+                        {cat.isJonaliMaineCoon && (
+                          <JonaliBadge 
+                            variant="ribbon" 
+                            size="sm" 
+                            position="top-right" 
+                            text="Jonali Maine Coon" 
+                            className="drop-shadow-lg"
+                          />
+                        )}
+
+                        <div className="w-full h-full rounded-full overflow-hidden shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border-4 border-white relative">
                           <img 
                             src={cat.image} 
                             alt={cat.name}

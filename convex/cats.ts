@@ -80,6 +80,8 @@ export const createCat = mutation({
     internalNotes: v.optional(v.string()),
     // New fields for gallery filtering
     category: v.optional(v.union(v.literal("kitten"), v.literal("adult"), v.literal("all"))),
+    // JonaliMaineCoon marking
+    isJonaliMaineCoon: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const catId = await ctx.db.insert("cats", {
@@ -111,6 +113,8 @@ export const updateCat = mutation({
     internalNotes: v.optional(v.string()),
     // New fields for gallery filtering
     category: v.optional(v.union(v.literal("kitten"), v.literal("adult"), v.literal("all"))),
+    // JonaliMaineCoon marking
+    isJonaliMaineCoon: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;

@@ -197,6 +197,8 @@ export type CatData = {
   internalNotes?: string;
   // New fields for gallery filtering
   category?: 'kitten' | 'adult' | 'all';
+  // JonaliMaineCoon marking
+  isJonaliMaineCoon?: boolean;
 };
 
 export type PedigreeConnection = {

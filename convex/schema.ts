@@ -19,12 +19,16 @@ export default defineSchema({
     freeText: v.optional(v.string()),
     // New fields for gallery filtering
     category: v.optional(v.union(v.literal("kitten"), v.literal("adult"), v.literal("all"))),
+    // JonaliMaineCoon marking
+    isJonaliMaineCoon: v.optional(v.boolean()),
   })
     .index("by_displayed", ["isDisplayed"])
     .index("by_gender", ["gender"])
     .index("by_registration", ["registrationNumber"])
     .index("by_category", ["category"])
-    .index("by_category_displayed", ["category", "isDisplayed"]),
+    .index("by_category_displayed", ["category", "isDisplayed"])
+    .index("by_jonali", ["isJonaliMaineCoon"])
+    .index("by_jonali_displayed", ["isJonaliMaineCoon", "isDisplayed"]),
 
   // Pedigree connections between cats
   pedigreeConnections: defineTable({

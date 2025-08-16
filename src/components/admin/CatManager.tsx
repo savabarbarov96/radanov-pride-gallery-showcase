@@ -46,7 +46,9 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
     image: '',
     gallery: [] as string[],
     // New fields for gallery filtering
-    category: 'adult' as 'kitten' | 'adult' | 'all' | undefined
+    category: 'adult' as 'kitten' | 'adult' | 'all' | undefined,
+    // JonaliMaineCoon marking
+    isJonaliMaineCoon: false
   });
 
   const resetForm = () => {
@@ -66,7 +68,9 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       image: '',
       gallery: [],
       // New fields for gallery filtering
-      category: 'adult'
+      category: 'adult',
+      // JonaliMaineCoon marking
+      isJonaliMaineCoon: false
     });
   };
 
@@ -92,7 +96,9 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
           image: formData.image,
           gallery: formData.gallery,
           // New fields for gallery filtering
-          category: formData.category
+          category: formData.category,
+          // JonaliMaineCoon marking
+          isJonaliMaineCoon: formData.isJonaliMaineCoon
         });
         setEditingCat(null);
       } else {
@@ -112,7 +118,9 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
           image: formData.image,
           gallery: formData.gallery,
           // New fields for gallery filtering
-          category: formData.category
+          category: formData.category,
+          // JonaliMaineCoon marking
+          isJonaliMaineCoon: formData.isJonaliMaineCoon
         });
         setIsAddingCat(false);
       }
@@ -142,7 +150,9 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
       image: cat.image,
       gallery: cat.gallery,
       // New fields for gallery filtering
-      category: cat.category || 'adult'
+      category: cat.category || 'adult',
+      // JonaliMaineCoon marking
+      isJonaliMaineCoon: cat.isJonaliMaineCoon || false
     });
   };
 
@@ -382,13 +392,26 @@ const CatManager = ({ onCatSelect, selectedCat, onAddToCanvas, onDropCatToCanvas
                   />
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="isDisplayed"
-                    checked={formData.isDisplayed}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isDisplayed: checked }))}
-                  />
-                  <Label htmlFor="isDisplayed">Показване на сайта</Label>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="isDisplayed"
+                      checked={formData.isDisplayed}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isDisplayed: checked }))}
+                    />
+                    <Label htmlFor="isDisplayed">Показване на сайта</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="isJonaliMaineCoon"
+                      checked={formData.isJonaliMaineCoon}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isJonaliMaineCoon: checked }))}
+                    />
+                    <Label htmlFor="isJonaliMaineCoon" className="text-pink-600 font-medium">
+                      JonaliMaineCoon 💕
+                    </Label>
+                  </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
