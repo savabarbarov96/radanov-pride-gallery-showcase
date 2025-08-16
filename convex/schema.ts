@@ -119,4 +119,11 @@ export default defineSchema({
     .index("by_active", ["isActive"])
     .index("by_cat_active", ["catId", "isActive"])
     .index("by_sort_order", ["sortOrder"]),
+
+  // Simple reservations table
+  reservations: defineTable({
+    customerName: v.string(),
+    phoneNumber: v.string(),
+    message: v.string(),
+  }), // _creationTime is automatically indexed
 }); 

@@ -7,7 +7,9 @@
     "home": "Home",
     "models": "Models",
     "tiktok": "TikTok",
-    "contact": "Contact"
+    "contact": "Contact",
+    "careGuide": "Care Guide",
+    "reservations": "Reservations"
   },
   "hero": {
     "mainTitle": "Maine Coon",
@@ -89,5 +91,16 @@
   "footer": {
     "address": "Bulgaria, Razlog, Bulgaria, 2760",
     "copyright": "© 2024 Radanov Pride. All rights reserved."
+  },
+  "reservations": {
+    "title": "Reservations",
+    "subtitle": "Reserve your future pet",
+    "form": {
+      "name": "Name",
+      "phone": "Phone",
+      "message": "Message",
+      "submit": "Submit Reservation",
+      "success": "Reservation submitted successfully!"
+    }
   }
 }

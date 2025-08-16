@@ -6,9 +6,10 @@ import CatManager from '@/components/admin/CatManager';
 import PedigreeCanvas from '@/components/admin/PedigreeCanvas';
 import TikTokVideoManager from '@/components/admin/TikTokVideoManager';
 import SocialMediaSettings from '@/components/admin/SocialMediaSettings';
+import ReservationManager from '@/components/admin/ReservationManager';
 import { CatData } from '@/services/convexCatService';
 
-type AdminTab = 'pedigree' | 'tiktok' | 'social';
+type AdminTab = 'pedigree' | 'tiktok' | 'social' | 'reservations';
 
 const Admin = () => {
   const { isAuthenticated, isLoading, logout } = useAdminAuth();
@@ -64,6 +65,8 @@ const Admin = () => {
         return <TikTokVideoManager />;
       case 'social':
         return <SocialMediaSettings />;
+      case 'reservations':
+        return <ReservationManager />;
       default:
         return null;
     }
@@ -93,7 +96,8 @@ const Admin = () => {
           {[
             { id: 'pedigree' as AdminTab, label: 'Родословие' },
             { id: 'tiktok' as AdminTab, label: 'TikTok видеа' },
-            { id: 'social' as AdminTab, label: 'Социални мрежи' }
+            { id: 'social' as AdminTab, label: 'Социални мрежи' },
+            { id: 'reservations' as AdminTab, label: 'Резервации' }
           ].map(tab => (
             <button
               key={tab.id}

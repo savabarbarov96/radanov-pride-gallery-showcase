@@ -4,6 +4,7 @@ import { useActiveSection, useScrollPosition } from "@/hooks/useScrollAnimation"
 import SocialContactModal from "./SocialContactModal";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/hooks/useLanguage";
+import { Link, useLocation } from "react-router-dom";
 
 const ModernNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +12,7 @@ const ModernNavigation = () => {
   const activeSection = useActiveSection(['home', 'models', 'tiktok', 'contact']);
   const { scrollY } = useScrollPosition();
   const { t } = useLanguage();
+  const location = useLocation();
 
   const scrollToSection = useCallback((sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -66,6 +68,22 @@ const ModernNavigation = () => {
             >
               {t('navigation.tiktok')}
             </button>
+            <Link
+              to="/care-guide"
+              className={`transition-colors text-sm font-medium ${
+                location.pathname.startsWith('/care-guide') ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t('navigation.careGuide')}
+            </Link>
+            <Link
+              to="/reservations"
+              className={`transition-colors text-sm font-medium ${
+                location.pathname.startsWith('/reservations') ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t('navigation.reservations')}
+            </Link>
             
             {/* Language Switcher */}
             <LanguageSwitcher />
@@ -125,6 +143,24 @@ const ModernNavigation = () => {
               >
                 {t('navigation.tiktok')}
               </button>
+              <Link 
+                to="/care-guide"
+                className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
+                  location.pathname.startsWith('/care-guide') ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                {t('navigation.careGuide')}
+              </Link>
+              <Link 
+                to="/reservations"
+                className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
+                  location.pathname.startsWith('/reservations') ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                {t('navigation.reservations')}
+              </Link>
               
               {/* Mobile Language Switcher */}
               <div className="px-3 py-2">

@@ -19,6 +19,7 @@ import type * as contact from "../contact.js";
 import type * as files from "../files.js";
 import type * as imageMigration from "../imageMigration.js";
 import type * as pedigree from "../pedigree.js";
+import type * as reservations from "../reservations.js";
 import type * as seed from "../seed.js";
 import type * as siteSettings from "../siteSettings.js";
 import type * as tiktokVideos from "../tiktokVideos.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   files: typeof files;
   imageMigration: typeof imageMigration;
   pedigree: typeof pedigree;
+  reservations: typeof reservations;
   seed: typeof seed;
   siteSettings: typeof siteSettings;
   tiktokVideos: typeof tiktokVideos;
