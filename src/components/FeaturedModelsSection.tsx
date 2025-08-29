@@ -179,6 +179,7 @@ const FeaturedModelsSection = () => {
                           <img 
                             src={cat.image} 
                             alt={cat.name}
+                            loading="lazy"
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         </div>
@@ -263,6 +264,7 @@ const FeaturedModelsSection = () => {
                   <img 
                     src={selectedCat.image} 
                     alt={selectedCat.name}
+                    loading="lazy"
                     className="w-full rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
                     onClick={() => {
                       const allImages = [selectedCat.image, ...selectedCat.gallery];
@@ -294,6 +296,7 @@ const FeaturedModelsSection = () => {
                             key={index}
                             src={img} 
                             alt={`${selectedCat.name} ${index + 2}`}
+                            loading="lazy"
                             className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
                             onClick={() => {
                               const allImages = [selectedCat.image, ...selectedCat.gallery];

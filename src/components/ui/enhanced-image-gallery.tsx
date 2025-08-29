@@ -100,6 +100,7 @@ const EnhancedImageGallery = ({
         <img
           src={images[currentIndex]}
           alt={`Gallery image ${currentIndex + 1}`}
+          loading="lazy"
           className={`max-w-full max-h-full object-contain transition-transform duration-200 ${
             isZoomed ? 'scale-150 cursor-grab' : 'cursor-zoom-in'
           }`}
@@ -147,6 +148,7 @@ const EnhancedImageGallery = ({
                 <img
                   src={image}
                   alt={`Thumbnail ${index + 1}`}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
               </button>

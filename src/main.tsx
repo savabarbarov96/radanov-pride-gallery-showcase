@@ -11,7 +11,15 @@ import { ThemeProvider } from './hooks/useTheme.tsx'
 import App from './App.tsx'
 import './index.css'
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes - good for relatively static cat data
+      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
+      retry: 1, // Only retry once on failure
+    },
+  },
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

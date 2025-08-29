@@ -147,6 +147,7 @@ const TikTokSection = () => {
                   <img 
                     src={video.thumbnail} 
                     alt={video.title}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                   

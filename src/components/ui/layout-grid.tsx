@@ -50,6 +50,7 @@ const ImageComponent = ({ card }: { card: Card }) => {
   return (
     <img
       src={card.thumbnail}
+      loading="lazy"
       className="object-cover object-center absolute inset-0 h-full w-full transition duration-200 hover:scale-105"
       alt="Maine Coon cat"
     />

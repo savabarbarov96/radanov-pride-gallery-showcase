@@ -3,8 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFileUpload, validateImageFile, getFileInfo, UploadFileOptions } from '@/services/convexFileService';
-import { Upload, X, Image, Loader2 } from 'lucide-react';
+import { Upload, X, Image, Loader2, Zap } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { compressImage, validateImageFile as validateImage, getOptimalFormat } from '@/lib/imageUtils';
 
 interface ImageUploadProps {
   onUploadSuccess: (url: string, storageId: string) => void;
@@ -16,6 +17,7 @@ interface ImageUploadProps {
   uploadOptions?: Partial<UploadFileOptions>;
   className?: string;
   previewSize?: 'small' | 'medium' | 'large';
+  enableCompression?: boolean; // New prop to enable/disable compression
 }
 
 export const ImageUpload = ({
@@ -27,12 +29,14 @@ export const ImageUpload = ({
   required = false,
   uploadOptions = {},
   className = '',
-  previewSize = 'medium'
+  previewSize = 'medium',
+  enableCompression = true
 }: ImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadFile } = useFileUpload();
@@ -46,29 +50,61 @@ export const ImageUpload = ({
   };
 
   const handleFileSelect = useCallback(async (file: File) => {
-    const validation = validateImageFile(file);
-    if (!validation.valid) {
-      onUploadError?.(validation.error || 'Невалиден файл');
+    // Use our new validation function
+    if (!validateImage(file)) {
+      onUploadError?.('Невалиден файл или размерът е твърде голям (макс. 10MB)');
       toast({
         title: "Грешка при избора на файл",
-        description: validation.error,
+        description: 'Моля изберете валиден image файл (JPEG, PNG, WebP) под 10MB',
         variant: "destructive"
       });
       return;
     }
 
+    const originalSize = file.size;
+    let processedFile = file;
+
+    try {
+      // Compress image if enabled and file is over 100KB
+      if (enableCompression && file.size > 100 * 1024) {
+        setIsCompressing(true);
+        
+        const optimalFormat = getOptimalFormat();
+        processedFile = await compressImage(file, {
+          maxWidth: 1920,
+          maxHeight: 1080,
+          quality: 0.8,
+          format: optimalFormat
+        });
+
+        const compressionRatio = ((originalSize - processedFile.size) / originalSize * 100);
+        
+        toast({
+          title: "Изображението е оптимизирано",
+          description: `Размерът е намален с ${Math.round(compressionRatio)}% (${Math.round(originalSize/1024)}KB → ${Math.round(processedFile.size/1024)}KB)`,
+          variant: "default"
+        });
+      }
+    } catch (compressionError) {
+      // If compression fails, use original file
+      console.warn('Image compression failed, using original:', compressionError);
+      processedFile = file;
+    } finally {
+      setIsCompressing(false);
+    }
+
     setIsUploading(true);
     setUploadProgress(0);
 
-    // Create preview
+    // Create preview from processed file
     const reader = new FileReader();
     reader.onload = (e) => {
       setPreviewUrl(e.target?.result as string);
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(processedFile);
 
     try {
-      const result = await uploadFile(file, {
+      const result = await uploadFile(processedFile, {
         imageType: 'general',
         ...uploadOptions,
         onProgress: setUploadProgress
@@ -79,7 +115,7 @@ export const ImageUpload = ({
         setPreviewUrl(result.url);
         toast({
           title: "Качването е успешно",
-          description: `${file.name} е качен успешно`,
+          description: `${processedFile.name} е качен успешно`,
           variant: "default"
         });
       } else {
@@ -98,7 +134,7 @@ export const ImageUpload = ({
       setIsUploading(false);
       setUploadProgress(0);
     }
-  }, [uploadFile, uploadOptions, onUploadSuccess, onUploadError, currentImageUrl]);
+  }, [uploadFile, uploadOptions, onUploadSuccess, onUploadError, currentImageUrl, enableCompression]);
 
   const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -169,7 +205,7 @@ export const ImageUpload = ({
         className={`
           relative border-2 border-dashed rounded-lg p-4 transition-all duration-200 cursor-pointer
           ${isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
-          ${isUploading ? 'pointer-events-none opacity-60' : ''}
+          ${isUploading || isCompressing ? 'pointer-events-none opacity-60' : ''}
         `}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -224,7 +260,12 @@ export const ImageUpload = ({
 
         {/* Upload UI */}
         <div className="text-center">
-          {isUploading ? (
+          {isCompressing ? (
+            <div className="space-y-2">
+              <Zap className="w-8 h-8 mx-auto animate-pulse text-orange-500" />
+              <p className="text-sm text-gray-600">Оптимизиране на изображението...</p>
+            </div>
+          ) : isUploading ? (
             <div className="space-y-2">
               <Loader2 className="w-8 h-8 mx-auto animate-spin text-blue-500" />
               <p className="text-sm text-gray-600">Качване... {Math.round(uploadProgress)}%</p>
@@ -250,6 +291,12 @@ export const ImageUpload = ({
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   JPG, PNG, GIF или WebP (макс. 10MB)
+                  {enableCompression && (
+                    <span className="flex items-center justify-center mt-1 text-green-600">
+                      <Zap className="w-3 h-3 mr-1" />
+                      Автоматично оптимизиране
+                    </span>
+                  )}
                 </p>
               </div>
               <Button 
