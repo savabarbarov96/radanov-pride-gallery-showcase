@@ -4,7 +4,7 @@ import { useActiveSection, useScrollPosition } from "@/hooks/useScrollAnimation"
 import SocialContactModal from "./SocialContactModal";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/hooks/useLanguage";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const ModernNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,14 +13,21 @@ const ModernNavigation = () => {
   const { scrollY } = useScrollPosition();
   const { t } = useLanguage();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const scrollToSection = useCallback((sectionId: string) => {
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+      setIsOpen(false);
+      return;
+    }
+
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsOpen(false);
-  }, []);
+  }, [location.pathname, navigate]);
 
   const navBg = scrollY > 50 ? 'bg-background/98' : 'bg-background/95';
   const navShadow = scrollY > 50 ? 'shadow-lg' : '';

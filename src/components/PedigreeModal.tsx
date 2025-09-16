@@ -56,7 +56,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
         </div>
 
         {/* Pedigree Tree */}
-        <div className="p-8">
+        <div className="p-6 md:p-8">
           <div className="flex flex-col items-center space-y-8">
             {/* Header Info */}
             <div className="text-center mb-4">
@@ -101,7 +101,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
 
             {/* Connection Lines */}
             {!isLoadingParents && (mother || father) && (
-              <div className="relative flex flex-col items-center">
+              <div className="relative hidden md:flex flex-col items-center">
                 {/* Vertical line down */}
                 <div className="w-px h-8 bg-border"></div>
                 {/* Horizontal line */}
@@ -116,11 +116,11 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
 
             {/* Parents Section */}
             {!isLoadingParents && (mother || father) && (
-              <div className="flex justify-center items-start gap-16">
+              <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-8 md:gap-16 w-full">
                 {/* Mother */}
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center w-full max-w-xs">
                   {mother ? (
-                    <div className="bg-card rounded-lg shadow-lg p-4 w-64 text-center cursor-pointer hover:shadow-xl transition-shadow"
+                    <div className="bg-card rounded-lg shadow-lg p-4 w-full md:w-64 text-center cursor-pointer hover:shadow-xl transition-shadow"
                          onClick={() => openParentModal(mother)}>
                       <div className="w-full h-32 bg-muted rounded-lg overflow-hidden mb-3">
                         <img
@@ -145,7 +145,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-muted rounded-lg border-2 border-dashed border-border p-4 w-64 h-40 flex items-center justify-center text-muted-foreground">
+                    <div className="bg-muted rounded-lg border-2 border-dashed border-border p-4 w-full md:w-64 h-40 flex items-center justify-center text-muted-foreground">
                       <div className="text-center">
                         <p className="font-medium mb-1">{t('pedigree.mother')}</p>
                         <p className="text-sm">{t('pedigree.noData')}</p>
@@ -158,9 +158,9 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                 </div>
 
                 {/* Father */}
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center w-full max-w-xs">
                   {father ? (
-                    <div className="bg-card rounded-lg shadow-lg p-4 w-64 text-center cursor-pointer hover:shadow-xl transition-shadow"
+                    <div className="bg-card rounded-lg shadow-lg p-4 w-full md:w-64 text-center cursor-pointer hover:shadow-xl transition-shadow"
                          onClick={() => openParentModal(father)}>
                       <div className="w-full h-32 bg-muted rounded-lg overflow-hidden mb-3">
                         <img
@@ -185,7 +185,7 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-muted rounded-lg border-2 border-dashed border-border p-4 w-64 h-40 flex items-center justify-center text-muted-foreground">
+                    <div className="bg-muted rounded-lg border-2 border-dashed border-border p-4 w-full md:w-64 h-40 flex items-center justify-center text-muted-foreground">
                       <div className="text-center">
                         <p className="font-medium mb-1">{t('pedigree.father')}</p>
                         <p className="text-sm">{t('pedigree.noData')}</p>

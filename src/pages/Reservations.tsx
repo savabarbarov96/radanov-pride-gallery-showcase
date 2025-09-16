@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,19 +13,87 @@ import { toast } from "sonner";
 import ModernNavigation from "@/components/ModernNavigation";
 import Footer from "@/components/Footer";
 
-// Form validation schema
-const reservationSchema = z.object({
-  customerName: z.string().min(2, "Името трябва да съдържа поне 2 символа"),
-  phoneNumber: z.string().min(6, "Телефонният номер трябва да съдържа поне 6 цифри"),
-  message: z.string().min(10, "Съобщението трябва да съдържа поне 10 символа"),
-});
+type ReservationFormData = {
+  customerName: string;
+  phoneNumber: string;
+  message: string;
+};
 
-type ReservationFormData = z.infer<typeof reservationSchema>;
+type ReservationContent = {
+  formTitle: string;
+  formDescription: string;
+  placeholders: {
+    name: string;
+    phone: string;
+    message: string;
+  };
+  submittingLabel: string;
+  errorMessage: string;
+  infoTitle: string;
+  infoBody: string;
+  validation: {
+    name: string;
+    phone: string;
+    message: string;
+  };
+};
+
+const reservationContent: Record<"bg" | "en", ReservationContent> = {
+  bg: {
+    formTitle: "Форма за резервация",
+    formDescription:
+      "Моля попълнете формата по-долу и ние ще се свържем с вас в най-скоро време за да обсъдим възможностите за резервация.",
+    placeholders: {
+      name: "Вашето име",
+      phone: "Вашият телефонен номер",
+      message: "Разкажете ни повече за желанията ви за бъдещето домашно любимче...",
+    },
+    submittingLabel: "Изпращане...",
+    errorMessage: "Възникна грешка при изпращането на резервацията. Моля опитайте отново.",
+    infoTitle: "Важна информация",
+    infoBody:
+      "След получаване на вашата резервация, нашият екип ще се свърже с вас в рамките на 24 часа. Ще обсъдим всички детайли относно наличността, характеристиките на котките и процеса на осиновяване. Всички наши котки са здрави, ваксинирани и с документи.",
+    validation: {
+      name: "Името трябва да съдържа поне 2 символа",
+      phone: "Телефонният номер трябва да съдържа поне 6 цифри",
+      message: "Съобщението трябва да съдържа поне 10 символа",
+    },
+  },
+  en: {
+    formTitle: "Reservation form",
+    formDescription:
+      "Please fill in the form below and we will contact you shortly to discuss reservation options.",
+    placeholders: {
+      name: "Your name",
+      phone: "Your phone number",
+      message: "Tell us more about the kitten you are looking for...",
+    },
+    submittingLabel: "Sending...",
+    errorMessage: "Something went wrong while sending the reservation. Please try again.",
+    infoTitle: "Important information",
+    infoBody:
+      "After receiving your reservation our team will reach out within 24 hours to discuss availability, cat characteristics and the adoption process. All of our cats are healthy, vaccinated and come with documentation.",
+    validation: {
+      name: "Name must contain at least 2 characters",
+      phone: "Phone number must contain at least 6 digits",
+      message: "Message must contain at least 10 characters",
+    },
+  },
+};
+
+const createReservationSchema = (validation: ReservationContent["validation"]) =>
+  z.object({
+    customerName: z.string().min(2, validation.name),
+    phoneNumber: z.string().min(6, validation.phone),
+    message: z.string().min(10, validation.message),
+  });
 
 const Reservations = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submitReservation = useSubmitReservation();
+  const content = reservationContent[language];
+  const reservationSchema = useMemo(() => createReservationSchema(content.validation), [content]);
 
   const {
     register,
@@ -51,7 +119,7 @@ const Reservations = () => {
       toast.success(t('reservations.form.success'));
       reset();
     } else {
-      toast.error("Възникна грешка при изпращането на резервацията. Моля опитайте отново.");
+      toast.error(content.errorMessage);
     }
     
     setIsSubmitting(false);
@@ -104,10 +172,10 @@ const Reservations = () => {
           <Card className="shadow-modern">
             <CardHeader>
               <CardTitle className="font-playfair text-2xl">
-                Форма за резервация
+                {content.formTitle}
               </CardTitle>
               <CardDescription>
-                Моля попълнете формата по-долу и ние ще се свържем с вас в най-скоро време за да обсъдим възможностите за резервация.
+                {content.formDescription}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -120,7 +188,7 @@ const Reservations = () => {
                   <Input
                     id="customerName"
                     type="text"
-                    placeholder="Вашето име"
+                    placeholder={content.placeholders.name}
                     {...register("customerName")}
                     className={errors.customerName ? "border-red-500" : ""}
                   />
@@ -137,7 +205,7 @@ const Reservations = () => {
                   <Input
                     id="phoneNumber"
                     type="tel"
-                    placeholder="Вашият телефонен номер"
+                    placeholder={content.placeholders.phone}
                     {...register("phoneNumber")}
                     className={errors.phoneNumber ? "border-red-500" : ""}
                   />
@@ -153,7 +221,7 @@ const Reservations = () => {
                   </Label>
                   <Textarea
                     id="message"
-                    placeholder="Разкажете ни повече за желанията ви за бъдещето домашно любимче..."
+                    placeholder={content.placeholders.message}
                     rows={5}
                     {...register("message")}
                     className={errors.message ? "border-red-500" : ""}
@@ -172,7 +240,7 @@ const Reservations = () => {
                   {isSubmitting ? (
                     <div className="flex items-center space-x-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-background"></div>
-                      <span>Изпращане...</span>
+                      <span>{content.submittingLabel}</span>
                     </div>
                   ) : (
                     t('reservations.form.submit')
@@ -186,12 +254,10 @@ const Reservations = () => {
           <div className="mt-12 text-center">
             <div className="bg-muted/50 rounded-lg p-6">
               <h3 className="font-playfair text-xl font-semibold mb-3">
-                Важна информация
+                {content.infoTitle}
               </h3>
               <p className="text-muted-foreground font-crimson leading-relaxed">
-                След получаване на вашата резервация, нашият екип ще се свърже с вас в рамките на 24 часа. 
-                Ще обсъдим всички детайли относно наличността, характеристиките на котките и процеса на осиновяване. 
-                Всички наши котки са здрави, ваксинирани и с документи.
+                {content.infoBody}
               </p>
             </div>
           </div>

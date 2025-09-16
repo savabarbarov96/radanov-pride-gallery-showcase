@@ -13,6 +13,7 @@ import JonaliBadge from "./ui/jonali-badge";
 import { useLanguage } from "@/hooks/useLanguage";
 
 type CategoryFilter = 'all' | 'kitten';
+type StatusFilter = 'all' | 'available' | 'unavailable';
 
 const FeaturedModelsSection = () => {
   const { t } = useLanguage();
@@ -20,6 +21,11 @@ const FeaturedModelsSection = () => {
   const categoryLabels = {
     all: t('featuredModels.categories.all'),
     kitten: t('featuredModels.categories.kitten')
+  };
+  const statusLabels = {
+    all: t('featuredModels.statusFilters.all'),
+    available: t('featuredModels.statusFilters.available'),
+    unavailable: t('featuredModels.statusFilters.unavailable')
   };
   const [selectedCat, setSelectedCat] = useState<CatData | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
@@ -31,7 +37,74 @@ const FeaturedModelsSection = () => {
   const [enhancedGalleryImages, setEnhancedGalleryImages] = useState<string[]>([]);
   const [enhancedGalleryTitle, setEnhancedGalleryTitle] = useState("");
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
-  const featuredCats = useDisplayedCatsByCategory(activeFilter);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const featuredCats = useDisplayedCatsByCategory('all');
+
+  // Accept data entered in Bulgarian by checking known kitten keywords
+  const getCategoryMatch = (cat: CatData, filter: CategoryFilter) => {
+    if (filter === 'all') {
+      return true;
+    }
+
+    const categorySource = `${cat.category || ''} ${cat.subtitle || ''}`.toLowerCase();
+    const kittenKeywords = ['kitten', 'котен', 'коте', 'котенце', 'котенца'];
+
+    if (filter === 'kitten') {
+      return kittenKeywords.some((keyword) => categorySource.includes(keyword));
+    }
+
+    return true;
+  };
+
+  const getAvailabilityFromStatus = (status?: string): StatusFilter => {
+    if (!status) {
+      return 'all';
+    }
+
+    const normalizedStatus = status.toLowerCase().replace(/\s+/g, '');
+
+    const unavailableKeywords = [
+      'недостъп',
+      'недстъп',
+      'недст',
+      'неналич',
+      'нееналич',
+      'резерв',
+      'occupied',
+      'unavailable',
+      'notavailable',
+      'sold',
+      'comingsoon'
+    ];
+
+    if (unavailableKeywords.some((keyword) => normalizedStatus.includes(keyword))) {
+      return 'unavailable';
+    }
+
+    const availableKeywords = [
+      'налич',
+      'достъп',
+      'available',
+      'open'
+    ];
+
+    if (availableKeywords.some((keyword) => normalizedStatus.includes(keyword))) {
+      return 'available';
+    }
+
+    return 'all';
+  };
+
+  const filteredCats = featuredCats
+    ?.filter((cat) => getCategoryMatch(cat, activeFilter))
+    ?.filter((cat) => {
+      if (statusFilter === 'all') {
+        return true;
+      }
+
+      const availability = getAvailabilityFromStatus(cat.status);
+      return availability === statusFilter;
+    });
   
   const { elementRef: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1);
   const { elementRef: headerRef, isVisible: headerVisible } = useScrollAnimation(0.1);
@@ -82,7 +155,7 @@ const FeaturedModelsSection = () => {
   // Always show the section structure, even when loading
   // This prevents the disappearing issue
   const isLoading = featuredCats === undefined;
-  const isEmpty = featuredCats !== undefined && featuredCats !== null && featuredCats.length === 0;
+  const isEmpty = !isLoading && (filteredCats?.length ?? 0) === 0;
 
 
   return (
@@ -102,8 +175,8 @@ const FeaturedModelsSection = () => {
             </h2>
           </div>
 
-          {/* Category Filter Tabs */}
-          <div className="flex justify-center mb-12">
+          {/* Filter Tabs */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12">
             <div className="flex space-x-0 bg-muted/50 p-1 rounded-lg">
               {(Object.entries(categoryLabels) as [CategoryFilter, string][]).map(([category, label]) => (
                 <button
@@ -111,6 +184,21 @@ const FeaturedModelsSection = () => {
                   onClick={() => setActiveFilter(category)}
                   className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                     activeFilter === category
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="flex space-x-0 bg-muted/50 p-1 rounded-lg">
+              {(Object.entries(statusLabels) as [StatusFilter, string][]).map(([filter, label]) => (
+                <button
+                  key={filter}
+                  onClick={() => setStatusFilter(filter)}
+                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    statusFilter === filter
                       ? 'bg-background text-foreground shadow-sm'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
@@ -142,7 +230,7 @@ const FeaturedModelsSection = () => {
             
             {!isLoading && !isEmpty && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
-                {featuredCats.map((cat, index) => (
+                {filteredCats?.map((cat, index) => (
                   <div 
                     key={cat._id} 
                     className={`group relative transition-all duration-300 max-w-xs w-full ${

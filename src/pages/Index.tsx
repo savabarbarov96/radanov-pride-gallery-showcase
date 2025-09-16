@@ -1,4 +1,5 @@
 import { useState, useEffect, Suspense, lazy } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import ModernNavigation from "@/components/ModernNavigation";
 import ModernHeroSection from "@/components/ModernHeroSection";
 import FeaturedModelsSection from "@/components/FeaturedModelsSection";
@@ -15,6 +16,8 @@ const TikTokSection = lazy(() => import("@/components/TikTokSection"));
 const Index = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [showCatCarePopup, setShowCatCarePopup] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Show cat care popup after 3 seconds
@@ -24,6 +27,21 @@ const Index = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const state = location.state as { scrollTo?: string } | null;
+    if (!state?.scrollTo) {
+      return;
+    }
+
+    const section = state.scrollTo;
+    const element = document.getElementById(section);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    navigate(location.pathname, { replace: true, state: {} });
+  }, [location, navigate]);
 
   return (
     <div className="min-h-screen bg-background relative">

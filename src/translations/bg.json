@@ -25,6 +25,11 @@
       "kitten": "Котенца",
       "retired": "В пенсия"
     },
+    "statusFilters": {
+      "all": "Всички",
+      "available": "Налични",
+      "unavailable": "Недостъпни"
+    },
     "galleryLabel": "Галерия"
   },
   "gallery": {
@@ -80,6 +85,11 @@
       "adult": "Възрастни",
       "kitten": "Котенца",
       "retired": "В пенсия"
+    },
+    "statusFilters": {
+      "all": "Всички",
+      "available": "Налични",
+      "unavailable": "Недостъпни"
     },
     "galleryLabel": "Галерия",
     "loading": "Зареждане на котките...",

@@ -25,6 +25,11 @@
       "kitten": "Kittens",
       "retired": "Retired"
     },
+    "statusFilters": {
+      "all": "All",
+      "available": "Available",
+      "unavailable": "Unavailable"
+    },
     "galleryLabel": "Gallery"
   },
   "gallery": {
@@ -80,6 +85,11 @@
       "adult": "Adults",
       "kitten": "Kittens",
       "retired": "Retired"
+    },
+    "statusFilters": {
+      "all": "All",
+      "available": "Available",
+      "unavailable": "Unavailable"
     },
     "galleryLabel": "Gallery",
     "loading": "Loading cats...",
