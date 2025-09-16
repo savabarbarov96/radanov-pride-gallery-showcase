@@ -49,10 +49,10 @@ export default function CatGallery() {
   // Convert cat data to card format for LayoutGrid
   const createCatCards = (catData: CatData[]) => {
     if (!catData || catData.length === 0) {
-      return [];
-    }
+    return [];
+  }
 
-    return catData.map((cat, index) => ({
+  return catData.map((cat, index) => ({
       id: cat._id,
       content: (
         <div>
@@ -80,6 +80,7 @@ export default function CatGallery() {
       ),
       className: getCardClassName(index, catData.length),
       thumbnail: cat.image,
+      alt: cat.subtitle ? `${cat.name} - ${cat.subtitle}` : cat.name,
     }));
   };
 
