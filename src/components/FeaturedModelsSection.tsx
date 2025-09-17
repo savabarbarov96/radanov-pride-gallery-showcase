@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useDisplayedCatsByCategory, CatData } from "@/services/convexCatService";
+import { useDisplayedCatsByCategory, useCatById, CatSummary, Id } from "@/services/convexCatService";
 import PedigreeModal from "./PedigreeModal";
 import SocialContactModal from "./SocialContactModal";
 import EnhancedImageGallery from "./ui/enhanced-image-gallery";
@@ -11,6 +11,7 @@ import { useTikTokVideosByCat } from "@/services/convexTikTokService";
 import CatStatusTag from "./ui/cat-status-tag";
 import JonaliBadge from "./ui/jonali-badge";
 import { useLanguage } from "@/hooks/useLanguage";
+import LazyImage from "@/components/ui/lazy-image";
 
 type CategoryFilter = 'all' | 'kitten';
 type StatusFilter = 'all' | 'available' | 'unavailable';
@@ -27,21 +28,26 @@ const FeaturedModelsSection = () => {
     available: t('featuredModels.statusFilters.available'),
     unavailable: t('featuredModels.statusFilters.unavailable')
   };
-  const [selectedCat, setSelectedCat] = useState<CatData | null>(null);
+  const [selectedCatId, setSelectedCatId] = useState<Id<"cats"> | null>(null);
+  const [selectedCatSummary, setSelectedCatSummary] = useState<CatSummary | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isPedigreeOpen, setIsPedigreeOpen] = useState(false);
-  const [pedigreeCat, setPedigreeCat] = useState<CatData | null>(null);
+  const [pedigreeCat, setPedigreeCat] = useState<CatSummary | null>(null);
   const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
-  const [socialCat, setSocialCat] = useState<CatData | null>(null);
+  const [socialCat, setSocialCat] = useState<CatSummary | null>(null);
   const [isEnhancedGalleryOpen, setIsEnhancedGalleryOpen] = useState(false);
   const [enhancedGalleryImages, setEnhancedGalleryImages] = useState<string[]>([]);
   const [enhancedGalleryTitle, setEnhancedGalleryTitle] = useState("");
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>('all');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const featuredCats = useDisplayedCatsByCategory('all');
+  const selectedCat = useCatById(selectedCatId ?? undefined);
+  const catForDisplay = selectedCat ?? selectedCatSummary;
+  const isSelectedCatLoading = selectedCatId !== null && selectedCat === undefined;
+  const galleryImages = selectedCat?.gallery ?? [];
 
   // Accept data entered in Bulgarian by checking known kitten keywords
-  const getCategoryMatch = (cat: CatData, filter: CategoryFilter) => {
+  const getCategoryMatch = (cat: CatSummary, filter: CategoryFilter) => {
     if (filter === 'all') {
       return true;
     }
@@ -110,17 +116,19 @@ const FeaturedModelsSection = () => {
   const { elementRef: headerRef, isVisible: headerVisible } = useScrollAnimation(0.1);
   const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation(0.1);
 
-  const openGallery = (cat: CatData) => {
-    setSelectedCat(cat);
+  const openGallery = (cat: CatSummary) => {
+    setSelectedCatSummary(cat);
+    setSelectedCatId(cat._id);
     setIsGalleryOpen(true);
   };
 
   const closeGallery = () => {
     setIsGalleryOpen(false);
-    setSelectedCat(null);
+    setSelectedCatId(null);
+    setSelectedCatSummary(null);
   };
 
-  const openPedigree = (cat: CatData) => {
+  const openPedigree = (cat: CatSummary) => {
     setPedigreeCat(cat);
     setIsPedigreeOpen(true);
   };
@@ -130,7 +138,7 @@ const FeaturedModelsSection = () => {
     setPedigreeCat(null);
   };
 
-  const openSocialModal = (cat: CatData) => {
+  const openSocialModal = (cat: CatSummary) => {
     setSocialCat(cat);
     setIsSocialModalOpen(true);
   };
@@ -264,11 +272,13 @@ const FeaturedModelsSection = () => {
                         )}
 
                         <div className="w-full h-full rounded-full overflow-hidden shadow-xl group-hover:shadow-2xl transition-shadow duration-300 border-4 border-white relative">
-                          <img 
-                            src={cat.image} 
+                          <LazyImage
+                            src={cat.image}
                             alt={cat.name}
-                            loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            wrapperClassName="h-full w-full rounded-full"
+                            placeholderClassName="rounded-full"
+                            aspectRatio={1}
+                            className="group-hover:scale-110 transition-transform duration-500"
                           />
                         </div>
                         
@@ -321,17 +331,17 @@ const FeaturedModelsSection = () => {
       </section>
 
       {/* Gallery Modal */}
-      {isGalleryOpen && selectedCat && (
+      {isGalleryOpen && catForDisplay && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-card rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-6 border-b border-border">
               <div>
                 <h3 className="font-playfair text-2xl font-semibold text-modern-dark">
-                  {selectedCat.name}
+                  {catForDisplay.name}
                 </h3>
                 <p className="text-muted-foreground uppercase tracking-wide text-sm">
-                  {selectedCat.subtitle}
+                  {catForDisplay.subtitle}
                 </p>
               </div>
               <Button 
@@ -349,99 +359,117 @@ const FeaturedModelsSection = () => {
               <div className="grid md:grid-cols-2 gap-8">
                 {/* Gallery */}
                 <div className="space-y-4">
-                  <img 
-                    src={selectedCat.image} 
-                    alt={selectedCat.name}
-                    loading="lazy"
-                    className="w-full rounded-xl cursor-pointer hover:opacity-90 transition-opacity"
+                  <div
+                    className="relative w-full rounded-xl overflow-hidden transition-opacity cursor-pointer hover:opacity-90"
                     onClick={() => {
-                      const allImages = [selectedCat.image, ...selectedCat.gallery];
-                      openEnhancedGallery(allImages, `${selectedCat.name} - ${t('featuredModels.galleryLabel')}`);
+                      const allImages = selectedCat
+                        ? [selectedCat.image, ...galleryImages]
+                        : [catForDisplay.image];
+                      openEnhancedGallery(allImages, `${catForDisplay.name} - ${t('featuredModels.galleryLabel')}`);
                     }}
-                  />
-                  
-                  {/* Thumbnail Gallery */}
-                  {selectedCat.gallery.length > 0 && (
+                  >
+                    <LazyImage
+                      src={catForDisplay.image}
+                      alt={catForDisplay.name}
+                      wrapperClassName="w-full rounded-xl overflow-hidden"
+                      placeholderClassName="rounded-xl"
+                      aspectRatio={1}
+                    />
+                  </div>
+
+                  {isSelectedCatLoading && (
+                    <div className="grid grid-cols-3 gap-2" aria-hidden="true">
+                      {[0, 1, 2].map((index) => (
+                        <div key={index} className="h-20 rounded-lg bg-muted/40 animate-pulse" />
+                      ))}
+                    </div>
+                  )}
+
+                  {!isSelectedCatLoading && selectedCat && galleryImages.length > 0 && (
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <h4 className="text-sm font-medium text-muted-foreground">
-                          {t('featuredModels.morePhotos')} ({selectedCat.gallery.length})
+                          {t('featuredModels.morePhotos')} ({galleryImages.length})
                         </h4>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            const allImages = [selectedCat.image, ...selectedCat.gallery];
-                            openEnhancedGallery(allImages, `${selectedCat.name} - ${t('featuredModels.galleryLabel')}`);
+                            const allImages = [selectedCat.image, ...galleryImages];
+                            openEnhancedGallery(allImages, `${catForDisplay.name} - ${t('featuredModels.galleryLabel')}`);
                           }}
                         >
                           Виж всички
                         </Button>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
-                        {selectedCat.gallery.slice(0, 6).map((img, index) => (
-                          <img 
-                            key={index}
-                            src={img} 
-                            alt={`${selectedCat.name} ${index + 2}`}
-                            loading="lazy"
-                            className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                        {galleryImages.slice(0, 6).map((img, index) => (
+                          <div
+                            key={`${img}-${index}`}
+                            className="relative h-20 overflow-hidden rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
                             onClick={() => {
-                              const allImages = [selectedCat.image, ...selectedCat.gallery];
-                              openEnhancedGallery(allImages, `${selectedCat.name} - ${t('featuredModels.galleryLabel')}`);
+                              const allImages = [selectedCat.image, ...galleryImages];
+                              openEnhancedGallery(allImages, `${catForDisplay.name} - ${t('featuredModels.galleryLabel')}`);
                             }}
-                          />
+                          >
+                            <LazyImage
+                              src={img}
+                              alt={`${catForDisplay.name} ${index + 2}`}
+                              wrapperClassName="h-full w-full rounded-lg"
+                              placeholderClassName="rounded-lg"
+                              aspectRatio={1}
+                            />
+                          </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* TikTok Videos Section */}
-                  <CatTikTokVideos catId={selectedCat._id} catName={selectedCat.name} />
+                  <CatTikTokVideos catId={catForDisplay._id} catName={catForDisplay.name} />
                 </div>
 
                 {/* Details */}
                 <div className="space-y-6">
                   <p className="text-foreground leading-relaxed">
-                    {selectedCat.description}
+                    {catForDisplay.description}
                   </p>
                   
                   <div className="space-y-3">
                     <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Възраст</span>
-                      <span className="font-medium">{selectedCat.age}</span>
+                      <span className="font-medium">{catForDisplay.age}</span>
                     </div>
                     <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Цвят</span>
-                      <span className="font-medium">{selectedCat.color}</span>
+                      <span className="font-medium">{catForDisplay.color}</span>
                     </div>
                     <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Статус</span>
-                      <span className={`font-medium ${selectedCat.status === "Достъпен" ? "text-green-600" : "text-orange-600"}`}>
-                        {selectedCat.status}
+                      <span className={`font-medium ${catForDisplay.status === "Достъпен" ? "text-green-600" : "text-orange-600"}`}>
+                        {catForDisplay.status}
                       </span>
                     </div>
-                    {selectedCat.registrationNumber && (
+                    {catForDisplay.registrationNumber && (
                       <div className="flex justify-between border-b border-border pb-2">
                         <span className="text-muted-foreground">Регистрационен номер</span>
-                        <span className="font-medium">{selectedCat.registrationNumber}</span>
+                        <span className="font-medium">{catForDisplay.registrationNumber}</span>
                       </div>
                     )}
-                    {selectedCat.freeText && (
+                    {catForDisplay.freeText && (
                       <div className="border-b border-border pb-2">
                         <span className="text-muted-foreground block mb-1">Допълнителна информация</span>
-                        <span className="font-medium">{selectedCat.freeText}</span>
+                        <span className="font-medium">{catForDisplay.freeText}</span>
                       </div>
                     )}
                   </div>
 
                   <div className="space-y-3">
                     {/* Only show request button if cat is available */}
-                    {(selectedCat.status === "Достъпен" || selectedCat.status === "Налична") && (
+                    {(catForDisplay.status === "Достъпен" || catForDisplay.status === "Налична") && (
                       <Button 
                         variant="modern" 
                         className="w-full"
-                        onClick={() => openSocialModal(selectedCat)}
+                        onClick={() => openSocialModal(catForDisplay)}
                       >
                         Заявете сега
                       </Button>
@@ -449,7 +477,7 @@ const FeaturedModelsSection = () => {
                     <Button 
                       variant="outline" 
                       className="w-full bg-amber-500 border-amber-500 text-white hover:bg-amber-600 hover:border-amber-600"
-                      onClick={() => openPedigree(selectedCat)}
+                      onClick={() => openPedigree(catForDisplay)}
                     >
                       Повече информация
                     </Button>

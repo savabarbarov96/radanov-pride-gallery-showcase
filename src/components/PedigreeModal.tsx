@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { CatData, useParents } from '@/services/convexCatService';
+import LazyImage from '@/components/ui/lazy-image';
+import { CatData, CatSummary, useParents } from '@/services/convexCatService';
 import { useLanguage } from '@/hooks/useLanguage';
 
 interface PedigreeModalProps {
-  cat: CatData;
+  cat: CatSummary;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -71,10 +72,12 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
             {/* Main Cat Card */}
             <div className="bg-card rounded-lg shadow-lg p-6 w-80 text-center">
               <div className="w-full h-48 bg-muted rounded-lg overflow-hidden mb-4">
-                <img
+                <LazyImage
                   src={cat.image}
                   alt={cat.name}
-                  className="w-full h-full object-cover"
+                  wrapperClassName="h-full w-full rounded-lg"
+                  placeholderClassName="rounded-lg"
+                  aspectRatio={4 / 3}
                 />
               </div>
               <h3 className="font-semibold text-lg text-foreground mb-2">
@@ -123,10 +126,12 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                     <div className="bg-card rounded-lg shadow-lg p-4 w-full md:w-64 text-center cursor-pointer hover:shadow-xl transition-shadow"
                          onClick={() => openParentModal(mother)}>
                       <div className="w-full h-32 bg-muted rounded-lg overflow-hidden mb-3">
-                        <img
+                        <LazyImage
                           src={mother.image}
                           alt={mother.name}
-                          className="w-full h-full object-cover"
+                          wrapperClassName="h-full w-full rounded-lg"
+                          placeholderClassName="rounded-lg"
+                          aspectRatio={4 / 3}
                         />
                       </div>
                       <h4 className="font-semibold text-foreground mb-1">
@@ -163,10 +168,12 @@ const PedigreeModal = ({ cat, isOpen, onClose }: PedigreeModalProps) => {
                     <div className="bg-card rounded-lg shadow-lg p-4 w-full md:w-64 text-center cursor-pointer hover:shadow-xl transition-shadow"
                          onClick={() => openParentModal(father)}>
                       <div className="w-full h-32 bg-muted rounded-lg overflow-hidden mb-3">
-                        <img
+                        <LazyImage
                           src={father.image}
                           alt={father.name}
-                          className="w-full h-full object-cover"
+                          wrapperClassName="h-full w-full rounded-lg"
+                          placeholderClassName="rounded-lg"
+                          aspectRatio={4 / 3}
                         />
                       </div>
                       <h4 className="font-semibold text-foreground mb-1">

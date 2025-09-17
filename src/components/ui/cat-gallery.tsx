@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import { LayoutGrid } from "@/components/ui/layout-grid";
 import { useDisplayedCatsByCategory } from "@/services/convexCatService";
-import { CatData } from "@/services/convexCatService";
+import { CatSummary } from "@/services/convexCatService";
 import CatStatusTag from "./cat-status-tag";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -47,7 +47,7 @@ export default function CatGallery() {
   }, []);
 
   // Convert cat data to card format for LayoutGrid
-  const createCatCards = (catData: CatData[]) => {
+  const createCatCards = (catData: CatSummary[]) => {
     if (!catData || catData.length === 0) {
     return [];
   }

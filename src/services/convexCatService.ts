@@ -41,7 +41,7 @@ export const useCatsByCategory = (category: 'kitten' | 'adult' | 'all') => {
 };
 
 export const useDisplayedCatsByCategory = (category: 'kitten' | 'adult' | 'all') => {
-  return useQuery(api.cats.getDisplayedCatsByCategory, { category });
+  return useQuery(api.cats.getDisplayedCatsByCategory, { category }) as CatSummary[] | undefined;
 };
 
 // Mutation hooks
@@ -199,6 +199,11 @@ export type CatData = {
   category?: 'kitten' | 'adult' | 'all';
   // JonaliMaineCoon marking
   isJonaliMaineCoon?: boolean;
+};
+
+export type CatSummary = Omit<CatData, "gallery"> & {
+  hasGallery: boolean;
+  galleryCount: number;
 };
 
 export type PedigreeConnection = {

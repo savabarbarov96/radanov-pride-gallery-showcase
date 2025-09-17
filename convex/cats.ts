@@ -268,30 +268,38 @@ export const getDisplayedCatsByCategory = query({
       .withIndex("by_displayed", (q) => q.eq("isDisplayed", true))
       .collect();
     
-    if (args.category === "all") {
-      return allDisplayedCats;
-    }
-    
-    // Calculate age-based category for each cat
-    const currentDate = new Date();
-    
-    return allDisplayedCats.filter(cat => {
-      if (!cat.birthDate) {
-        // If no birth date, fallback to manual category if available
-        return cat.category === args.category;
+    const filteredCats = (() => {
+      if (args.category === "all") {
+        return allDisplayedCats;
       }
-      
-      const birthDate = new Date(cat.birthDate);
-      const ageInYears = (currentDate.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-      
-      if (args.category === "kitten") {
-        return ageInYears < 1;
-      } else if (args.category === "adult") {
-        return ageInYears >= 1;
-      }
-      
-      return false;
-    });
+
+      // Calculate age-based category for each cat
+      const currentDate = new Date();
+
+      return allDisplayedCats.filter(cat => {
+        if (!cat.birthDate) {
+          // If no birth date, fallback to manual category if available
+          return cat.category === args.category;
+        }
+
+        const birthDate = new Date(cat.birthDate);
+        const ageInYears = (currentDate.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+
+        if (args.category === "kitten") {
+          return ageInYears < 1;
+        } else if (args.category === "adult") {
+          return ageInYears >= 1;
+        }
+
+        return false;
+      });
+    })();
+
+    return filteredCats.map(({ gallery, internalNotes, ...rest }) => ({
+      ...rest,
+      hasGallery: (gallery?.length ?? 0) > 0,
+      galleryCount: gallery?.length ?? 0,
+    }));
   },
 });
 

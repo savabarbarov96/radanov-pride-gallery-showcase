@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Facebook, Instagram } from 'lucide-react';
-import { CatData } from '@/services/convexCatService';
+import { CatSummary } from '@/services/convexCatService';
 import { useSocialMediaSettings } from '@/services/convexSiteSettingsService';
 import { useLanguage } from '@/hooks/useLanguage';
 
 interface SocialContactModalProps {
-  cat: CatData | null;
+  cat: CatSummary | null;
   isOpen: boolean;
   onClose: () => void;
 }
