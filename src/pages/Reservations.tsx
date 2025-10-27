@@ -127,36 +127,36 @@ const Reservations = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Subtle Background Images */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Decorative Background Images */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         {/* Top left cat image */}
-        <div 
-          className="absolute top-16 left-8 w-28 h-28 opacity-6 rounded-full bg-cover bg-center transform rotate-12"
+        <div
+          className="absolute top-20 -left-12 lg:left-8 w-32 h-32 lg:w-40 lg:h-40 opacity-[0.03] rounded-full bg-cover bg-center transform rotate-12 blur-[1px]"
           style={{ backgroundImage: "url('/cats/3e53631a-57b1-4efe-93cc-bb18c1e31b88.jpg')" }}
         />
-        
+
         {/* Top right cat image */}
-        <div 
-          className="absolute top-24 right-12 w-32 h-32 opacity-5 rounded-full bg-cover bg-center transform -rotate-6"
+        <div
+          className="absolute top-32 -right-16 lg:right-12 w-36 h-36 lg:w-44 lg:h-44 opacity-[0.04] rounded-full bg-cover bg-center transform -rotate-6 blur-[1px]"
           style={{ backgroundImage: "url('/cats/707ac156-a428-4c3c-9585-44cbf9f2af07.jpg')" }}
         />
-        
-        {/* Bottom left cat image */}
-        <div 
-          className="absolute bottom-32 left-16 w-24 h-24 opacity-7 rounded-full bg-cover bg-center transform rotate-45"
+
+        {/* Middle left cat image */}
+        <div
+          className="absolute top-1/2 -left-8 lg:left-16 w-28 h-28 lg:w-36 lg:h-36 opacity-[0.02] rounded-full bg-cover bg-center transform rotate-45 blur-[1px]"
           style={{ backgroundImage: "url('/cats/beed2196-c47f-47f5-ba92-8940e07791be.jpg')" }}
         />
-        
-        {/* Bottom right cat image */}
-        <div 
-          className="absolute bottom-24 right-8 w-26 h-26 opacity-4 rounded-full bg-cover bg-center transform -rotate-12"
+
+        {/* Middle right cat image */}
+        <div
+          className="absolute top-[60%] -right-12 lg:right-8 w-32 h-32 lg:w-40 lg:h-40 opacity-[0.02] rounded-full bg-cover bg-center transform -rotate-12 blur-[1px]"
           style={{ backgroundImage: "url('/cats/e11886d6-4f6d-40c8-82fa-6ab0a167625d.jpg')" }}
         />
       </div>
       
       <ModernNavigation />
       
-      <div className="container mx-auto px-6 lg:px-8 py-12 relative z-10">
+      <div className="container mx-auto px-6 lg:px-8 py-12 pb-24 relative z-10">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
