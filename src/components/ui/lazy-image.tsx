@@ -7,6 +7,7 @@ type LazyImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "loading"> & {
   placeholderClassName?: string;
   wrapperStyle?: CSSProperties;
   aspectRatio?: number;
+  forceLoad?: boolean;
 };
 
 const LazyImage = ({
@@ -17,12 +18,13 @@ const LazyImage = ({
   placeholderClassName,
   wrapperStyle,
   aspectRatio,
+  forceLoad = false,
   onLoad,
   onError,
   ...imgProps
 }: LazyImageProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(forceLoad);
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -30,9 +32,17 @@ const LazyImage = ({
     // Reset state when image source changes so we can animate new loads
     setIsLoaded(false);
     setHasError(false);
-  }, [src]);
+    if (forceLoad) {
+      setShouldLoad(true);
+    }
+  }, [src, forceLoad]);
 
   useEffect(() => {
+    if (forceLoad) {
+      setShouldLoad(true);
+      return;
+    }
+
     if (typeof window === "undefined") {
       setShouldLoad(true);
       return;
@@ -123,7 +133,7 @@ const LazyImage = ({
       }
       observer.disconnect();
     };
-  }, []);
+  }, [forceLoad]);
 
   const handleLoad: ImgHTMLAttributes<HTMLImageElement>["onLoad"] = (event) => {
     setIsLoaded(true);

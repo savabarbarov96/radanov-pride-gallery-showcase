@@ -278,6 +278,7 @@ const FeaturedModelsSection = () => {
                             wrapperClassName="h-full w-full rounded-full"
                             placeholderClassName="rounded-full"
                             aspectRatio={1}
+                            forceLoad
                             className="group-hover:scale-110 transition-transform duration-500"
                           />
                         </div>
