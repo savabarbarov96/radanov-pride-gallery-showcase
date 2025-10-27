@@ -50,19 +50,31 @@ const LazyImage = ({
       const windowWidth = window.innerWidth || document.documentElement.clientWidth;
 
       // Check if element is in viewport with some margin
-      const isVisible = (
+      // Note: We don't strictly require height/width > 0 because on mobile,
+      // the layout might not be complete during initial render
+      const isInViewport = (
         rect.top < windowHeight + 200 &&
         rect.bottom > -200 &&
         rect.left < windowWidth &&
-        rect.right > 0 &&
-        rect.height > 0 &&
-        rect.width > 0
+        rect.right > 0
       );
 
-      if (isVisible) {
+      // If element is in viewport OR if it exists but dimensions aren't ready yet
+      // (common on mobile during initial page load), mark it for loading
+      const hasDimensions = rect.height > 0 && rect.width > 0;
+
+      if (isInViewport && hasDimensions) {
         setShouldLoad(true);
         return true;
       }
+
+      // Fallback: if element is in DOM and potentially visible but dimensions not ready,
+      // still consider it visible (mobile fix)
+      if (isInViewport) {
+        setShouldLoad(true);
+        return true;
+      }
+
       return false;
     };
 
@@ -72,9 +84,10 @@ const LazyImage = ({
     }
 
     // Fallback timeout in case observer never fires (mobile edge cases)
+    // Reduced timeout for faster loading on mobile
     const fallbackTimeout = setTimeout(() => {
       setShouldLoad(true);
-    }, 2000);
+    }, 500);
 
     // Check if IntersectionObserver is available
     if (!window.IntersectionObserver) {
