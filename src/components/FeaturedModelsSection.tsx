@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useDisplayedCatsByCategory, useCatById, CatSummary, Id } from "@/services/convexCatService";
 import PedigreeModal from "./PedigreeModal";
 import SocialContactModal from "./SocialContactModal";
@@ -111,10 +110,6 @@ const FeaturedModelsSection = () => {
       const availability = getAvailabilityFromStatus(cat.status);
       return availability === statusFilter;
     });
-  
-  const { elementRef: sectionRef, isVisible: sectionVisible } = useScrollAnimation(0.1);
-  const { elementRef: headerRef, isVisible: headerVisible } = useScrollAnimation(0.1);
-  const { elementRef: gridRef, isVisible: gridVisible } = useScrollAnimation(0.1);
 
   const openGallery = (cat: CatSummary) => {
     setSelectedCatSummary(cat);
@@ -168,16 +163,11 @@ const FeaturedModelsSection = () => {
 
   return (
     <>
-      <section ref={sectionRef} className="py-20 bg-background mb-24">
+      <section className="py-20 bg-background mb-24">
         <div className="container mx-auto px-6 lg:px-8">
 
           {/* Section Header */}
-          <div 
-            ref={headerRef}
-            className={`text-center mb-12 transition-all duration-1000 ${
-              headerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}
-          >
+          <div className="text-center mb-12">
             <h2 className="font-playfair text-4xl lg:text-5xl font-light text-foreground">
               {t('featuredModels.title')}
             </h2>
@@ -218,35 +208,25 @@ const FeaturedModelsSection = () => {
           </div>
 
           {/* Content Area */}
-          <div 
-            ref={gridRef}
-            className={`max-w-6xl mx-auto transition-all duration-1000 ${
-              gridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            }`}
-          >
+          <div className="max-w-6xl mx-auto">
             {isLoading && (
               <div className="text-center">
                 <p className="text-muted-foreground">{t('featuredModels.loading')}</p>
               </div>
             )}
-            
+
             {isEmpty && (
               <div className="text-center">
                 <p className="text-muted-foreground">{t('featuredModels.noAvailable')}</p>
               </div>
             )}
-            
+
             {!isLoading && !isEmpty && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
                 {filteredCats?.map((cat, index) => (
-                  <div 
-                    key={cat._id} 
-                    className={`group relative transition-all duration-300 max-w-xs w-full ${
-                      gridVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-                    }`}
-                    style={{
-                      transitionDelay: gridVisible ? `${index * 0.1}s` : '0s'
-                    }}
+                  <div
+                    key={cat._id}
+                    className="group relative max-w-xs w-full"
                   >
                     {/* Main circular card */}
                     <div 
@@ -278,7 +258,6 @@ const FeaturedModelsSection = () => {
                             wrapperClassName="h-full w-full rounded-full"
                             placeholderClassName="rounded-full"
                             aspectRatio={1}
-                            forceLoad
                             className="group-hover:scale-110 transition-transform duration-500"
                           />
                         </div>
