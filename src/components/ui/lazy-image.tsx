@@ -43,12 +43,55 @@ const LazyImage = ({
       return;
     }
 
+    // Check if element is already in viewport (important for mobile/small screens)
+    const checkInitialVisibility = () => {
+      const rect = node.getBoundingClientRect();
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      const windowWidth = window.innerWidth || document.documentElement.clientWidth;
+
+      // Check if element is in viewport with some margin
+      const isVisible = (
+        rect.top < windowHeight + 200 &&
+        rect.bottom > -200 &&
+        rect.left < windowWidth &&
+        rect.right > 0 &&
+        rect.height > 0 &&
+        rect.width > 0
+      );
+
+      if (isVisible) {
+        setShouldLoad(true);
+        return true;
+      }
+      return false;
+    };
+
+    // If already visible, don't set up observer
+    if (checkInitialVisibility()) {
+      return;
+    }
+
+    // Fallback timeout in case observer never fires (mobile edge cases)
+    const fallbackTimeout = setTimeout(() => {
+      setShouldLoad(true);
+    }, 2000);
+
+    // Check if IntersectionObserver is available
+    if (!window.IntersectionObserver) {
+      clearTimeout(fallbackTimeout);
+      setShouldLoad(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            clearTimeout(fallbackTimeout);
             setShouldLoad(true);
-            observer.disconnect();
+            if (node) {
+              observer.unobserve(node);
+            }
           }
         });
       },
@@ -61,6 +104,10 @@ const LazyImage = ({
     observer.observe(node);
 
     return () => {
+      clearTimeout(fallbackTimeout);
+      if (node) {
+        observer.unobserve(node);
+      }
       observer.disconnect();
     };
   }, []);
