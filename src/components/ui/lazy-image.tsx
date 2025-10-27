@@ -184,8 +184,9 @@ const LazyImage = ({
             isLoaded ? "opacity-100" : "opacity-0",
             className
           )}
-          loading={forceLoad ? "eager" : "lazy"}
-          decoding={forceLoad ? "auto" : "async"}
+          loading={forceLoad ? "eager" : undefined}
+          decoding={forceLoad ? "auto" : undefined}
+          fetchPriority={forceLoad ? "high" : undefined}
           onLoad={handleLoad}
           onError={handleError}
           {...imgProps}
