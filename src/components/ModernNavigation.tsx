@@ -1,213 +1,31 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useActiveSection, useScrollPosition } from "@/hooks/useScrollAnimation";
-import SocialContactModal from "./SocialContactModal";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import SocialContactModal from "./SocialContactModal";
 
-const ModernNavigation = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const activeSection = useActiveSection(['home', 'models', 'tiktok', 'contact']);
-  const { scrollY } = useScrollPosition();
-  const { t } = useLanguage();
+const links = [
+  ["/", "Начало"], ["/breeding-cats", "Развъдни котки"], ["/available-kittens", "Налични котенца"],
+  ["/past-litters", "Минали котила"], ["/shows", "Изложби"], ["/health-care", "Здраве и грижа"], ["/reservations", "Резервации"],
+] as const;
+
+export default function ModernNavigation() {
+  const [open, setOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
+  const isActive = (path: string) => path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
 
-  const scrollToSection = useCallback((sectionId: string) => {
-    if (location.pathname !== '/') {
-      navigate('/', { state: { scrollTo: sectionId } });
-      setIsOpen(false);
-      return;
-    }
-
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsOpen(false);
-  }, [location.pathname, navigate]);
-
-  const navBg = scrollY > 50 ? 'bg-background/98' : 'bg-background/95';
-  const navShadow = scrollY > 50 ? 'shadow-lg' : '';
-  
-  // Calculate scroll progress
-  const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const scrollProgress = Math.min((scrollY / documentHeight) * 100, 100);
-
-  return (
-    <nav className={`${navBg} ${navShadow} backdrop-blur-sm sticky top-0 z-50 transition-all duration-300 relative`}>
-      <div className="container mx-auto px-6 lg:px-8">
-        <div className="flex justify-between items-center h-24">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <img 
-              src="/radanov-pride-logo.png" 
-              alt="Radanov Pride Logo" 
-              className="w-20 h-20 object-contain"
-            />
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <button 
-              onClick={() => scrollToSection('home')}
-              className={`transition-colors text-sm font-medium ${
-                activeSection === 'home' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t('navigation.home')}
-            </button>
-            <button 
-              onClick={() => scrollToSection('models')}
-              className={`transition-colors text-sm font-medium ${
-                activeSection === 'models' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t('navigation.models')}
-            </button>
-            <button 
-              onClick={() => scrollToSection('tiktok')}
-              className={`transition-colors text-sm font-medium ${
-                activeSection === 'tiktok' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t('navigation.tiktok')}
-            </button>
-            <Link
-              to="/care-guide"
-              className={`transition-colors text-sm font-medium ${
-                location.pathname.startsWith('/care-guide') ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t('navigation.careGuide')}
-            </Link>
-            <Link
-              to="/reservations"
-              className={`transition-colors text-sm font-medium ${
-                location.pathname.startsWith('/reservations') ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t('navigation.reservations')}
-            </Link>
-            
-            {/* Language Switcher */}
-            <LanguageSwitcher />
-            
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="bg-card border-border text-foreground hover:bg-muted"
-              onClick={() => setIsContactModalOpen(true)}
-            >
-              {t('navigation.contact')}
-            </Button>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-foreground hover:text-muted-foreground focus:outline-none"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden pb-4">
-            <div className="space-y-2">
-              <button 
-                onClick={() => scrollToSection('home')}
-                className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  activeSection === 'home' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {t('navigation.home')}
-              </button>
-              <button 
-                onClick={() => scrollToSection('models')}
-                className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  activeSection === 'models' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {t('navigation.models')}
-              </button>
-              <button 
-                onClick={() => scrollToSection('tiktok')}
-                className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  activeSection === 'tiktok' ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {t('navigation.tiktok')}
-              </button>
-              <Link 
-                to="/care-guide"
-                className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  location.pathname.startsWith('/care-guide') ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                {t('navigation.careGuide')}
-              </Link>
-              <Link 
-                to="/reservations"
-                className={`block px-3 py-2 transition-colors text-sm w-full text-left ${
-                  location.pathname.startsWith('/reservations') ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                {t('navigation.reservations')}
-              </Link>
-              
-              {/* Mobile Language Switcher */}
-              <div className="px-3 py-2">
-                <LanguageSwitcher />
-              </div>
-              
-              <div className="px-3 py-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full bg-white border-gray-300 text-foreground hover:bg-gray-50"
-                  onClick={() => {
-                    setIsContactModalOpen(true);
-                    setIsOpen(false);
-                  }}
-                >
-                  {t('navigation.contact')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+  return <>
+    <nav className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-xl">
+      <div className="mx-auto flex min-h-20 max-w-7xl items-center gap-6 px-5 lg:px-8">
+        <Link to="/" className="flex shrink-0 items-center" aria-label="Radanov Pride начало"><img src="/radanov-pride-logo.png" alt="Radanov Pride" className="h-14 w-14 object-contain" /></Link>
+        <div className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex">{links.map(([path, label]) => <Link key={path} to={path} className={`rounded-full px-3 py-2 text-[13px] font-medium transition-colors ${isActive(path) ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>{label}</Link>)}</div>
+        <div className="ml-auto hidden items-center gap-3 xl:flex"><LanguageSwitcher /><Button size="sm" onClick={() => setContactOpen(true)} className="rounded-full px-5">Контакт</Button></div>
+        <button className="ml-auto rounded-full p-2 hover:bg-muted xl:hidden" onClick={() => setOpen(!open)} aria-label={open ? "Затвори менюто" : "Отвори менюто"}>{open ? <X /> : <Menu />}</button>
       </div>
-      
-      {/* Scroll Progress Bar */}
-      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-200">
-        <div 
-          className="h-full bg-black transition-all duration-300 ease-out"
-          style={{ width: `${scrollProgress}%` }}
-        />
-      </div>
-
-      {/* Contact Modal */}
-      <SocialContactModal
-        cat={null}
-        isOpen={isContactModalOpen}
-        onClose={() => setIsContactModalOpen(false)}
-      />
+      {open && <div className="border-t border-border/60 px-5 pb-5 pt-3 xl:hidden"><div className="mx-auto grid max-w-2xl gap-1">{links.map(([path, label]) => <Link key={path} to={path} onClick={() => setOpen(false)} className={`rounded-xl px-4 py-3 text-sm font-medium ${isActive(path) ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted"}`}>{label}</Link>)}</div><div className="mx-auto mt-3 flex max-w-2xl items-center justify-between gap-3 px-4"><LanguageSwitcher /><Button size="sm" className="rounded-full" onClick={() => { setContactOpen(true); setOpen(false); }}>Контакт</Button></div></div>}
     </nav>
-  );
-};
-
-export default ModernNavigation;
+    <SocialContactModal cat={null} isOpen={contactOpen} onClose={() => setContactOpen(false)} />
+  </>;
+}

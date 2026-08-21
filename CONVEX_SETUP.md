@@ -35,6 +35,10 @@ Create a `.env.local` file in your project root with the following content:
 ```env
 # Convex
 VITE_CONVEX_URL=https://your-deployment-url.convex.cloud
+
+# Reservation email notifications (configure in the Convex deployment)
+RESEND_API_KEY=re_your_api_key
+RESEND_FROM_EMAIL=Radanov Pride <notifications@your-domain.com>
 ```
 
 Replace `your-deployment-url` with the actual URL provided by Convex during setup.

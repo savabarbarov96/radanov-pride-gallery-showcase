@@ -6,6 +6,11 @@ import Index from "./pages/Index";
 import CareGuide from "./pages/CareGuide";
 import Reservations from "./pages/Reservations";
 import NotFound from "./pages/NotFound";
+import BreedingCats from "./pages/BreedingCats";
+import AvailableKittens from "./pages/AvailableKittens";
+import PastLitters from "./pages/PastLitters";
+import Shows from "./pages/Shows";
+import HealthCare from "./pages/HealthCare";
 import { LocationBasedTheme } from "@/hooks/useTheme";
 import { Helmet } from 'react-helmet-async';
 import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
@@ -29,6 +34,11 @@ const AppContent = () => {
           <Route path="/" element={<Index />} />
           <Route path="/care-guide" element={<CareGuide />} />
           <Route path="/reservations" element={<Reservations />} />
+          <Route path="/breeding-cats" element={<BreedingCats />} />
+          <Route path="/available-kittens" element={<AvailableKittens />} />
+          <Route path="/past-litters" element={<PastLitters />} />
+          <Route path="/shows" element={<Shows />} />
+          <Route path="/health-care" element={<HealthCare />} />
           <Route path="/admin" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
               <div className="text-center">

@@ -1,23 +1,12 @@
-import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useForm as useFormspree, ValidationError } from "@formspree/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useSubmitReservation, NewReservationData, reservationService } from "@/services/convexReservationService";
-import { toast } from "sonner";
 import ModernNavigation from "@/components/ModernNavigation";
 import Footer from "@/components/Footer";
-
-type ReservationFormData = {
-  customerName: string;
-  phoneNumber: string;
-  message: string;
-};
 
 type ReservationContent = {
   formTitle: string;
@@ -31,11 +20,6 @@ type ReservationContent = {
   errorMessage: string;
   infoTitle: string;
   infoBody: string;
-  validation: {
-    name: string;
-    phone: string;
-    message: string;
-  };
 };
 
 const reservationContent: Record<"bg" | "en", ReservationContent> = {
@@ -53,11 +37,6 @@ const reservationContent: Record<"bg" | "en", ReservationContent> = {
     infoTitle: "Важна информация",
     infoBody:
       "След получаване на вашата резервация, нашият екип ще се свърже с вас в рамките на 24 часа. Ще обсъдим всички детайли относно наличността, характеристиките на котките и процеса на осиновяване. Всички наши котки са здрави, ваксинирани и с документи.",
-    validation: {
-      name: "Името трябва да съдържа поне 2 символа",
-      phone: "Телефонният номер трябва да съдържа поне 6 цифри",
-      message: "Съобщението трябва да съдържа поне 10 символа",
-    },
   },
   en: {
     formTitle: "Reservation form",
@@ -73,57 +52,13 @@ const reservationContent: Record<"bg" | "en", ReservationContent> = {
     infoTitle: "Important information",
     infoBody:
       "After receiving your reservation our team will reach out within 24 hours to discuss availability, cat characteristics and the adoption process. All of our cats are healthy, vaccinated and come with documentation.",
-    validation: {
-      name: "Name must contain at least 2 characters",
-      phone: "Phone number must contain at least 6 digits",
-      message: "Message must contain at least 10 characters",
-    },
   },
 };
 
-const createReservationSchema = (validation: ReservationContent["validation"]) =>
-  z.object({
-    customerName: z.string().min(2, validation.name),
-    phoneNumber: z.string().min(6, validation.phone),
-    message: z.string().min(10, validation.message),
-  });
-
 const Reservations = () => {
   const { t, language } = useLanguage();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const submitReservation = useSubmitReservation();
   const content = reservationContent[language];
-  const reservationSchema = useMemo(() => createReservationSchema(content.validation), [content]);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ReservationFormData>({
-    resolver: zodResolver(reservationSchema),
-  });
-
-  const onSubmit = async (data: ReservationFormData) => {
-    setIsSubmitting(true);
-    
-    const reservationData: NewReservationData = {
-      customerName: data.customerName,
-      phoneNumber: data.phoneNumber,
-      message: data.message,
-    };
-
-    const result = await reservationService.submit(reservationData, submitReservation);
-    
-    if (result.success) {
-      toast.success(t('reservations.form.success'));
-      reset();
-    } else {
-      toast.error(content.errorMessage);
-    }
-    
-    setIsSubmitting(false);
-  };
+  const [state, handleSubmit] = useFormspree("mppabokd");
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -179,7 +114,9 @@ const Reservations = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {state.succeeded ? (
+                <div className="rounded-2xl bg-muted p-6 text-center leading-7">{t('reservations.form.success')}</div>
+              ) : <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Field */}
                 <div className="space-y-2">
                   <Label htmlFor="customerName" className="text-sm font-medium">
@@ -189,12 +126,11 @@ const Reservations = () => {
                     id="customerName"
                     type="text"
                     placeholder={content.placeholders.name}
-                    {...register("customerName")}
-                    className={errors.customerName ? "border-red-500" : ""}
+                    name="customerName"
+                    required
+                    minLength={2}
                   />
-                  {errors.customerName && (
-                    <p className="text-sm text-red-500">{errors.customerName.message}</p>
-                  )}
+                  <ValidationError prefix="Име" field="customerName" errors={state.errors} />
                 </div>
 
                 {/* Phone Field */}
@@ -206,12 +142,11 @@ const Reservations = () => {
                     id="phoneNumber"
                     type="tel"
                     placeholder={content.placeholders.phone}
-                    {...register("phoneNumber")}
-                    className={errors.phoneNumber ? "border-red-500" : ""}
+                    name="phoneNumber"
+                    required
+                    minLength={6}
                   />
-                  {errors.phoneNumber && (
-                    <p className="text-sm text-red-500">{errors.phoneNumber.message}</p>
-                  )}
+                  <ValidationError prefix="Телефон" field="phoneNumber" errors={state.errors} />
                 </div>
 
                 {/* Message Field */}
@@ -223,21 +158,20 @@ const Reservations = () => {
                     id="message"
                     placeholder={content.placeholders.message}
                     rows={5}
-                    {...register("message")}
-                    className={errors.message ? "border-red-500" : ""}
+                    name="message"
+                    required
+                    minLength={10}
                   />
-                  {errors.message && (
-                    <p className="text-sm text-red-500">{errors.message.message}</p>
-                  )}
+                  <ValidationError prefix="Съобщение" field="message" errors={state.errors} />
                 </div>
 
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={state.submitting}
                   className="w-full bg-foreground text-background hover:bg-foreground/90 font-medium py-3"
                 >
-                  {isSubmitting ? (
+                  {state.submitting ? (
                     <div className="flex items-center space-x-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-background"></div>
                       <span>{content.submittingLabel}</span>
@@ -246,7 +180,7 @@ const Reservations = () => {
                     t('reservations.form.submit')
                   )}
                 </Button>
-              </form>
+              </form>}
             </CardContent>
           </Card>
 

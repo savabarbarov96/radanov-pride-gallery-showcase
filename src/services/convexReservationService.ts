@@ -22,6 +22,7 @@ export const useSubmitReservation = () => {
   return useMutation(api.reservations.submitReservation);
 };
 
+
 export const useGetAllReservations = () => {
   return useQuery(api.reservations.getAllReservations);
 };
