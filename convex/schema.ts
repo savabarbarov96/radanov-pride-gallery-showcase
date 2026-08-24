@@ -105,6 +105,25 @@ export default defineSchema({
     .index("by_key", ["key"])
     .index("by_type", ["type"]),
 
+  pageMedia: defineTable({
+    page: v.union(
+      v.literal("breeding"),
+      v.literal("kittens"),
+      v.literal("litters"),
+      v.literal("shows")
+    ),
+    storageId: v.id("_storage"),
+    url: v.string(),
+    filename: v.string(),
+    altText: v.string(),
+    caption: v.optional(v.string()),
+    isDisplayed: v.boolean(),
+    sortOrder: v.number(),
+    uploadedAt: v.string(),
+  })
+    .index("by_page", ["page"])
+    .index("by_page_displayed", ["page", "isDisplayed"]),
+
   // TikTok videos for cats
   tiktokVideos: defineTable({
     catId: v.optional(v.id("cats")), // If null, it's a global video

@@ -3,10 +3,18 @@ import { ArrowRight, Check, ExternalLink, ShieldCheck, Syringe, Dna, Trophy } fr
 import { Helmet } from "react-helmet-async";
 import ModernNavigation from "@/components/ModernNavigation";
 import Footer from "@/components/Footer";
+import { useActivePageMedia } from "@/services/convexPageMediaService";
 
 type PageKey = "breeding" | "kittens" | "litters" | "shows" | "health";
 
 const babhRegistryUrl = "https://public-iisr.bfsa.bg/BABHRegsExt/pagesPublic/registers/registerAnimalDefault.xhtml?reg=56";
+
+const fallbackImages = {
+  breeding: "/page-media/breeding-cats.webp",
+  kittens: "/page-media/available-kittens.webp",
+  litters: "/page-media/past-litters.webp",
+  shows: "/page-media/shows.webp",
+} as const;
 
 const pages: Record<PageKey, { eyebrow: string; title: string; intro: string; sections: { title: string; body: string; items?: string[] }[] }> = {
   breeding: {
@@ -62,18 +70,23 @@ const icons = [Dna, ShieldCheck, Syringe, Trophy];
 
 export default function InformationPage({ page }: { page: PageKey }) {
   const content = pages[page];
+  const media = useActivePageMedia(page === "health" ? "breeding" : page);
+  const activeMedia = page === "health" ? [] : media ?? [];
+  const heroImage = activeMedia[0]?.url ?? (page === "health" ? undefined : fallbackImages[page]);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Helmet><title>{content.title} | Radanov Pride</title><meta name="description" content={content.intro} /></Helmet>
       <ModernNavigation />
       <main>
-        <section className="border-b border-border/60 bg-gradient-to-br from-muted/70 via-background to-background px-6 py-20 md:py-28">
-          <div className="mx-auto max-w-6xl">
-            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">{content.eyebrow}</p>
+        <section className="relative isolate overflow-hidden border-b border-border/60 bg-muted px-6 py-20 md:py-28">
+          {heroImage && <><img src={heroImage} alt={activeMedia[0]?.altText || content.title} className="absolute inset-0 -z-20 h-full w-full object-cover" /><div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/75 via-black/45 to-black/10" /></>}
+          <div className={`relative mx-auto max-w-6xl ${heroImage ? "text-white" : ""}`}>
+            <p className={`mb-5 text-xs font-semibold uppercase tracking-[0.28em] ${heroImage ? "text-white/75" : "text-muted-foreground"}`}>{content.eyebrow}</p>
             <h1 className="max-w-4xl font-playfair text-4xl font-medium leading-tight md:text-6xl">{content.title}</h1>
-            <p className="mt-7 max-w-3xl text-lg leading-8 text-muted-foreground md:text-xl">{content.intro}</p>
+            <p className={`mt-7 max-w-3xl text-lg leading-8 md:text-xl ${heroImage ? "text-white/80" : "text-muted-foreground"}`}>{content.intro}</p>
           </div>
         </section>
+        {activeMedia.length > 1 && <section className="mx-auto grid max-w-6xl gap-4 px-6 pt-16 md:grid-cols-3"><div className="md:col-span-2"><img src={activeMedia[1].url} alt={activeMedia[1].altText} className="h-full max-h-[520px] min-h-[280px] w-full rounded-3xl object-cover" loading="lazy" /></div>{activeMedia.slice(2, 4).map((item) => <img key={item._id} src={item.url} alt={item.altText} className="h-64 w-full rounded-3xl object-cover md:h-full" loading="lazy" />)}</section>}
         <section className="mx-auto grid max-w-6xl gap-5 px-6 py-16 md:grid-cols-2 md:py-24">
           {content.sections.map((section, index) => {
             const Icon = icons[index % icons.length];

@@ -18,6 +18,7 @@ import type * as cats from "../cats.js";
 import type * as contact from "../contact.js";
 import type * as files from "../files.js";
 import type * as imageMigration from "../imageMigration.js";
+import type * as pageMedia from "../pageMedia.js";
 import type * as pedigree from "../pedigree.js";
 import type * as reservations from "../reservations.js";
 import type * as seed from "../seed.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   contact: typeof contact;
   files: typeof files;
   imageMigration: typeof imageMigration;
+  pageMedia: typeof pageMedia;
   pedigree: typeof pedigree;
   reservations: typeof reservations;
   seed: typeof seed;
